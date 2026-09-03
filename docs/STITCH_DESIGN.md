@@ -16,10 +16,12 @@ itd. można podmienić bez zmiany reszty geometrii (bryła i mocowanie są w oso
 ## Zasada działania
 
 Każdy zestaw ma **5 pozycji osiowych** (tak jak zestaw A — dźwignia wyboru ściegu przesuwa
-trzpień wzdłuż osi krzywki). Na każdej pozycji rowek biegnie dookoła walca ze zmiennym
-promieniem `r(kąt)` — to właśnie ten przebieg tworzy ruch igły na boki podczas szycia.
-Profile są zdefiniowane jako funkcje znormalizowane (`-1..1`), przeskalowane w `cam_common.scad`
-przez `GROOVE_PITCH_R ± GROOVE_AMP`.
+czujnik/popychacz wzdłuż osi krzywki), rozdzielonych wąskimi kołnierzami. Na każdej pozycji
+sama **krawędź walca** ma promień zmienny w funkcji kąta `r(kąt)` — czujnik jeździ bezpośrednio
+po tej krawędzi (krzywka krawędziowa/edge cam, tak jak w zestawie A — nie kanał/rowek), a jej
+wychylenie w bok tworzy ruch igły podczas szycia. Profile są zdefiniowane jako funkcje
+znormalizowane (`-1..1`), przeskalowane w `cam_common.scad` na zakres promienia
+`EDGE_MAX_R` (płytko) do `EDGE_MIN_R` (głęboko).
 
 ## Zestaw B — "Fale i muszelki"
 
@@ -54,12 +56,11 @@ przez `GROOVE_PITCH_R ± GROOVE_AMP`.
 ## Parametry do kalibracji przed drukiem
 
 W `cam_common.scad`:
-- `GROOVE_BASE_R`/`GROOVE_DEEP_R` — określają zakres promienia toru (płytko/blisko powierzchni
-  ↔ głęboko/blisko otworu), czyli efektywną szerokość/rozstaw ściegu. Nie mam fizycznej maszyny
-  do kalibracji, więc **wartości wymagają sprawdzenia na wydruku próbnym** zestawu A (porównaj
-  z prawdziwą szerokością zygzaka) i ew. korekty dla B/C/D — patrz `docs/PRINTABILITY.md` za
-  marginesami bezpieczeństwa, których nie należy przekraczać.
-- `GROOVE_WIDTH` (2.2 mm) — szerokość rowka, powinna odpowiadać średnicy trzpienia/widełek
-  śledzących w mechanizmie maszyny.
+- `EDGE_MAX_R`/`EDGE_MIN_R` — określają zakres promienia krawędzi (płytko/blisko powierzchni
+  głównego walca ↔ głęboko/blisko otworu), czyli efektywną szerokość/rozstaw ściegu. Nie mam
+  fizycznej maszyny do kalibracji, więc **wartości wymagają sprawdzenia na wydruku próbnym**
+  zestawu A (porównaj z prawdziwą szerokością zygzaka) i ew. korekty dla B/C/D — patrz
+  `docs/PRINTABILITY.md` za marginesami bezpieczeństwa, których nie należy przekraczać.
+- `COLLAR_LEN` (0.8 mm) — wysokość kołnierzy separujących pozycje.
 - `BOSS_LEN` (2.0 mm) — długość kołnierzy na końcach walca — wartość przybliżona
   (patrz ograniczenia w `DIMENSIONS.md`), do potwierdzenia przy montażu.

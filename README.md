@@ -8,12 +8,13 @@ Zestaw A jest już zaprojektowany: [Viking 21a Basic Stitch Cam](https://www.thi
 autorstwa maxkrippler — zygzak + zygzak 3-stopniowy.
 
 Analiza pliku STL zestawu A pokazała, że to nie płaska tarcza, tylko **krzywka bębnowa
-(barrel/drum cam)**: walec z rowkiem otwartym na powierzchni zewnętrznej, po którym jeździ
-trzpień śledzący maszyny; dźwignia wyboru ściegu przesuwa trzpień wzdłuż osi walca między
-5 pozycjami. Na tej podstawie odtworzono wymiary mechaniczne (otwór, średnice, kołnierze) i
-zbudowano parametryczny generator OpenSCAD do trzech kolejnych zestawów: **B, C, D** — z tą
-samą geometrią mocowania, ale nowymi, oryginalnymi wzorami ściegów (nie odtworzeniem historii
-— źródeł do wiernej rekonstrukcji nie udało się znaleźć).
+(barrel/drum cam) z profilowaną krawędzią**: sama krawędź walca na każdej z 5 pozycji jest
+ukształtowana jako ząbki/profil ściegu (nie schowany rowek — czujnik/popychacz maszyny jeździ
+bezpośrednio po tej krawędzi); dźwignia wyboru ściegu przesuwa go wzdłuż osi walca między
+5 pozycjami, oddzielonymi wąskimi kołnierzami. Na tej podstawie odtworzono wymiary mechaniczne
+(otwór, średnice, kołnierze) i zbudowano parametryczny generator OpenSCAD do trzech kolejnych
+zestawów: **B, C, D** — z tą samą geometrią mocowania, ale nowymi, oryginalnymi wzorami ściegów
+(nie odtworzeniem historii — źródeł do wiernej rekonstrukcji nie udało się znaleźć).
 
 ## Status
 
@@ -27,24 +28,23 @@ samą geometrią mocowania, ale nowymi, oryginalnymi wzorami ściegów (nie odtw
 Wzory B/C/D to **nowe, oryginalne projekty** (nie odtworzenie historii — źródeł nie udało się
 znaleźć), ale z geometrią mocowania 1:1 z zestawem A. Szczegóły wyboru wzorów:
 [`docs/STITCH_DESIGN.md`](docs/STITCH_DESIGN.md). Kolejny krok: wydruk próbny i ew. kalibracja
-głębokości rowka (`GROOVE_BASE_R`/`GROOVE_DEEP_R` w `cam_common.scad`) — patrz
+głębokości profilu (`EDGE_MAX_R`/`EDGE_MIN_R` w `cam_common.scad`) — patrz
 [`docs/WORKFLOW.md`](docs/WORKFLOW.md) i [`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
 
 ## Podgląd
 
 ![Zestawienie A/B/C/D](docs/renders/assembly_all.png)
 
-| | Widok izometryczny | Przekrój (pokazuje kształt rowka) |
+| | Widok izometryczny | Przekrój (pokazuje kształt ściegu) |
 |---|---|---|
 | **A** (referencja) | ![A iso](docs/renders/cam_A_iso.png) | ![A przekrój](docs/renders/cam_A_cross_section.png) |
 | **B** | ![B iso](docs/renders/cam_B_iso.png) | ![B przekrój](docs/renders/cam_B_cross_section.png) |
 | **C** | ![C iso](docs/renders/cam_C_iso.png) | ![C przekrój](docs/renders/cam_C_cross_section.png) |
 | **D** | ![D iso](docs/renders/cam_D_iso.png) | ![D przekrój](docs/renders/cam_D_cross_section.png) |
 
-Widoki przekrojowe pokazują kształt ściegu najwyraźniej — na widoku izometrycznym rowek jest
-płytki i gładki (przejście promienia ~7 mm rozłożone na całym obwodzie), więc na oko widać go
-subtelnie mimo że fizycznie robi różnicę. Więcej widoków (z przodu) w
-[`docs/renders/`](docs/renders/).
+Widoki izometryczne pokazują wyraźne ząbkowanie krawędzi (5 pozycji rozdzielonych wąskimi
+kołnierzami), tak jak w oryginalnym zestawie A — przekroje pokazują dokładny kształt każdego
+wzoru. Więcej widoków (z przodu) w [`docs/renders/`](docs/renders/).
 
 ## Dokumentacja
 
