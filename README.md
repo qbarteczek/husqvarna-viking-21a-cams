@@ -7,9 +7,13 @@ Otwarta biblioteka krzywek (stitch cams) do maszyny **Husqvarna Viking 21A** (i 
 Zestaw A jest już zaprojektowany: [Viking 21a Basic Stitch Cam](https://www.thingiverse.com/thing:6018240)
 autorstwa maxkrippler — zygzak + zygzak 3-stopniowy.
 
-Na tej podstawie odtwarzamy geometrię mechaniczną (piasta, tarcza, tor krzywki) i tworzymy
-trzy kolejne, historyczne zestawy: **B, C, D** — każdy z zygzakiem + 4 ściegami ozdobnymi,
-zgodnie z oryginalnym systemem stosu krzywek tej maszyny.
+Analiza pliku STL zestawu A pokazała, że to nie płaska tarcza, tylko **krzywka bębnowa
+(barrel/drum cam)**: walec z rowkiem otwartym na powierzchni zewnętrznej, po którym jeździ
+trzpień śledzący maszyny; dźwignia wyboru ściegu przesuwa trzpień wzdłuż osi walca między
+5 pozycjami. Na tej podstawie odtworzono wymiary mechaniczne (otwór, średnice, kołnierze) i
+zbudowano parametryczny generator OpenSCAD do trzech kolejnych zestawów: **B, C, D** — z tą
+samą geometrią mocowania, ale nowymi, oryginalnymi wzorami ściegów (nie odtworzeniem historii
+— źródeł do wiernej rekonstrukcji nie udało się znaleźć).
 
 ## Status
 
@@ -22,8 +26,25 @@ zgodnie z oryginalnym systemem stosu krzywek tej maszyny.
 
 Wzory B/C/D to **nowe, oryginalne projekty** (nie odtworzenie historii — źródeł nie udało się
 znaleźć), ale z geometrią mocowania 1:1 z zestawem A. Szczegóły wyboru wzorów:
-[`docs/STITCH_DESIGN.md`](docs/STITCH_DESIGN.md). Kolejny krok: wydruk próbny i kalibracja
-`GROOVE_AMP`/`GROOVE_WIDTH` — patrz [`docs/WORKFLOW.md`](docs/WORKFLOW.md).
+[`docs/STITCH_DESIGN.md`](docs/STITCH_DESIGN.md). Kolejny krok: wydruk próbny i ew. kalibracja
+głębokości rowka (`GROOVE_BASE_R`/`GROOVE_DEEP_R` w `cam_common.scad`) — patrz
+[`docs/WORKFLOW.md`](docs/WORKFLOW.md) i [`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
+
+## Podgląd
+
+![Zestawienie A/B/C/D](docs/renders/assembly_all.png)
+
+| | Widok izometryczny | Przekrój (pokazuje kształt rowka) |
+|---|---|---|
+| **A** (referencja) | ![A iso](docs/renders/cam_A_iso.png) | ![A przekrój](docs/renders/cam_A_cross_section.png) |
+| **B** | ![B iso](docs/renders/cam_B_iso.png) | ![B przekrój](docs/renders/cam_B_cross_section.png) |
+| **C** | ![C iso](docs/renders/cam_C_iso.png) | ![C przekrój](docs/renders/cam_C_cross_section.png) |
+| **D** | ![D iso](docs/renders/cam_D_iso.png) | ![D przekrój](docs/renders/cam_D_cross_section.png) |
+
+Widoki przekrojowe pokazują kształt ściegu najwyraźniej — na widoku izometrycznym rowek jest
+płytki i gładki (przejście promienia ~7 mm rozłożone na całym obwodzie), więc na oko widać go
+subtelnie mimo że fizycznie robi różnicę. Więcej widoków (z przodu) w
+[`docs/renders/`](docs/renders/).
 
 ## Dokumentacja
 
@@ -41,15 +62,15 @@ znaleźć), ale z geometrią mocowania 1:1 z zestawem A. Szczegóły wyboru wzor
 - `models/original/` — geometria zestawu A po imporcie/analizie pliku źródłowego,
 - `models/generated/` — nowe modele B, C, D,
 - `references/` — skany, zdjęcia, linki źródłowe (bez wrzucania cudzych plików bez licencji),
-- `docs/` — dokumentacja, status, brakujące dane,
-- `tools/` — generator OpenSCAD z profilu JSON (adaptacja z projektu elna-supermatic-cams).
+- `docs/` — dokumentacja, status, brakujące dane, renderowania,
+- `tools/openscad/` — wspólna biblioteka OpenSCAD (`cam_common.scad`) i skrypty renderujące
+  (`render/`) używane do wygenerowania podglądów w `docs/renders/`.
 
 ## Projekt źródłowy (zestaw A)
 
 https://www.thingiverse.com/thing:6018240
 
-## Powiązany projekt
+## Licencja
 
-Podobna metodologia rekonstrukcji krzywek (profil JSON → generator OpenSCAD) została już
-zastosowana w `elna-supermatic-cams` dla innej maszyny (Elna Supermatic) — tu ją adaptujemy
-pod inną geometrię mocowania.
+CC-BY 4.0 — patrz [`LICENSE`](LICENSE) i [`LICENSE_NOTE.md`](LICENSE_NOTE.md) (atrybucja dla
+zestawu A / maxkrippler).

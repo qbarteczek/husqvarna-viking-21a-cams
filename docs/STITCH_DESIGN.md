@@ -54,9 +54,11 @@ przez `GROOVE_PITCH_R ± GROOVE_AMP`.
 ## Parametry do kalibracji przed drukiem
 
 W `cam_common.scad`:
-- `GROOVE_AMP` (domyślnie 3.0 mm) — steruje maksymalną szerokością ściegu (rozstawem zygzaka).
-  Nie mam fizycznej maszyny do kalibracji, więc **wartość wymaga sprawdzenia na wydruku próbnym**
-  zestawu A (porównaj z prawdziwą szerokością zygzaka) i ew. korekty tej samej stałej dla B/C/D.
+- `GROOVE_BASE_R`/`GROOVE_DEEP_R` — określają zakres promienia toru (płytko/blisko powierzchni
+  ↔ głęboko/blisko otworu), czyli efektywną szerokość/rozstaw ściegu. Nie mam fizycznej maszyny
+  do kalibracji, więc **wartości wymagają sprawdzenia na wydruku próbnym** zestawu A (porównaj
+  z prawdziwą szerokością zygzaka) i ew. korekty dla B/C/D — patrz `docs/PRINTABILITY.md` za
+  marginesami bezpieczeństwa, których nie należy przekraczać.
 - `GROOVE_WIDTH` (2.2 mm) — szerokość rowka, powinna odpowiadać średnicy trzpienia/widełek
   śledzących w mechanizmie maszyny.
 - `BOSS_LEN` (2.0 mm) — długość kołnierzy na końcach walca — wartość przybliżona

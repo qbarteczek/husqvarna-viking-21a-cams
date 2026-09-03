@@ -18,22 +18,30 @@ Pole `Volumes` w raporcie CGAL (zwykle >1, np. 7) **nie oznacza rozłącznych br
 wewnętrzna dekompozycja Nef polyhedra CGAL uwzględniająca tunele/otwory, typowa dla brył
 z przelotowym otworem i rowkami. Liczy się `Simple: yes`.
 
-## Znaleziony i naprawiony problem: zbyt cienka ścianka
+## Historia dwóch znalezionych i naprawionych problemów
 
-Pierwsza wersja parametrów (`GROOVE_PITCH_R=13.0`, `GROOVE_AMP=3.0`) przy najsilniej
-wychylonych profilach (amplituda znormalizowana do 0.9, np. muszelka w B, strzałka w C)
-zostawiała:
+### 1. Zbyt cienka ścianka (naprawione, potem zastąpione podejściem #2)
 
-- od strony otworu centralnego: ok. **1.45 mm** ścianki,
-- od strony powierzchni zewnętrznej: ok. **0.17 mm** ścianki — praktycznie przebicie na wylot.
+Pierwsza wersja parametrów (`GROOVE_PITCH_R=13.0`, wychylenie ±3.0 mm wokół tego promienia)
+przy najsilniej wychylonych profilach (amplituda znormalizowana do 0.9, np. muszelka w B,
+strzałka w C) zostawiała ok. 0.17 mm ścianki od strony powierzchni zewnętrznej — praktycznie
+przebicie na wylot, za mało dla FDM.
 
-To za mało dla FDM (ryzyko dziury/pęknięcia na złączu warstw, brak trwałości mechanicznej
-rowka pod obciążeniem trzpienia śledzącego).
+### 2. Rowek całkowicie schowany w materiale — błąd funkcjonalny (naprawione ostatecznie)
 
-**Poprawka**: `GROOVE_PITCH_R=12.4`, `GROOVE_AMP=2.0` — przy tej samej maks. amplitudzie 0.9
-zostaje min. **~1.7 mm** ścianki po obu stronach (otwór i powierzchnia zewnętrzna) dla
-wszystkich 15 profili B/C/D. Konsekwencja: nieco węższy zakres ruchu igły niż w pierwotnym
-założeniu — do skalibrowania wydrukiem próbnym (patrz "Kalibracja" w `STITCH_DESIGN.md`).
+Próba naprawy problemu #1 (zmniejszenie promienia i amplitudy tak, żeby zostawić margines po
+obu stronach) doprowadziła do **poważniejszego błędu**: rowek przestał w ogóle sięgać
+powierzchni zewnętrznej — cała krzywka wyglądałaby jak gładki walec bez żadnego funkcjonalnego
+rowka, bo trzpień śledzący maszyny wchodzi w rowek **z zewnątrz** i nie miałby jak go dosięgnąć.
+Wykryte przez bezpośrednią analizę wygenerowanej geometrii (przekrój poprzeczny pokazał idealne
+koło zamiast falistego kształtu).
+
+**Ostateczne rozwiązanie**: rowek liczony jest jako głębokość cięcia **od powierzchni głównego
+walca** (`GROOVE_BASE_R = MAIN_R - 0.5`), a nie jako wychylenie wokół promienia środkowego —
+dzięki temu nawet najpłytszy punkt toru faktycznie przebija powierzchnię (bo szerokość narzędzia
+cięcia > margines do `MAIN_R`), a najgłębszy punkt (`GROOVE_DEEP_R`) zostawia bezpieczne
+**~1,5–1,9 mm** ścianki do otworu centralnego. Zweryfikowane przekrojem poprzecznym dla
+wszystkich pozycji każdego zestawu — patrz `docs/renders/cam_*_cross_section.png`.
 
 ## Orientacja druku
 
@@ -84,5 +92,5 @@ oznaczenie, obróć gotową część spodem do góry. Grawerunek nie wpływa na 
 2. Sprawdzić płynność ruchu trzpienia śledzącego w rowku — w razie szorstkości wygładzić
    drobnym pilnikiem igłowym.
 3. Porównać szerokość ściegu zestawu A (oryginał) z nowym zestawem na pozycji "zygzak
-   referencyjny" — jeśli znacząco się różni, skorygować `GROOVE_AMP` w `cam_common.scad`
-   i przedrukować.
+   referencyjny" — jeśli znacząco się różni, skorygować `GROOVE_BASE_R`/`GROOVE_DEEP_R`
+   w `cam_common.scad` i przedrukować.
