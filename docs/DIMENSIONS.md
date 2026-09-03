@@ -5,7 +5,7 @@
 wierzchołków siatki STL (skan promienia `sqrt(x²+z²)` w funkcji pozycji na osi Y, w krokach
 0.1–0.25 mm), nie z narzędzia CAD (brak takiego w tym środowisku).
 
-## Typ mechanizmu — trzy poprawki po kolejnych, coraz dokładniejszych analizach
+## Typ mechanizmu — cztery poprawki po kolejnych, coraz dokładniejszych analizach
 
 1. To **nie jest płaska tarcza z profilowanym obrysem** (jak krzywki Elna Supermatic), tylko
    krzywka bębnowa/walcowa z 5 pozycjami osiowymi.
@@ -15,6 +15,12 @@ wierzchołków siatki STL (skan promienia `sqrt(x²+z²)` w funkcji pozycji na o
    centralny", to w rzeczywistości: (a) płytkie, ślepe gniazdo montażowe wycięte od czoła
    dużego kołnierza i (b) osobny, węższy **czop montażowy** będący częścią wieloschodkowego
    trzpienia między dużym kołnierzem a częścią zębatą. Cała reszta bryły jest lita.
+4. Czujnik/popychacz maszyny ma **ograniczony, twardy zakres ruchu**: pełny skan promienia
+   części zębatej (Y=9.7–24.25) pokazuje, że promień krawędzi w oryginale nigdy nie wychodzi
+   poza **[7.71 mm, 17.03 mm]** — to fizyczna granica zasięgu czujnika w mechanizmie maszyny,
+   nie dowolny parametr projektowy. Wcześniejsza wersja B/C/D używała dolnej granicy 6.5 mm
+   (poza tym zakresem) dobranej wyłącznie z powodów wytrzymałościowych druku, bez odniesienia
+   do realnego zasięgu czujnika — poprawione.
 
 ## Zmierzone wymiary (oś obrotu = Y w oryginalnym pliku)
 
@@ -31,7 +37,7 @@ Współrzędna Y biegnie od 0 (duży kołnierz, strona z widoczną strukturą mo
 | Y = 6.3 – 7.3 | r = 13.97 mm | stały kołnierzyk pośredni |
 | Y = 7.3 – 7.8 | 13.97 → 7.75 mm | stożkowe przejście / próg |
 | Y = 7.8 – 9.7 | r = 7.75 mm | **czop montażowy** (najwęższy odcinek trzpienia) |
-| Y = 9.7 – ~24.25 | r = 6–17 mm (zmienny) | część zębata — 5 pozycji ściegu, sąsiadujących bez odstępu |
+| Y = 9.7 – ~24.25 | r = **7.71–17.03 mm** (zmienny, nigdy poza tym zakresem) | część zębata — 5 pozycji ściegu, sąsiadujących bez odstępu |
 | Y = ~24.25 – 26 | r → 10.30 mm | zwężenie do małego kołnierza na dalekim końcu |
 
 Głębokość gniazda montażowego od czoła Y=0: ok. 2.5 mm (do potwierdzenia — pomiar siatki nie
@@ -46,7 +52,9 @@ rozstrzyga jednoznacznie dokładnego dna, tylko obecność i promień gniazda).
 - to samo ślepe gniazdo montażowe w czole dużego kołnierza,
 - te same średnice kołnierzy na obu końcach (Ø 29.9 mm przy Y=0, Ø 20.6 mm przy Y=26),
 - tę samą maksymalną obwiednię części zębatej (Ø ~34 mm),
-- **brak odstępu między pozycjami** ściegu w części zębatej.
+- **brak odstępu między pozycjami** ściegu w części zębatej,
+- **ten sam zakres promienia krawędzi [7.71, 17.03] mm** — żaden wzór nie może wychylić
+  czujnika poza granice, w których fizycznie się porusza w oryginale.
 
 Różni się **tylko kształt krawędzi (promień w funkcji kąta obrotu)** na każdej z 5 pozycji —
 to jest właśnie "wzór ściegu", który projektujemy indywidualnie dla B, C, D.

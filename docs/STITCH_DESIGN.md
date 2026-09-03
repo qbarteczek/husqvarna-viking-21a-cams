@@ -53,13 +53,17 @@ znormalizowane (`-1..1`), przeskalowane w `cam_common.scad` na zakres promienia
 | 4 | Potrójny prosty wzmocniony | `tri_wave(a,18)` | delikatna, częsta oscylacja — imituje potrójny ścieg |
 | 5 | Zamknięty overlock elastyczny | `sine_wave(a,6) + 0.3·sine_wave(3a,6)` | fala podstawowa + wzmocnienie brzegu |
 
-## Parametry do kalibracji przed drukiem
+## Zakres wychylenia — twarda granica, nie parametr do dowolnego strojenia
 
-W `cam_common.scad`:
-- `EDGE_MAX_R`/`EDGE_MIN_R` — określają zakres promienia krawędzi (płytko ↔ głęboko), czyli
-  efektywną szerokość/rozstaw ściegu. Nie mam fizycznej maszyny do kalibracji, więc **wartości
-  wymagają sprawdzenia na wydruku próbnym** zestawu A (porównaj z prawdziwą szerokością
-  zygzaka) i ew. korekty dla B/C/D — patrz `docs/PRINTABILITY.md`.
+`EDGE_MAX_R = 17.03 mm` i `EDGE_MIN_R = 7.71 mm` w `cam_common.scad` to **zmierzony, rzeczywisty
+zasięg ruchu czujnika/popychacza** w oryginalnym zestawie A (pełny skan promienia całej części
+zębatej — patrz `docs/DIMENSIONS.md`). Wszystkie 15 profili B/C/D skaluje swoją amplitudę
+WEWNĄTRZ tego zakresu (współczynniki 0.3–0.9 w tabelach niżej) — żaden wzór nie wychyla
+czujnika poza granice, w których fizycznie się porusza w prawdziwej maszynie. Nie zmieniaj tych
+dwóch stałych bez ponownego zmierzenia oryginału — to nie jest kosmetyczny parametr do
+"wyczucia", tylko twardy limit mechanizmu.
+
+## Inne parametry do kalibracji przed drukiem
 - Pozycje ściegu sąsiadują bezpośrednio, bez kołnierzy separujących (`BAND_LEN` w
   `cam_common.scad`) — zgodnie ze zmierzoną budową oryginału.
 - Schodkowy trzpień montażowy (`mounting_neck()`) i ślepe gniazdo (`SOCKET_R`/`SOCKET_DEPTH`)

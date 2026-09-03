@@ -53,12 +53,16 @@ BAND_LEN  = (LENGTH - NECK_END - BOSS1_LEN) / N_POS;  // pozycje sąsiadują bez
 
 function position_z(i) = NECK_END + i*BAND_LEN;
 
-// Zakres promienia krawędzi ząbków: EDGE_MAX_R = MAIN_R (płytko), EDGE_MIN_R —
-// bez realnego otworu centralnego na tej długości nie ma się o co "otrzeć",
-// więc dolny limit to tylko względy wytrzymałościowe wydruku (patrz
-// docs/PRINTABILITY.md), a nie margines do wałka.
-EDGE_MAX_R = MAIN_R;
-EDGE_MIN_R = 6.5;
+// Zakres promienia krawędzi ząbków = rzeczywisty, zmierzony zakres ruchu
+// czujnika/popychacza na oryginale A (skan promienia całej części zębatej,
+// Y=9.7..24.25): promień tam NIGDY nie wychodzi poza [7.71, 17.03] mm.
+// To są twarde granice mechanizmu maszyny — czujnik fizycznie nie sięga dalej
+// ani nie wchodzi głębiej — więc żaden wzór B/C/D nie może ich przekroczyć.
+// (Wcześniejsza wersja używała dolnego limitu 6.5 mm — poza zmierzonym
+// zakresem — dobranego tylko z względów wytrzymałościowych wydruku, bez
+// odniesienia do realnego zasięgu czujnika. Błąd naprawiony.)
+EDGE_MAX_R = 17.03;
+EDGE_MIN_R = 7.71;
 EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R;
 
 // --- Podstawowe kształty fal, zwracają wartości znormalizowane -1..1 (chyba że zaznaczono inaczej) ---

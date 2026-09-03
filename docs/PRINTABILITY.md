@@ -47,7 +47,7 @@ wielokąta, którego obrys BEZPOŚREDNIO jest profilem ściegu — promień zmie
 `EDGE_MAX_R = MAIN_R` (płytko) do `EDGE_MIN_R` (głęboko). Zweryfikowane wizualnie (widoki
 izometryczne wyraźnie pokazują zęby, tak jak zestaw A) i przekrojem poprzecznym.
 
-### 4. Kołnierze między pozycjami i pełny otwór na wałek — dwa dalsze błędy wykryte po dokładniejszym pomiarze oryginału (naprawione ostatecznie)
+### 4. Kołnierze między pozycjami i pełny otwór na wałek — dwa dalsze błędy wykryte po dokładniejszym pomiarze oryginału (naprawione)
 
 Dokładny skan promienia co 0.1–0.25 mm wzdłuż całej długości oryginału A (zamiast tylko kilku
 przekrojów) ujawnił dwie kolejne nieścisłości względem realnej budowy:
@@ -67,6 +67,21 @@ trzpienia (seria `cylinder(r1=...,r2=...)`) oraz ślepe gniazdo montażowe (zami
 wylot), a pozycje ściegu sąsiadują bez odstępu (`BAND_LEN` liczone bez kołnierzy). Zweryfikowane
 bezpośrednio w danych STL (skan promienia potwierdza każdy odcinek trzpienia) — patrz
 `docs/renders/`.
+
+### 5. Zakres wychylenia czujnika wykraczał poza realny zasięg mechanizmu (naprawione ostatecznie)
+
+`EDGE_MIN_R` był wcześniej dobrany na 6.5 mm — wartość dobrana wyłącznie z myślą o
+wytrzymałości wydruku (żeby dolina zęba nie była zbyt cienka), **bez odniesienia do tego, jak
+daleko fizycznie sięga czujnik/popychacz w prawdziwej maszynie**. Pełny skan promienia całej
+części zębatej oryginału A pokazał, że rzeczywisty zasięg czujnika to dokładnie
+**[7.71 mm, 17.03 mm]** — nigdy szerzej ani węziej. Wartość 6.5 mm była POZA tym zakresem
+(głębiej, niż czujnik może fizycznie sięgnąć), więc najgłębsze punkty niektórych wzorów B/C/D
+odpowiadały wychyleniu, którego mechanizm maszyny nie jest w stanie wykonać.
+
+**Ostateczne rozwiązanie**: `EDGE_MAX_R = 17.03`, `EDGE_MIN_R = 7.71` — dokładnie zmierzone
+granice z oryginału. Każdy z 15 profili B/C/D (funkcje `*_pos1..5` w `cam_B/C/D.scad`) skaluje
+swoją amplitudę WEWNĄTRZ tego zakresu (współczynniki 0.3–0.9 z `docs/STITCH_DESIGN.md`), więc
+żaden wzór nie żąda od czujnika wychylenia poza jego fizyczny zasięg.
 
 ## Orientacja druku
 
