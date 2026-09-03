@@ -4,35 +4,62 @@
 // (thing:6018240) — patrz ../../docs/DIMENSIONS.md. Oś obrotu w tym pliku to Z
 // (w oryginalnym STL była to oś Y — sama nazwa osi nie wpływa na pasowanie).
 //
-// MECHANIZM (poprawiony po weryfikacji z realnym wyglądem zestawu A): to NIE
-// jest wąski rowek schowany wewnątrz pełnego walca. Sama KRAWĘDŹ walca na
-// każdej z 5 pozycji jest ukształtowana jako profil ściegu (jak ząbki na
-// zestawie A) — czujnik/popychacz maszyny jeździ bezpośrednio po tej krawędzi,
-// a jego wychylenie w bok napędza igłę. Pozycje są oddzielone wąskimi
-// kołnierzami o pełnej średnicy (MAIN_R), tak jak w oryginale.
+// MECHANIZM (drugi raz poprawiony, po dokładnym skanie promienia co 0.1-0.25 mm
+// wzdłuż całej długości oryginału A):
+// 1. Krawędź walca na każdej z 5 pozycji JEST profilem ściegu (ząbki jak w A),
+//    nie schowanym rowekiem — czujnik jeździ bezpośrednio po krawędzi.
+// 2. Pozycje NIE są rozdzielone kołnierzami — w oryginale sąsiadują bezpośrednio
+//    (brak odstępu). Wcześniejsza wersja błędnie dodawała 0.8 mm kołnierz
+//    między każdą parą pozycji.
+// 3. Między dużym kołnierzem (BOSS0) a częścią zębatą jest w oryginale
+//    wieloschodkowy trzpień (nie prosty walec!): 14.97 -> 9.75 -> 13.97 -> 7.75,
+//    a najwęższy odcinek (promień ~7.75 mm, dł. ~1.9 mm) to osobny, wyraźnie
+//    węższy "czop" — prawdopodobnie właściwy element pasujący do gniazda
+//    napędu maszyny.
+// 4. W dużym kołnierzu (Z=0, strona z literą) jest ślepe gniazdo montażowe
+//    (promień ~7.8 mm) wycięte od czoła, NIE otwór przelotowy przez całą
+//    krzywkę — całość poza tym gniazdem jest lita (bez centralnego wałka).
+// Poprzednia wersja tego pliku zakładała prosty pełny otwór na wałek na całej
+// długości — było to błędne uproszczenie.
 
 LENGTH   = 26.0;   // długość całkowita walca
-MAIN_R   = 16.97;  // promień głównego walca / kołnierzy separujących, Ø ~33.94
-BOSS0_R  = 14.97;  // promień kołnierza przy Z=0 (strona "wejściowa"), Ø ~29.94
-BOSS1_R  = 10.30;  // promień kołnierza przy Z=LENGTH (strona "daleka"), Ø ~20.6
-BOSS_LEN = 2.0;    // długość każdego kołnierza — wartość przybliżona, do weryfikacji wydrukiem próbnym
-BORE_R   = 7.75;   // promień otworu centralnego (wałek napędowy), Ø ~15.5
+MAIN_R   = 16.97;  // promień części zębatej, Ø ~33.94
+BOSS0_R  = 14.97;  // promień dużego kołnierza przy Z=0 (strona z literą), Ø ~29.94
+BOSS1_R  = 10.30;  // promień kołnierza przy Z=LENGTH (strona daleka), Ø ~20.6
 
-MAIN_LEN = LENGTH - 2*BOSS_LEN;
+// --- Schodkowy trzpień montażowy między BOSS0 a częścią zębatą (zmierzone
+// z oryginału, długości ok. 0.1-0.5 mm zaokrąglone/uproszczone tam, gdzie
+// rozdzielczość pomiaru siatki nie pozwalała rozróżnić ostrego progu od
+// krótkiego stożka) ---
+BOSS0_LEN   = 3.2;
+NECK_R1     = 9.75;   // promień pierwszego "przewężenia"
+NECK_LEN1   = 2.1;    // Z = 3.7 .. 5.8
+NECK_R2     = 13.97;  // promień pośredniego kołnierzyka
+NECK_LEN2   = 1.0;    // Z = 6.3 .. 7.3
+NECK_PIN_R  = 7.75;   // promień najwęższego czopu montażowego
+NECK_PIN_LEN = 1.9;   // Z = 7.8 .. 9.7
+TAPER_LEN   = 0.5;    // długość każdego skosu/progu między odcinkami trzpienia
 
-N_POS       = 5;     // liczba pozycji wyboru ściegu (jak w zestawie A)
-COLLAR_LEN  = 0.8;   // wysokość wąskiego kołnierza separującego pozycje
-BAND_LEN    = (MAIN_LEN - (N_POS-1)*COLLAR_LEN) / N_POS;  // wysokość jednej "ząbkowanej" pozycji
+NECK_START = BOSS0_LEN;                                    // 3.2
+NECK_END   = BOSS0_LEN + TAPER_LEN + NECK_LEN1 + TAPER_LEN + NECK_LEN2 + TAPER_LEN + NECK_PIN_LEN;  // 9.7
 
-// Zakres promienia krawędzi ząbków: EDGE_MAX_R = MAIN_R (płynne połączenie
-// z kołnierzami przy najpłytszym punkcie profilu), EDGE_MIN_R zostawia min.
-// ~3 mm ścianki do otworu centralnego (BORE_R) w najgłębszym punkcie — patrz
-// docs/PRINTABILITY.md.
+// Ślepe gniazdo montażowe wycięte od czoła Z=0 (nie otwór przelotowy!)
+SOCKET_R     = 7.8;
+SOCKET_DEPTH = 2.5;
+
+N_POS     = 5;     // liczba pozycji wyboru ściegu (jak w zestawie A)
+BOSS1_LEN = 1.75;
+BAND_LEN  = (LENGTH - NECK_END - BOSS1_LEN) / N_POS;  // pozycje sąsiadują bez odstępu
+
+function position_z(i) = NECK_END + i*BAND_LEN;
+
+// Zakres promienia krawędzi ząbków: EDGE_MAX_R = MAIN_R (płytko), EDGE_MIN_R —
+// bez realnego otworu centralnego na tej długości nie ma się o co "otrzeć",
+// więc dolny limit to tylko względy wytrzymałościowe wydruku (patrz
+// docs/PRINTABILITY.md), a nie margines do wałka.
 EDGE_MAX_R = MAIN_R;
-EDGE_MIN_R = BORE_R + 3.0;
+EDGE_MIN_R = 6.5;
 EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R;
-
-function position_z(i) = BOSS_LEN + i*(BAND_LEN + COLLAR_LEN);
 
 // --- Podstawowe kształty fal, zwracają wartości znormalizowane -1..1 (chyba że zaznaczono inaczej) ---
 
@@ -86,19 +113,25 @@ module tooth_band(profile_fn, height, samples=96) {
         polygon(edge_points(profile_fn, samples));
 }
 
-module cam_solid(profile_fns) {
-    union() {
-        cylinder(h=BOSS_LEN, r=BOSS0_R, $fn=96);
-        for (i = [0:N_POS-1]) {
-            translate([0, 0, position_z(i)])
-                tooth_band(profile_fns[i], BAND_LEN);
-            if (i < N_POS-1)
-                translate([0, 0, position_z(i) + BAND_LEN])
-                    cylinder(h=COLLAR_LEN, r=MAIN_R, $fn=96);
-        }
-        translate([0, 0, LENGTH-BOSS_LEN])
-            cylinder(h=BOSS_LEN, r=BOSS1_R, $fn=96);
-    }
+module mounting_neck() {
+    // BOSS0_LEN..+TAPER: 14.97 -> NECK_R1
+    translate([0, 0, BOSS0_LEN])
+        cylinder(h=TAPER_LEN, r1=BOSS0_R, r2=NECK_R1, $fn=96);
+    // stała szyjka NECK_R1
+    translate([0, 0, BOSS0_LEN+TAPER_LEN])
+        cylinder(h=NECK_LEN1, r=NECK_R1, $fn=96);
+    // skos NECK_R1 -> NECK_R2
+    translate([0, 0, BOSS0_LEN+TAPER_LEN+NECK_LEN1])
+        cylinder(h=TAPER_LEN, r1=NECK_R1, r2=NECK_R2, $fn=96);
+    // stały kołnierzyk NECK_R2
+    translate([0, 0, BOSS0_LEN+2*TAPER_LEN+NECK_LEN1])
+        cylinder(h=NECK_LEN2, r=NECK_R2, $fn=96);
+    // skos NECK_R2 -> NECK_PIN_R
+    translate([0, 0, BOSS0_LEN+2*TAPER_LEN+NECK_LEN1+NECK_LEN2])
+        cylinder(h=TAPER_LEN, r1=NECK_R2, r2=NECK_PIN_R, $fn=96);
+    // czop montażowy NECK_PIN_R
+    translate([0, 0, BOSS0_LEN+3*TAPER_LEN+NECK_LEN1+NECK_LEN2])
+        cylinder(h=NECK_PIN_LEN, r=NECK_PIN_R, $fn=96);
 }
 
 module cam_label_cut(letter) {
@@ -107,11 +140,25 @@ module cam_label_cut(letter) {
             text(letter, size=6, halign="center", valign="center", font="Liberation Sans:style=Bold");
 }
 
+module cam_solid(profile_fns) {
+    difference() {
+        union() {
+            cylinder(h=BOSS0_LEN, r=BOSS0_R, $fn=96);
+            mounting_neck();
+            for (i = [0:N_POS-1])
+                translate([0, 0, position_z(i)])
+                    tooth_band(profile_fns[i], BAND_LEN);
+            translate([0, 0, LENGTH-BOSS1_LEN])
+                cylinder(h=BOSS1_LEN, r=BOSS1_R, $fn=96);
+        }
+        translate([0, 0, -1])
+            cylinder(h=SOCKET_DEPTH+1, r=SOCKET_R, $fn=64);
+    }
+}
+
 module cam_with_grooves(letter, profile_fns) {
     difference() {
         cam_solid(profile_fns);
-        translate([0, 0, -1])
-            cylinder(h=LENGTH+2, r=BORE_R, $fn=64);
         cam_label_cut(letter);
     }
 }

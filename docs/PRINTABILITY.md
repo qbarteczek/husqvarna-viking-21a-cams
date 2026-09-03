@@ -19,7 +19,7 @@ Dodatkowo, dla każdej pozycji każdego zestawu wygenerowano przekrój poprzeczn
 to bezpośredni dowód na rzeczywisty kształt krawędzi, niezależny od tego, jak wygląda
 podgląd 3D (patrz niżej, punkt 3 w historii problemów).
 
-## Historia trzech znalezionych i naprawionych problemów
+## Historia czterech znalezionych i naprawionych problemów
 
 ### 1. Zbyt cienka ścianka (naprawione, potem zastąpione podejściem #3)
 
@@ -42,14 +42,31 @@ na całym obwodzie), a nie schowana w środku pełnej średnicy. Czujnik/popycha
 bezpośrednio po tej krawędzi — to klasyczna krzywka krawędziowa (edge/plate cam), nie kanał,
 w którym coś by "pływało" wewnątrz materiału.
 
-**Ostateczne rozwiązanie**: każda z 5 pozycji to teraz osobna bryła wytłoczona
-(`linear_extrude`) z wielokąta, którego obrys BEZPOŚREDNIO jest profilem ściegu — promień
-zmienia się od `EDGE_MAX_R = MAIN_R` (płytko, płynne połączenie z sąsiadującym kołnierzem) do
-`EDGE_MIN_R = BORE_R + 3.0 mm` (głęboko, zawsze min. 3 mm ścianki do otworu centralnego).
-Pozycje są rozdzielone wąskimi (0,8 mm) kołnierzami o pełnej średnicy `MAIN_R` — tak jak
-w oryginale — co też pomaga czujnikowi pozytywnie wyczuć granicę między pozycjami.
-Zweryfikowane wizualnie (widoki izometryczne teraz wyraźnie pokazują zęby, tak jak zestaw A)
-i przekrojem poprzecznym dla wszystkich pozycji.
+**Rozwiązanie #3**: każda z 5 pozycji to osobna bryła wytłoczona (`linear_extrude`) z
+wielokąta, którego obrys BEZPOŚREDNIO jest profilem ściegu — promień zmienia się od
+`EDGE_MAX_R = MAIN_R` (płytko) do `EDGE_MIN_R` (głęboko). Zweryfikowane wizualnie (widoki
+izometryczne wyraźnie pokazują zęby, tak jak zestaw A) i przekrojem poprzecznym.
+
+### 4. Kołnierze między pozycjami i pełny otwór na wałek — dwa dalsze błędy wykryte po dokładniejszym pomiarze oryginału (naprawione ostatecznie)
+
+Dokładny skan promienia co 0.1–0.25 mm wzdłuż całej długości oryginału A (zamiast tylko kilku
+przekrojów) ujawnił dwie kolejne nieścisłości względem realnej budowy:
+
+- **Kołnierze między pozycjami**: w oryginale 5 pozycji ściegu sąsiaduje ze sobą
+  **bezpośrednio, bez żadnego odstępu**. Wcześniejsza wersja wstawiała między nimi wąski
+  (0,8 mm) kołnierz separujący — usunięty.
+- **Brak otworu przelotowego**: krzywka A **nie ma** centralnego otworu na wałek na całej
+  długości. Zamiast tego ma: ślepe gniazdo montażowe (r≈7,8 mm, głęb. ~2,5 mm) wycięte od
+  czoła dużego kołnierza, oraz osobny, wieloschodkowy trzpień montażowy (kilka średnic:
+  14,97 → 9,75 → 13,97 → 7,75 mm) między dużym kołnierzem a częścią zębatą — patrz
+  `docs/DIMENSIONS.md`. Poprzednia wersja modelowała to jako prosty pełny otwór na całej
+  długości, co było błędnym uproszczeniem wpływającym na realne mocowanie w maszynie.
+
+**Ostateczne rozwiązanie**: `cam_common.scad` odtwarza teraz dokładny schodkowy profil
+trzpienia (seria `cylinder(r1=...,r2=...)`) oraz ślepe gniazdo montażowe (zamiast otworu na
+wylot), a pozycje ściegu sąsiadują bez odstępu (`BAND_LEN` liczone bez kołnierzy). Zweryfikowane
+bezpośrednio w danych STL (skan promienia potwierdza każdy odcinek trzpienia) — patrz
+`docs/renders/`.
 
 ## Orientacja druku
 
@@ -57,26 +74,25 @@ i przekrojem poprzecznym dla wszystkich pozycji.
 (Ø 29,94 mm, strona z grawerowanym oznaczeniem litery) na stole.**
 
 Powody:
-- Otwór centralny drukuje się równolegle do osi Z — czysty okrągły otwór w każdej warstwie,
-  bez mostkowania.
-- Przejście Ø29,94 → Ø33,94 mm (kołnierz → pierwsza pozycja) to pojedynczy, krótki (2 mm)
-  występ na zewnątrz — drukuje się jak zwykły kołnierz, bez podpór.
-- Zwężenie Ø33,94 → Ø20,6 mm na drugim końcu jest do wewnątrz — zawsze bezproblemowe.
+- Ślepe gniazdo montażowe w czole drukuje się poziomo, warstwa po warstwie, jak każdy inny
+  otwór drukowany prostopadle do osi — bez mostkowania.
+- Schodkowy trzpień montażowy (Ø 29,94 → 19,5 → 27,94 → 15,5 mm) to seria krótkich stożków
+  i kołnierzyków, wszystkie **zwężające się** w miarę wzrostu Z na przemian — żaden pojedynczy
+  skok nie przekracza kilku mm i wszystkie mieszczą się w typowym zakresie bezproblemowego
+  druku FDM bez podpór.
+- Zwężenie Ø33,94 → Ø20,6 mm na dalekim końcu jest do wewnątrz — zawsze bezproblemowe.
 
-**Znana niedoskonałość geometrii**: na granicy między dnem "doliny" zęba (promień
-`EDGE_MIN_R`, ok. Ø 21,5 mm) a sąsiadującym kołnierzem separującym (pełne Ø 33,94 mm)
-promień skacze skokowo o ok. 6,2 mm w jednej warstwie, na wąskim wycinku obwodu (tam gdzie
-akurat jest "dolina"). To lokalny, jednowarstwowy nawis — w praktyce FDM zwykle drukuje to
-bez podpór (niewielkie smużenie/naddruk w tym jednym miejscu), ale warto obejrzeć ten
-konkretny obszar po wydruku i ew. delikatnie oczyścić nożykiem/pilnikiem. Zestaw referencyjny
-A ma bardzo podobną geometrię krawędzi, więc ten sam efekt dotyczy również oryginału.
+**Znana niedoskonałość geometrii**: między sąsiednimi pozycjami ściegu (bez separującego
+kołnierza — patrz wyżej) promień krawędzi może się zmieniać dość gwałtownie na granicy dwóch
+pozycji, jeśli jedna kończy się głęboką "doliną" a sąsiednia zaczyna się płytkim punktem. To
+lokalny, jednowarstwowy efekt (podobny do tego, co widać w oryginale A), zwykle drukowalny bez
+podpór, ale warto obejrzeć te granice po wydruku i ew. delikatnie oczyścić.
 
-**Nie są potrzebne żadne podpory** — powyższa niedoskonałość jest zbyt lokalna, żeby
-uzasadniać budowanie podpór dla całego wydruku.
+**Nie są potrzebne żadne podpory.**
 
 Odwrócenie części (mniejszym kołnierzem na stół) jest odradzane — wtedy przejście
-Ø20,6 → Ø33,94 mm byłoby pojedynczym skokiem na zewnątrz o ~6,7 mm na pełnym obwodzie
-(nie tylko lokalnie), czyli za dużo na czysty druk bez podpór.
+Ø20,6 → Ø33,94 mm byłoby pojedynczym skokiem na zewnątrz o ~6,7 mm na pełnym obwodzie, czyli
+za dużo na czysty druk bez podpór.
 
 ## Oznaczenie litery zestawu
 
@@ -100,10 +116,10 @@ oznaczenie, obróć gotową część spodem do góry. Grawerunek nie wpływa na 
 
 ## Kroki po wydruku
 
-1. Sprawdzić pasowanie otworu centralnego na wałek maszyny — druk FDM często daje otwór
-   nieznacznie mniejszy niż nominalny (skurcz materiału); w razie potrzeby delikatnie
-   pogłębić rozwiertakiem/wiertłem Ø15,5 mm.
-2. Sprawdzić i ew. oczyścić lokalne naddruki na granicy zębów i kołnierzy (patrz wyżej).
+1. Sprawdzić pasowanie ślepego gniazda montażowego i schodkowego trzpienia w maszynie —
+   druk FDM często daje wymiary lekko mniejsze niż nominalne (skurcz materiału); w razie
+   potrzeby delikatnie doszlifować/dopasować.
+2. Sprawdzić i ew. oczyścić lokalne naddruki na granicy sąsiednich pozycji ściegu (patrz wyżej).
 3. Sprawdzić płynność ruchu czujnika/popychacza po krawędzi — w razie szorstkości wygładzić
    drobnym pilnikiem.
 4. Porównać wychylenie na pozycji "zygzak referencyjny" z zestawem A — jeśli znacząco się

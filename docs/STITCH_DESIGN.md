@@ -56,11 +56,11 @@ znormalizowane (`-1..1`), przeskalowane w `cam_common.scad` na zakres promienia
 ## Parametry do kalibracji przed drukiem
 
 W `cam_common.scad`:
-- `EDGE_MAX_R`/`EDGE_MIN_R` — określają zakres promienia krawędzi (płytko/blisko powierzchni
-  głównego walca ↔ głęboko/blisko otworu), czyli efektywną szerokość/rozstaw ściegu. Nie mam
-  fizycznej maszyny do kalibracji, więc **wartości wymagają sprawdzenia na wydruku próbnym**
-  zestawu A (porównaj z prawdziwą szerokością zygzaka) i ew. korekty dla B/C/D — patrz
-  `docs/PRINTABILITY.md` za marginesami bezpieczeństwa, których nie należy przekraczać.
-- `COLLAR_LEN` (0.8 mm) — wysokość kołnierzy separujących pozycje.
-- `BOSS_LEN` (2.0 mm) — długość kołnierzy na końcach walca — wartość przybliżona
-  (patrz ograniczenia w `DIMENSIONS.md`), do potwierdzenia przy montażu.
+- `EDGE_MAX_R`/`EDGE_MIN_R` — określają zakres promienia krawędzi (płytko ↔ głęboko), czyli
+  efektywną szerokość/rozstaw ściegu. Nie mam fizycznej maszyny do kalibracji, więc **wartości
+  wymagają sprawdzenia na wydruku próbnym** zestawu A (porównaj z prawdziwą szerokością
+  zygzaka) i ew. korekty dla B/C/D — patrz `docs/PRINTABILITY.md`.
+- Pozycje ściegu sąsiadują bezpośrednio, bez kołnierzy separujących (`BAND_LEN` w
+  `cam_common.scad`) — zgodnie ze zmierzoną budową oryginału.
+- Schodkowy trzpień montażowy (`mounting_neck()`) i ślepe gniazdo (`SOCKET_R`/`SOCKET_DEPTH`)
+  odtwarzają zmierzoną geometrię mocowania zestawu A — patrz `docs/DIMENSIONS.md`.

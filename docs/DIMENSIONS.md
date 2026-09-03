@@ -1,54 +1,62 @@
 # Wymiary mechaniczne — zestaw A (referencja)
 
 Źródło: `V21ZZ3Z.stl` z paczki [thing:6018240](https://www.thingiverse.com/thing:6018240)
-(Viking 21a Basic Stitch Cam, maxkrippler). Wymiary wyciągnięte przez analizę geometrii
-siatki STL (5706 trójkątów, format binarny, wygenerowany narzędziem ATF — prawdopodobnie
-eksport z Fusion 360).
+(Viking 21a Basic Stitch Cam, maxkrippler). Wymiary wyciągnięte przez bezpośrednią analizę
+wierzchołków siatki STL (skan promienia `sqrt(x²+z²)` w funkcji pozycji na osi Y, w krokach
+0.1–0.25 mm), nie z narzędzia CAD (brak takiego w tym środowisku).
 
-## Typ mechanizmu — WAŻNE ODKRYCIE
+## Typ mechanizmu — trzy poprawki po kolejnych, coraz dokładniejszych analizach
 
-To **nie jest płaska tarcza z profilowanym obrysem** (jak krzywki Elna Supermatic), tylko
-**krzywka bębnowa / walcowa (barrel/drum cam)**:
+1. To **nie jest płaska tarcza z profilowanym obrysem** (jak krzywki Elna Supermatic), tylko
+   krzywka bębnowa/walcowa z 5 pozycjami osiowymi.
+2. Profil ściegu to **sama krawędź walca** (jak ząbki/zęby), nie schowany rowek — czujnik
+   maszyny jeździ bezpośrednio po krawędzi. Pozycje **sąsiadują bezpośrednio, bez odstępu**.
+3. Krzywka **nie ma otworu przelotowego na wałek**. To, co wcześniej wzięto za "otwór
+   centralny", to w rzeczywistości: (a) płytkie, ślepe gniazdo montażowe wycięte od czoła
+   dużego kołnierza i (b) osobny, węższy **czop montażowy** będący częścią wieloschodkowego
+   trzpienia między dużym kołnierzem a częścią zębatą. Cała reszta bryły jest lita.
 
-- walec obraca się wokół osi (w pliku = oś Y),
-- na powierzchni walca wyfrezowany jest rowek (tor) o zmiennym promieniu,
-- trzpień/widełki maszyny wsuwają się w rowek i przesuwają igłę na boki (zygzak) w miarę
-  obrotu walca podczas szycia,
-- dźwignia wyboru ściegu przesuwa trzpień **osiowo** (wzdłuż Y) do jednej z **5 pozycji** —
-  to zgadza się z opisem z README: "Positions 1&2 → 3-step zigzag, positions 3~5 → zygzak".
+## Zmierzone wymiary (oś obrotu = Y w oryginalnym pliku)
 
-Każda z 5 pozycji to odrębny, zamknięty tor (pierścień) na innej "wysokości" walca — nie jeden
-ciągły ślimak na całej długości.
+Współrzędna Y biegnie od 0 (duży kołnierz, strona z widoczną strukturą montażową) do 26.01
+(mały kołnierz na przeciwnym końcu).
 
-## Zmierzone wymiary (oś obrotu = Y)
-
-| Cecha | Wartość | Uwagi |
+| Odcinek (Y) | Promień | Opis |
 |---|---:|---|
-| Długość całkowita walca | **26.01 mm** | zakres Y: 0 → 26.0096 |
-| Maks. średnica zewnętrzna (grzbiet toru) | **~33.94–34.06 mm** | promień dopasowany metodą najmniejszych kwadratów (fit okręgu) do zewnętrznej ścianki: R=16.97 mm |
-| Średnica otworu centralnego (na wałek napędowy) | **~15.4–15.6 mm** | promień ~7.71–7.80 mm, spójny na obu końcach — brak wyraźnego wpustu/D-shape w granicach dokładności pomiaru |
-| Kołnierz/piasta na końcu Y=0 | promień **14.97 mm** (Ø ~29.9 mm) | węższy niż maks. średnica walca — najpewniej element mocujący/wprowadzający |
-| Kołnierz/piasta na końcu Y=26 | promień **~10.3 mm** (Ø ~20.6 mm) | wyraźnie węższy niż strona Y=0 — walec jest **niesymetryczny końcami**, prawdopodobnie ten koniec wchodzi głębiej / ustala orientację |
-| Asymetria obrysu w osi Z | bbox Z: -17.03 do +16.42 (nie idealnie symetryczny mimo dopasowanego środka w Z≈0) | ślad po rowku tnącym powierzchnię niesymetrycznie (naturalne dla nie-okresowego wzoru ściegu) |
+| Y = 0 (czoło) | Ø 29.94 mm (r 14.97) na zewnątrz, gniazdo r ≈ 7.8 mm w środku | czoło dużego kołnierza z wyciętym ślepym gniazdem montażowym |
+| Y = 0 – 3.2 | r = 14.97 mm | duży kołnierz (lity, poza gniazdem od czoła) |
+| Y = 3.2 – 3.7 | 14.97 → 9.75 mm | stożkowe przejście / próg |
+| Y = 3.7 – 5.8 | r = 9.75 mm | stała szyjka pośrednia |
+| Y = 5.8 – 6.3 | 9.75 → 13.97 mm | stożkowe przejście / próg (promień znowu rośnie!) |
+| Y = 6.3 – 7.3 | r = 13.97 mm | stały kołnierzyk pośredni |
+| Y = 7.3 – 7.8 | 13.97 → 7.75 mm | stożkowe przejście / próg |
+| Y = 7.8 – 9.7 | r = 7.75 mm | **czop montażowy** (najwęższy odcinek trzpienia) |
+| Y = 9.7 – ~24.25 | r = 6–17 mm (zmienny) | część zębata — 5 pozycji ściegu, sąsiadujących bez odstępu |
+| Y = ~24.25 – 26 | r → 10.30 mm | zwężenie do małego kołnierza na dalekim końcu |
+
+Głębokość gniazda montażowego od czoła Y=0: ok. 2.5 mm (do potwierdzenia — pomiar siatki nie
+rozstrzyga jednoznacznie dokładnego dna, tylko obecność i promień gniazda).
 
 ## Co z tego wynika dla B, C, D
 
 Żeby nowe zestawy fizycznie pasowały do maszyny, muszą zachować:
-- tę samą długość walca (26.0 mm) i te same 5 pozycji osiowych w tych samych miejscach,
-- tę samą średnicę i kształt otworu centralnego (~15.5 mm, okrągły),
-- te same średnice/kształty kołnierzy na obu końcach (Ø 29.9 mm przy Y=0, Ø 20.6 mm przy Y=26),
-- tę samą maksymalną obwiednię zewnętrzną (Ø ~34 mm), żeby zmieściły się w tej samej wnęce maszyny,
-- tę samą szerokość/głębokość rowka (do doprecyzowania — nie udało się jej wiarygodnie
-  wyciągnąć samym parsowaniem wierzchołków STL bez narzędzia do przekrojów; do zweryfikowania
-  przy pierwszym wydruku próbnym).
+- tę samą długość całkowitą (26.0 mm),
+- ten sam, dokładny profil schodkowego trzpienia montażowego (Y=3.2–9.7) — to
+  prawdopodobnie kluczowy element pozycjonujący/mocujący, nie dowolny szczegół kosmetyczny,
+- to samo ślepe gniazdo montażowe w czole dużego kołnierza,
+- te same średnice kołnierzy na obu końcach (Ø 29.9 mm przy Y=0, Ø 20.6 mm przy Y=26),
+- tę samą maksymalną obwiednię części zębatej (Ø ~34 mm),
+- **brak odstępu między pozycjami** ściegu w części zębatej.
 
-Różni się **tylko kształt toru (promień w funkcji kąta obrotu)** na każdej z 5 pozycji —
+Różni się **tylko kształt krawędzi (promień w funkcji kąta obrotu)** na każdej z 5 pozycji —
 to jest właśnie "wzór ściegu", który projektujemy indywidualnie dla B, C, D.
 
 ## Ograniczenia tej analizy
 
 Wymiary wyciągnięto z analizy surowej siatki trójkątów (bez dostępu do CAD/OpenSCAD/Python
-w tym środowisku) — metoda: dopasowanie okręgu do zewnętrznej ścianki + klastrowanie
-promieni na przekrojach krańcowych. Dokładność rzędu ±0.1–0.2 mm. **Przed drukiem produkcyjnym
-zalecana jest weryfikacja pierwszym wydrukiem próbnym / pomiarem fizycznym oryginału, jeśli jest
-dostępny.**
+w tym środowisku) — metoda: skanowanie min/max promienia w wąskich przedziałach Y (0.1–0.25 mm)
+i identyfikacja skoków/stałych odcinków. Dokładność rzędu ±0.1 mm dla promieni, ale długości
+niektórych krótkich odcinków przejściowych (progów/stożków) są przybliżone — rozdzielczość
+siatki nie zawsze pozwalała jednoznacznie odróżnić ostry próg od bardzo krótkiego stożka.
+**Przed drukiem produkcyjnym zalecana jest weryfikacja wydrukiem próbnym i porównaniem z
+oryginałem / fizycznym gniazdem maszyny, jeśli jest dostępne.**
