@@ -1,68 +1,50 @@
-# Instrukcja obsługi — montaż i użytkowanie bębnów ściegowych w maszynie
+# Instrukcja obsługi — montaż, regulacja i użytkowanie bębnów ściegowych
 
-Dotyczy zestawów A, B, C, D (ten projekt — generator) do Husqvarna 21E i modeli pokrewnych
-(19, 20, 21A) z tym samym mechanizmem stosu krzywek.
+Dotyczy bębnów ściegowych (**A1, B1, C1, D**) dla maszyn **Husqvarna Automatic 21E** oraz pokrewnych modeli z rodziny (19, 20, 21A) wyposażonych w gniazdo bębna ściegowego.
 
-## Zasada działania (przypomnienie)
+---
 
-Bęben **nie ma otworu przelotowego na całą długość** — mocuje się schodkowym trzpieniem
-(kilka średnic) i gwintowanym kołnierzem z otworem na wałek napędowy (z wypustem
-pryzmatycznym przenoszącym obrót), które pasują do konkretnego gniazda w mechanizmie maszyny
-(patrz `docs/DIMENSIONS.md`). Sama krawędź walca na każdej z 5 pozycji jest ukształtowana jako
-profil ściegu (ząbki) — czujnik/popychacz maszyny jeździ bezpośrednio po tej krawędzi i
-przekłada jej wychylenie na ruch igły w bok. Dźwignia wyboru ściegu na maszynie przesuwa
-czujnik **wzdłuż osi bębna** do jednej z 5 pozycji (sąsiadujących bez odstępu) — to wybiera,
-który wzór zostanie użyty.
+## Budowa bębna i zasada kontaktu z mechanizmem
 
-Przed montażem całego bębna warto wydrukować i przetestować
-[`tools/openscad/mating_shaft_reference.scad`](../tools/openscad/mating_shaft_reference.scad)
-— prosty trzpień sprawdzający dopasowanie otworu i wpustu, patrz `docs/PRINTABILITY.md`.
+* **Otwór centralny i wpust:** Bęben posiada centralny otwór przelotowy na wylot (Ø 15.6 mm, $R = 7.8\text{ mm}$), wsuwany bezpośrednio na wałek napędowy maszyny. Od strony tylnego kołnierza montażowego wycięty jest wewnętrzny wpust (szer. 4.5 mm, głęb. 2.2 mm, $Z \in [6.4, 26.0]\text{ mm}$), który blokuje obrót bębna na klinie wałka.
+* **Krawędzie ściegowe:** Na 5 pozycjach osiowych znajdują się profilowane krawędzie zębate. Palec wodzika (*follower*) jeździ bezpośrednio po obwodzie krawędzi, przenosząc wychylenie poprzeczne na ramę igielnicy.
+* **Pozycja bazowa:** Szczyty zębów (`EDGE_MAX_R = 17.03 mm`) odpowiadają zerowemu wychyleniu igły (ścieg prosty). Dna dolin (`EDGE_MIN_R = 14.20 mm`) odpowiadają pełnemu wychyleniu w prawo (amplituda radialna `EDGE_SWING = 2.83 mm`).
 
-## Montaż bębna
+---
 
-1. Wyłącz maszynę / odłącz od zasilania przed wymianą bębna.
-2. Zdejmij aktualnie zamontowany bęben zgodnie z instrukcją maszyny.
-3. Osadź nowy bęben (A/B/C/D) w gnieździe maszyny — **duży, gwintowany kołnierz (Ø 29,94 mm,
-   strona z literą) i otwór na wałek z wypustem** ustawione zgodnie z tym, jak był ustawiony
-   oryginał (sprawdź orientację na oryginalnym bębnie przed wymianą, jeśli to Twój pierwszy
-   montaż). Jeśli mechanizm wymaga wkręcenia gwintu — wkręcaj delikatnie, bez siłowania.
-4. Upewnij się, że schodkowy trzpień wchodzi swobodnie w gniazdo maszyny, wypust prawidłowo
-   zazębia się z wałkiem, i że czujnik/popychacz dotyka krawędzi bębna na każdej z 5 pozycji —
-   przesuń dźwignię wyboru ściegu przez pełny zakres **ręcznie, bez napędu**, żeby sprawdzić,
-   że nic się nie zacina, zanim uruchomisz maszynę.
-5. Zamknij osłonę.
+## Fabryczna procedura wymiany bębna (wg instrukcji Husqvarna 21E, str. 28 i 30)
 
-## Wybór ściegu
+1. **Ustawienie ściegu prostego:** Ustaw pokrętło szerokości zygzaka na `0` (*rettsöm*).
+2. **Ustawienie pozycji 5:** Przesuń dźwignię wybieraka wzorów (*Mönstervelger*) **na pozycję 5**.
+   > [!IMPORTANT]
+   > Ustawienie wybieraka na 5 jest niezbędne — zwalnia ono nacisk sprężyny wodzika i umożliwia swobodne odchylenie ramienia ustalającego.
+3. **Otwarcie klapki:** Otwórz drzwiczki inspekcyjne z tyłu korpusu maszyny (fig. 39).
+4. **Wyjęcie bębna:**
+   * Chwyć bęben kciukiem i palcem wskazującym prawej ręki.
+   * Środkowym palcem odchyl ramię ustalające (*A*, fig. 40) w pozycję pionową.
+   * Pociągnij i zsuń bęben z wałka osiowego.
+5. **Montaż nowego bębna:**
+   * Wsuń nowy bęben na wałek tak, aby **wytłoczona litera (A, B lub C) była skierowana idealnie pionowo do góry**.
+   * Dociśnij bęben do końca, aż ramię ustalające samoczynnie opadnie w rowek indeksujący na kołnierzu (*A*, fig. 38).
+   * Zamknij klapkę inspekcyjną.
 
-Dźwignia wyboru ściegu na maszynie ma 5 pozycji odpowiadających pozycjom 1–5 opisanym w
-`docs/STITCH_DESIGN.md` (dla B/C/D) lub w oryginalnym opisie zestawu A (pozycje 1–2 = zygzak
-3-stopniowy, 3–5 = zygzak). Ustaw dźwignię na wybraną pozycję **przy nieruchomej igle**
-(maszyna wyłączona lub koło ręczne w pozycji spoczynkowej), dopiero potem szyj.
+---
 
-## Pierwsze uruchomienie po wymianie — zalecana procedura
+## Uwagi serwisowe i regulacja mechanizmu (wg Service Manual Class 21)
 
-1. Obróć kołem ręcznym maszynę o pełny obrót **bez nitki**, obserwując ruch igły — sprawdź,
-   czy zygzak jest płynny, bez szarpnięć czy zacinania trzpienia.
-2. Przetestuj wszystkie 5 pozycji po kolei w ten sam sposób.
-3. Dopiero po potwierdzeniu płynnego ruchu na wszystkich pozycjach — nawlecz i szyj próbkę na
-   skrawku materiału.
-4. Jeśli ścieg jest węższy/szerszy niż oczekiwano względem zestawu A — patrz sekcja
-   "Kalibracja" w `docs/STITCH_DESIGN.md` (`EDGE_MAX_R`/`EDGE_MIN_R`) i rozważ przedruk.
+1. **Kalibracja luzu wodzika (Service Manual, str. 1):**
+   * Przy nastawie zygzaka na `0` i wybieraku na `5`, wierzchołek zęba krzywki (`EDGE_MAX_R`) styka się z palcem wodzika.
+   * Luz między palcem a wierzchołkiem zęba powinien wynosić minimalną wartość technologiczną (*minimum play*), regulowaną śrubą zaciskową dźwigni wodzika.
+2. **Centrowanie ściegu (Service Manual, str. 3):**
+   * Położenie środkowe igły w otworze płytki ściegowej można precyzyjnie doregulować śrubą docisku wodzika (1 na Fig. 4).
+3. **Zakaz pracy bez bębna (*OBS!*, instrukcja obsługi str. 31):**
+   > [!CAUTION]
+   > **Nigdy nie wolno uruchamiać napędu maszyny bez włożonego bębna ściegowego!** Brak bębna grozi uderzeniem palca wodzika o pusty wałek i mechanicznym uszkodzeniem zespołu sterowania igielnicy.
 
-## Bezpieczeństwo i trwałość
+---
 
-- To są **wydruki 3D** — nie mają twardości/trwałości oryginalnych krzywek fabrycznych
-  (metal/bakelit). Traktuj jako rozwiązanie hobbystyczne/serwisowe, nie jako trwały
-  zamiennik do intensywnego użytku profesjonalnego.
-- Regularnie sprawdzaj krawędź (zęby) pod kątem śladów zużycia (ścierania) — wydruk FDM może
-  zużywać się szybciej niż oryginał przy częstym użytkowaniu.
-- Nigdy nie zmieniaj pozycji dźwigni wyboru ściegu podczas ruchu igły — ryzyko złamania
-  trzpienia śledzącego lub krzywki.
-- W razie oporu przy przesuwaniu dźwigni — zatrzymaj się i sprawdź krzywkę/mechanizm zamiast
-  siłować.
+## Pierwsze uruchomienie po wymianie
 
-## Odtworzenie oznaczenia po wydruku
-
-Litera zestawu jest wygrawerowana na spodzie (stronie kołnierza Ø29,94 mm, która podczas
-druku leży na stole — patrz `docs/PRINTABILITY.md`). Obróć wydrukowaną część spodem do góry,
-żeby ją odczytać.
+1. Przed włączeniem silnika obróć kołem ręcznym maszyny o 2–3 pełne obroty, obserwując płynność ruchu igielnicy.
+2. Przetestuj pozycje 1–5 wybieraka przy nieruchomej igle w górnym punkcie zwrotnym.
+3. Wykonaj przeszycie testowe na skrawku tkaniny z odpowiednią stopką (do gęstych ściegów satynowych zalecana jest stopka do ściegów ozdobnych **S 15801** z wybraniem od spodu).

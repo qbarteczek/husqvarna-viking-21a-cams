@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generator Bębnów Ściegowych Husqvarna 21E / Stitch Drum Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #0b0f19;
+      --bg-surface: #131b2e;
+      --bg-surface-elevated: #1c2640;
+      --bg-card: rgba(28, 38, 64, 0.7);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(56, 189, 248, 0.3);
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-cyan: #38bdf8;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --accent-rose: #f43f5e;
+      --thread-color: #38bdf8;
+      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, sans-serif;
+      background: radial-gradient(circle at top right, #172554, #0b0f19 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      line-height: 1.5;
+      padding-bottom: 4rem;
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+    }
+
+    .brand-title h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(90deg, #fff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.55rem 1.1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #0284c7, #2563eb);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+      border-color: var(--border-subtle);
+    }
+    .btn-secondary:hover {
+      background: #273556;
+      border-color: var(--accent-cyan);
+    }
+
+    .main-container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 1080px) {
+      .main-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Sidebar: Drum Builder */
+    .builder-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: sticky;
+      top: 5.5rem;
+      height: fit-content;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-header h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .presets-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .preset-pill {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      font-size: 0.78rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .preset-pill:hover, .preset-pill.active {
+      color: #fff;
+      background: #2563eb;
+      border-color: #3b82f6;
+    }
+
+    .drum-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--bg-surface-elevated);
+      padding: 0.85rem 1rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .drum-meta-row label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      flex: 1;
+    }
+
+    .drum-meta-row input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      width: 70px;
+      text-transform: uppercase;
+    }
+    .drum-meta-row input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    /* Track Slots (Positions 1 to 5) */
+    .tracks-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .track-slot {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .track-slot:hover {
+      border-color: var(--accent-cyan);
+      background: rgba(37, 99, 235, 0.12);
+    }
+
+    .track-slot.active {
+      border-color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
+    }
+
+    .track-badge {
+      width: 28px;
+      height: 28px;
+      background: var(--bg-surface-elevated);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      flex-shrink: 0;
+    }
+
+    .track-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .track-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-cat {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .track-mini-canvas {
+      width: 80px;
+      height: 32px;
+      background: #070a12;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.05);
+      flex-shrink: 0;
+    }
+
+    /* Right Column: Visualizer + Catalog */
+    .content-column {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .visualizer-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .visualizer-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .fabric-simulation-wrapper {
+      background: #090e18;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    #fabricCanvas {
+      width: 100%;
+      height: 220px;
+      display: block;
+    }
+
+    /* Catalog Section */
+    .catalog-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .catalog-filters {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .cat-btn {
+      background: var(--bg-surface-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 0.85rem;
+      font-size: 0.8rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .cat-btn:hover, .cat-btn.active {
+      color: #fff;
+      background: #2563eb;
+      border-color: #3b82f6;
+    }
+
+    .search-input {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: #fff;
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      width: 200px;
+      font-family: inherit;
+    }
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent-cyan);
+    }
+
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      max-height: 600px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+
+    .stitch-card {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .stitch-card:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    }
+
+    .stitch-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .stitch-card-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .badge-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-utility { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); }
+    .badge-decorative { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+    .badge-satin { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+    .badge-geometric { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+
+    .stitch-card canvas {
+      width: 100%;
+      height: 56px;
+      background: #080c16;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .stitch-card-desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Export Modal & Code Box */
+    .code-export-box {
+      background: #080c16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .code-export-box pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #93c5fd;
+      overflow-x: auto;
+      max-height: 160px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #10b981;
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      display: none;
+      z-index: 100;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-logo">H</div>
+        <div class="brand-title">
+          <h1>Husqvarna 21E Stitch Drum Generator</h1>
+          <p>Parametryczny kreator bębnów ściegowych do druku 3D (FDM / SLA)</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <a href="https://github.com/qbarteczek/husqvarna-viking-21a-cams" target="_blank" class="btn btn-secondary">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+          GitHub
+        </a>
+        <button id="downloadScadBtn" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          Pobierz plik .SCAD
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- Left Column: Drum Builder -->
+    <aside class="builder-panel">
+      <div class="panel-header">
+        <h2>Konfigurator Bębna</h2>
+        <span style="font-size:0.75rem; color:var(--text-muted);">5 pozycji ściegów</span>
+      </div>
+
+      <!-- Presets -->
+      <div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Fabryczne Presety</div>
+        <div class="presets-row">
+          <button class="preset-pill" onclick="applyPreset('A1')">Zestaw A1 (Fabryczny)</button>
+          <button class="preset-pill" onclick="applyPreset('B1')">Zestaw B1 (Ozdobny)</button>
+          <button class="preset-pill" onclick="applyPreset('C1')">Zestaw C1 (Meandry)</button>
+          <button class="preset-pill" onclick="applyPreset('D')">Zestaw D (Specjalny)</button>
+        </div>
+      </div>
+
+      <!-- Drum Meta: Letter -->
+      <div class="drum-meta-row">
+        <label for="drumLetterInput">Litera bębna (wytłoczenie na czole Z=0):</label>
+        <input type="text" id="drumLetterInput" value="E" maxlength="2" oninput="updateDrumLetter(this.value)">
+      </div>
+
+      <!-- 5 Track Slots -->
+      <div class="tracks-list">
+        <div class="track-slot active" id="slot-0" onclick="selectActiveSlot(0)">
+          <div class="track-badge">1</div>
+          <div class="track-info">
+            <div class="track-name" id="slot-name-0">Ścieg kryty standardowy</div>
+            <div class="track-cat" id="slot-cat-0">Użytkowy · Poz. 1 (blisko czoła)</div>
+          </div>
+          <canvas class="track-mini-canvas" id="slot-canvas-0"></canvas>
+        </div>
+
+        <div class="track-slot" id="slot-1" onclick="selectActiveSlot(1)">
+          <div class="track-badge">2</div>
+          <div class="track-info">
+            <div class="track-name" id="slot-name-1">Serpentyna szeroka</div>
+            <div class="track-cat" id="slot-cat-1">Ozdobny · Poz. 2</div>
+          </div>
+          <canvas class="track-mini-canvas" id="slot-canvas-1"></canvas>
+        </div>
+
+        <div class="track-slot" id="slot-2" onclick="selectActiveSlot(2)">
+          <div class="track-badge">3</div>
+          <div class="track-info">
+            <div class="track-name" id="slot-name-2">Satynowy romb liść</div>
+            <div class="track-cat" id="slot-cat-2">Satynowy · Poz. 3</div>
+          </div>
+          <canvas class="track-mini-canvas" id="slot-canvas-2"></canvas>
+        </div>
+
+        <div class="track-slot" id="slot-3" onclick="selectActiveSlot(3)">
+          <div class="track-badge">4</div>
+          <div class="track-info">
+            <div class="track-name" id="slot-name-3">Grecki klucz meander</div>
+            <div class="track-cat" id="slot-cat-3">Geometryczny · Poz. 4</div>
+          </div>
+          <canvas class="track-mini-canvas" id="slot-canvas-3"></canvas>
+        </div>
+
+        <div class="track-slot" id="slot-4" onclick="selectActiveSlot(4)">
+          <div class="track-badge">5</div>
+          <div class="track-info">
+            <div class="track-name" id="slot-name-4">Zygzak referencyjny</div>
+            <div class="track-cat" id="slot-cat-4">Baza mechanizmu · Poz. 5 (stan zerowy)</div>
+          </div>
+          <canvas class="track-mini-canvas" id="slot-canvas-4"></canvas>
+        </div>
+      </div>
+
+      <!-- Live SCAD Code Preview -->
+      <div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase;">Wygenerowany kod OpenSCAD</div>
+        <div class="code-export-box">
+          <pre id="scadCodePreview"></pre>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right Column: Visualizer & Catalog -->
+    <div class="content-column">
+
+      <!-- Real-time Fabric Stitch Simulation -->
+      <section class="visualizer-card">
+        <div class="visualizer-header">
+          <div>
+            <h2 style="font-size:1.1rem; font-weight:600;">Symulacja Przeszycia na Tkaninie</h2>
+            <p style="font-size:0.78rem; color:var(--text-muted);">Realny tor igły dla wybranego bębna na 5 pozycjach dźwigni maszyny</p>
+          </div>
+          <button class="btn btn-secondary" onclick="redrawFabric()" style="padding:0.35rem 0.75rem; font-size:0.75rem;">
+            Odśwież podgląd
+          </button>
+        </div>
+
+        <div class="fabric-simulation-wrapper">
+          <canvas id="fabricCanvas" width="900" height="240"></canvas>
+        </div>
+      </section>
+
+      <!-- Stitch Catalog -->
+      <section class="catalog-section">
+        <div class="catalog-filters">
+          <div>
+            <h2 style="font-size:1.1rem; font-weight:600;">Katalog Ściegów</h2>
+            <p style="font-size:0.78rem; color:var(--text-muted);">Kliknij dowolny ścieg, aby przypisać go do aktywnej pozycji <span id="activeSlotIndicator" style="color:var(--accent-cyan); font-weight:700;">1</span></p>
+          </div>
+
+          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
+            <div class="cat-buttons">
+              <button class="cat-btn active" onclick="filterCatalog('all', this)">Wszystkie (36)</button>
+              <button class="cat-btn" onclick="filterCatalog('utility', this)">Użytkowe</button>
+              <button class="cat-btn" onclick="filterCatalog('decorative', this)">Ozdobne</button>
+              <button class="cat-btn" onclick="filterCatalog('satin', this)">Satynowe</button>
+              <button class="cat-btn" onclick="filterCatalog('geometric', this)">Geometryczne</button>
+            </div>
+            <input type="text" class="search-input" id="catalogSearch" placeholder="Szukaj ściegu..." oninput="searchCatalog(this.value)">
+          </div>
+        </div>
+
+        <div class="catalog-grid" id="catalogGrid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="toast" id="toast">Kod skopiowany do schowka!</div>
+
+  <script>
+    // --- STITCH DATABASE (36 STITCHES) ---
+    const STITCHES = [
+      { id: 0, key: "straight", name_pl: "Ścieg prosty zerowy", name_en: "Straight Stitch", category: "utility", desc: "Brak wychylenia igły (ścieg prosty).", fn: (a) => -1.0 },
+      { id: 1, key: "blind_hem_std", name_pl: "Ścieg kryty standard (A1)", name_en: "Blind Hem Std", category: "utility", desc: "4-5 ściegów prostych + skok w prawo.", fn: (a) => { let t = (a*3/360) % 1; return t < 0.2 ? Math.sin(Math.PI*t/0.2)*2 - 1 : -1; } },
+      { id: 2, key: "blind_hem_dense", name_pl: "Ścieg kryty gęsty", name_en: "Blind Hem Dense", category: "utility", desc: "Ścieg kryty 4 cykle na obrót.", fn: (a) => { let t = (a*4/360) % 1; return t < 0.16 ? Math.sin(Math.PI*t/0.16)*2 - 1 : -1; } },
+      { id: 3, key: "blind_hem_wide", name_pl: "Ścieg kryty szeroki", name_en: "Blind Hem Wide", category: "utility", desc: "Poszerzone wkłucie brzegowe.", fn: (a) => { let t = (a*3/360) % 1; return t < 0.28 ? Math.sin(Math.PI*t/0.28)*2 - 1 : -1; } },
+      { id: 4, key: "zigzag_std", name_pl: "Zygzak standardowy (A1/B1/C1)", name_en: "Standard Zigzag Ref", category: "utility", desc: "9 zębów trapezowych, stan spoczynkowy.", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
+      { id: 5, key: "zigzag_wide", name_pl: "Zygzak szeroki (A1)", name_en: "Wide Zigzag", category: "utility", desc: "Wydłużony skok do obrzucania krawędzi.", fn: (a) => trapWave(a, 6, 0.30) * 0.95 },
+      { id: 6, key: "zigzag_narrow", name_pl: "Zygzak wąski", name_en: "Narrow Zigzag", category: "utility", desc: "Drobny zygzak o zredukowanej amplitudzie (40%).", fn: (a) => trapWave(a, 10, 0.25) * 0.40 },
+      { id: 7, key: "zigzag_satin", name_pl: "Zygzak gęsty satynowy (A1)", name_en: "Satin Dense Zigzag", category: "utility", desc: "18 zębów na obrót, gęste krycie.", fn: (a) => trapWave(a, 18, 0.20) * 0.85 },
+      { id: 8, key: "three_step_elastic", name_pl: "Trójskok elastyczny (A1)", name_en: "3-Step Elastic", category: "utility", desc: "3 wkłucia w lewo, 3 w prawo (dzianiny).", fn: (a) => { let step = Math.floor(((a*3/360)%1)*6); return [-0.9, -0.3, 0.3, 0.9, 0.3, -0.3][step] || 0; } },
+      { id: 9, key: "four_step_elastic", name_pl: "Zygzak 4-stopniowy", name_en: "4-Step Super Stretch", category: "utility", desc: "4 stopnie w lewo i 4 w prawo.", fn: (a) => { let s = Math.floor(((a*3/360)%1)*8); return s < 4 ? -0.9 + s*0.6 : 0.9 - (s-4)*0.6; } },
+      { id: 10, key: "overlock_open", name_pl: "Owerlok otwarty", name_en: "Open Overlock", category: "utility", desc: "Fala podkładowa ze skokiem brzegowym.", fn: (a) => Math.sin(a*4*Math.PI/180)*0.6 + (((a*4/360)%1)<0.2 ? 0.4 : -0.4) },
+      { id: 11, key: "overlock_closed", name_pl: "Owerlok zamknięty", name_en: "Closed Overlock", category: "utility", desc: "Podwójna częstotliwość wzmacniająca brzeg.", fn: (a) => (Math.sin(a*6*Math.PI/180) + 0.3*Math.sin(a*18*Math.PI/180))/1.3 * 0.85 },
+      { id: 12, key: "triple_stretch", name_pl: "Potrójny prosty elastyczny", name_en: "Triple Stretch", category: "utility", desc: "Szybkie mikro-oscylacje igły.", fn: (a) => triWave(a, 18) * 0.35 },
+      { id: 13, key: "ladder", name_pl: "Ścieg drabinkowy", name_en: "Ladder Stitch", category: "utility", desc: "Równoległe szyny z natychmiastowym przeskokiem.", fn: (a) => Math.sign(Math.sin(a*6*Math.PI/180)) * 0.85 },
+      { id: 14, key: "serpentine_wide", name_pl: "Serpentyna szeroka (B1)", name_en: "Wide Serpentine", category: "decorative", desc: "Gładka sinusoida 3 cykle na obrót.", fn: (a) => Math.sin(a*3*Math.PI/180) * 0.90 },
+      { id: 15, key: "serpentine_med", name_pl: "Serpentyna średnia", name_en: "Medium Serpentine", category: "decorative", desc: "Fala sinusoidalna 4 cykle na obrót.", fn: (a) => Math.sin(a*4*Math.PI/180) * 0.85 },
+      { id: 16, key: "serpentine_dense", name_pl: "Serpentyna gęsta", name_en: "Dense Serpentine", category: "decorative", desc: "Fala sinusoidalna 6 cykli na obrót.", fn: (a) => Math.sin(a*6*Math.PI/180) * 0.80 },
+      { id: 17, key: "scallop_wave", name_pl: "Muszelka łuskowa", name_en: "Scallop Shell", category: "decorative", desc: "Łagodny wznios i ostre ścięcie krawędzi.", fn: (a) => sawWave(a, 5, 0.85) * 0.90 },
+      { id: 18, key: "double_lobe", name_pl: "Podwójna pętla", name_en: "Double Lobe Wave", category: "decorative", desc: "Fala z harmonicznym wybrzuszeniem.", fn: (a) => (Math.sin(a*5*Math.PI/180) + 0.35*Math.sin(a*10*Math.PI/180))/1.35 * 0.90 },
+      { id: 19, key: "feather", name_pl: "Piórko gałązkowe", name_en: "Feather Stitch", category: "decorative", desc: "Drobne gałązki połączone z szerokim ruchem.", fn: (a) => { let t = (a*6/360)%1; return t < 0.75 ? 0.5*triWave(a, 54) : Math.sin(a*6*Math.PI/180); } },
+      { id: 20, key: "stepped_chevron", name_pl: "Jodełka schodkowa (B1)", name_en: "Stepped Chevron", category: "decorative", desc: "Fala trójkątna z mikroząbkiem krawędziowym.", fn: (a) => triWave(a, 3)*0.70 + triWave(a, 18)*0.25 },
+      { id: 21, key: "angled_teeth", name_pl: "Ząbki skośne piła (B1)", name_en: "Angled Teeth", category: "decorative", desc: "Asymetryczny profil zęba piły.", fn: (a) => sawWave(a, 6, 0.80) * 0.90 },
+      { id: 22, key: "fine_comb", name_pl: "Grzebyk drobny", name_en: "Fine Comb", category: "decorative", desc: "Gęsta, subtelna fala ząbkowana.", fn: (a) => triWave(a, 14) * 0.50 },
+      { id: 23, key: "diamond_satin_3", name_pl: "Satynowy romb liść (B1)", name_en: "Diamond Satin 3c", category: "satin", desc: "Modulowana satyna rozszerzająca się w romby.", fn: (a) => { let env = (1 - Math.cos(a*3*Math.PI/180))/2; return trapWave(a, 18, 0.22) * (env*0.75 + 0.20); } },
+      { id: 24, key: "diamond_satin_4", name_pl: "Satynowy romb gęsty (4c)", name_en: "Diamond Satin 4c", category: "satin", desc: "4 romby satynowe na pełny obrót.", fn: (a) => { let env = (1 - Math.cos(a*4*Math.PI/180))/2; return trapWave(a, 20, 0.20) * (env*0.75 + 0.20); } },
+      { id: 25, key: "pearl_beads", name_pl: "Perełki satynowe", name_en: "Pearl Beads", category: "satin", desc: "Zaokrąglona obwiednia koralikowa.", fn: (a) => { let env = Math.pow(Math.sin(a*1.5*Math.PI/180), 2); return trapWave(a, 18, 0.20)*(env*0.80 + 0.15); } },
+      { id: 26, key: "hourglass_satin", name_pl: "Klepsydra satynowa (C1)", name_en: "Hourglass Satin", category: "satin", desc: "Satyna o symetrycznym przewężeniu w środku.", fn: (a) => { let env = Math.abs(Math.cos(a*3*Math.PI/180)); return trapWave(a, 18, 0.22)*(env*0.75 + 0.20); } },
+      { id: 27, key: "flame_satin", name_pl: "Płomienie satynowe (C1)", name_en: "Flame Satin", category: "satin", desc: "Dynamiczne wyostrzone szczyty satynowe.", fn: (a) => { let env = (1 - Math.cos(a*4*Math.PI/180))/2; return sawWave(a, 16, 0.60)*(env*0.75 + 0.20); } },
+      { id: 28, key: "taper_satin", name_pl: "Stożek satynowy", name_en: "Taper Satin Wedge", category: "satin", desc: "Klin rosnący od zera do pełnej szerokości.", fn: (a) => { let t = (a*3/360)%1; return trapWave(a, 18, 0.22)*(t*0.80 + 0.15); } },
+      { id: 29, key: "greek_key_4", name_pl: "Grecki klucz meander (C1)", name_en: "Greek Key Meander 4c", category: "geometric", desc: "4 prostokątne baszty meandrowe na obrót.", fn: (a) => trapWave(a, 4, 0.45) * 0.90 },
+      { id: 30, key: "greek_key_5", name_pl: "Grecki klucz gęsty (5c)", name_en: "Greek Key 5c", category: "geometric", desc: "Kompaktowy meander o 5 basztach.", fn: (a) => trapWave(a, 5, 0.45) * 0.90 },
+      { id: 31, key: "satin_blocks", name_pl: "Bloki satynowe (C1)", name_en: "Satin Blocks", category: "geometric", desc: "Naprzemienne schodkowe panele satynowe.", fn: (a) => { let s = Math.sign(Math.sin(a*4*Math.PI/180)); return trapWave(a, 16, 0.22)*0.45 + s*0.45; } },
+      { id: 32, key: "checker_step", name_pl: "Szachownica schodkowa", name_en: "Checkerboard Step", category: "geometric", desc: "Przeskok schodkowy między dwoma pasami.", fn: (a) => { let t = (a*4/360)%1; return t < 0.5 ? triWave(a, 16)*0.4 + 0.5 : triWave(a, 16)*0.4 - 0.5; } },
+      { id: 33, key: "cross_stitch", name_pl: "Krzyżyki geometryczne", name_en: "Cross Stitch", category: "geometric", desc: "Dwie harmoniczne tworzące wzór X.", fn: (a) => (triWave(a, 6) + 0.4*triWave(a*2, 6))/1.4 * 0.85 },
+      { id: 34, key: "arrowhead", name_pl: "Strzałka ostra", name_en: "Arrowhead Sharp", category: "geometric", desc: "Wyostrzone geometryczne groty strzał.", fn: (a) => { let v = sawWave(a, 6, 0.5); return Math.sign(v)*Math.pow(Math.abs(v), 0.6)*0.9; } },
+      { id: 35, key: "honeycomb", name_pl: "Plaster miodu", name_en: "Honeycomb Lattice", category: "geometric", desc: "Siatka rombowa z przesuniętych fal.", fn: (a) => (triWave(a, 6) + triWave(a+30, 6))/2 * 0.80 }
+    ];
+
+    // Math helper waves
+    function triWave(a, reps) {
+      let t = (a * reps / 360) % 1;
+      return 4 * Math.abs(t - 0.5) - 1;
+    }
+
+    function sawWave(a, reps, skew = 0.5) {
+      let t = (a * reps / 360) % 1;
+      return t < skew ? (2 * (t / skew) - 1) : (1 - 2 * (t - skew) / (1 - skew));
+    }
+
+    function trapWave(a, reps, dwell = 0.28) {
+      let t = (a * reps / 360) % 1;
+      let ramp = (1.0 - 2.0 * dwell) / 2.0;
+      if (t < dwell) return 1.0;
+      if (t < dwell + ramp) return 1.0 - 2.0 * (t - dwell) / ramp;
+      if (t < 2.0 * dwell + ramp) return -1.0;
+      return -1.0 + 2.0 * (t - 2.0 * dwell - ramp) / ramp;
+    }
+
+    // Current State
+    let currentDrum = {
+      letter: "E",
+      slots: [1, 14, 23, 29, 4] // Default custom mix: Blind hem, Serpentine, Diamond, Greek key, Zigzag ref
+    };
+    let activeSlotIndex = 0;
+
+    // Presets
+    const PRESETS = {
+      "A1": { letter: "A", slots: [1, 8, 5, 7, 4] },
+      "B1": { letter: "B", slots: [14, 20, 23, 21, 4] },
+      "C1": { letter: "C", slots: [29, 27, 31, 26, 4] },
+      "D":  { letter: "D", slots: [6, 3, 13, 12, 4] }
+    };
+
+    function init() {
+      renderCatalog(STITCHES);
+      updateAllSlotUI();
+      redrawFabric();
+      updateScadPreview();
+
+      document.getElementById('downloadScadBtn').addEventListener('click', downloadScadFile);
+    }
+
+    function selectActiveSlot(index) {
+      activeSlotIndex = index;
+      document.querySelectorAll('.track-slot').forEach((slot, i) => {
+        slot.classList.toggle('active', i === index);
+      });
+      document.getElementById('activeSlotIndicator').textContent = (index + 1);
+    }
+
+    function assignStitchToActiveSlot(stitchId) {
+      currentDrum.slots[activeSlotIndex] = stitchId;
+      updateSlotUI(activeSlotIndex);
+      redrawFabric();
+      updateScadPreview();
+
+      // Automatically advance to next slot for rapid configuration
+      if (activeSlotIndex < 4) {
+        selectActiveSlot(activeSlotIndex + 1);
+      }
+    }
+
+    function updateSlotUI(index) {
+      const stitch = STITCHES.find(s => s.id === currentDrum.slots[index]);
+      if (!stitch) return;
+
+      document.getElementById(`slot-name-${index}`).textContent = stitch.name_pl;
+      document.getElementById(`slot-cat-${index}`).textContent = `${stitch.category.toUpperCase()} · Poz. ${index + 1}`;
+
+      // Draw mini canvas
+      const miniCanvas = document.getElementById(`slot-canvas-${index}`);
+      drawMiniWave(miniCanvas, stitch.fn);
+    }
+
+    function updateAllSlotUI() {
+      for (let i = 0; i < 5; i++) {
+        updateSlotUI(i);
+      }
+    }
+
+    function updateDrumLetter(val) {
+      currentDrum.letter = (val || "X").toUpperCase().substring(0, 2);
+      updateScadPreview();
+    }
+
+    function applyPreset(name) {
+      const preset = PRESETS[name];
+      if (!preset) return;
+      currentDrum.letter = preset.letter;
+      currentDrum.slots = [...preset.slots];
+      document.getElementById('drumLetterInput').value = preset.letter;
+      updateAllSlotUI();
+      redrawFabric();
+      updateScadPreview();
+
+      document.querySelectorAll('.preset-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(name));
+      });
+    }
+
+    // Mini Wave Drawing
+    function drawMiniWave(canvas, fn) {
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth * 2;
+      const h = canvas.height = canvas.offsetHeight * 2;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      for (let x = 0; x < w; x++) {
+        let a = (x / w) * 360;
+        let v = fn(a); // -1 to 1
+        let y = h / 2 - (v * (h * 0.38));
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Render Catalog
+    function renderCatalog(items) {
+      const grid = document.getElementById('catalogGrid');
+      grid.innerHTML = "";
+
+      items.forEach(st => {
+        const card = document.createElement('div');
+        card.className = "stitch-card";
+        card.onclick = () => assignStitchToActiveSlot(st.id);
+
+        card.innerHTML = `
+          <div class="stitch-card-header">
+            <div class="stitch-card-title">${st.name_pl}</div>
+            <span class="badge-tag badge-${st.category}">${st.category}</span>
+          </div>
+          <canvas id="cat-canvas-${st.id}"></canvas>
+          <div class="stitch-card-desc">${st.desc}</div>
+        `;
+
+        grid.appendChild(card);
+        setTimeout(() => {
+          const cvs = document.getElementById(`cat-canvas-${st.id}`);
+          if (cvs) drawMiniWave(cvs, st.fn);
+        }, 10);
+      });
+    }
+
+    function filterCatalog(category, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (category === 'all') {
+        renderCatalog(STITCHES);
+      } else {
+        renderCatalog(STITCHES.filter(s => s.category === category));
+      }
+    }
+
+    function searchCatalog(query) {
+      const q = query.toLowerCase().trim();
+      const filtered = STITCHES.filter(s => s.name_pl.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q) || s.name_en.toLowerCase().includes(q));
+      renderCatalog(filtered);
+    }
+
+    // Fabric Simulation
+    function redrawFabric() {
+      const canvas = document.getElementById('fabricCanvas');
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width = canvas.offsetWidth * 2;
+      const h = canvas.height = canvas.offsetHeight * 2;
+
+      // Dark textile weave background
+      ctx.fillStyle = "#0c1322";
+      ctx.fillRect(0, 0, w, h);
+
+      // Weave pattern texture
+      ctx.strokeStyle = "rgba(255,255,255,0.03)";
+      ctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 8) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+      }
+      for (let y = 0; y < h; y += 8) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Draw 5 rows of stitching (Tracks 1 to 5)
+      const rowHeight = h / 5;
+      const trackColors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399"];
+
+      for (let row = 0; row < 5; row++) {
+        const stitch = STITCHES.find(s => s.id === currentDrum.slots[row]);
+        if (!stitch) continue;
+
+        const centerY = rowHeight * row + rowHeight / 2;
+        const color = trackColors[row];
+
+        // Track label
+        ctx.fillStyle = "rgba(255,255,255,0.3)";
+        ctx.font = "bold 18px 'Outfit', sans-serif";
+        ctx.fillText(`Poz. ${row + 1} (${stitch.name_pl})`, 24, centerY - 14);
+
+        // Center guideline
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(12, centerY); ctx.lineTo(w - 12, centerY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Thread stitch line
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
+
+        // Stitch needle penetration points (simulating sewing cycle)
+        ctx.beginPath();
+        const steps = 140;
+        const startX = 220;
+        const endX = w - 40;
+        const widthX = endX - startX;
+
+        for (let i = 0; i <= steps; i++) {
+          let a = (i / steps) * 720; // 2 drum revolutions across fabric width
+          let v = stitch.fn(a);      // -1 (left/top) to +1 (right/bottom)
+          let x = startX + (i / steps) * widthX;
+          let y = centerY + (v * (rowHeight * 0.32));
+
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+    }
+
+    // OpenSCAD Code Generation
+    function generateScadCode() {
+      const s0 = STITCHES.find(s => s.id === currentDrum.slots[0]);
+      const s1 = STITCHES.find(s => s.id === currentDrum.slots[1]);
+      const s2 = STITCHES.find(s => s.id === currentDrum.slots[2]);
+      const s3 = STITCHES.find(s => s.id === currentDrum.slots[3]);
+      const s4 = STITCHES.find(s => s.id === currentDrum.slots[4]);
+
+      return `// ==============================================================================
+// BĘBEN ŚCIEGOWY HUSQVARNA 21E — ZESTAW ${currentDrum.letter}
+// Wygenerowano automatycznie za pomocą Husqvarna Stitch Drum Generator
+// ==============================================================================
+include <../../tools/openscad/cam_common.scad>
+include <../../tools/openscad/stitch_catalog.scad>
+
+// Pozycja 1: ${s0.name_pl}
+function pos1(a) = get_stitch_by_id(${s0.id}, a);
+
+// Pozycja 2: ${s1.name_pl}
+function pos2(a) = get_stitch_by_id(${s1.id}, a);
+
+// Pozycja 3: ${s2.name_pl}
+function pos3(a) = get_stitch_by_id(${s2.id}, a);
+
+// Pozycja 4: ${s3.name_pl}
+function pos4(a) = get_stitch_by_id(${s3.id}, a);
+
+// Pozycja 5: ${s4.name_pl} (zalecany zygzak referencyjny)
+function pos5(a) = get_stitch_by_id(${s4.id}, a);
+
+cam_with_grooves("${currentDrum.letter}", [
+    function(a) pos1(a),
+    function(a) pos2(a),
+    function(a) pos3(a),
+    function(a) pos4(a),
+    function(a) pos5(a)
+]);
+`;
+    }
+
+    function updateScadPreview() {
+      const code = generateScadCode();
+      document.getElementById('scadCodePreview').textContent = code;
+    }
+
+    function downloadScadFile() {
+      const code = generateScadCode();
+      const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cam_${currentDrum.letter}.scad`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showToast(`Pobrano plik cam_${currentDrum.letter}.scad!`);
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 3000);
+    }
+
+    // Run on load
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

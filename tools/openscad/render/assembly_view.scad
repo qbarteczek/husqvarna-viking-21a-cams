@@ -15,18 +15,18 @@ module label(t) {
 }
 
 translate([-1.5*SPACING, 0, 0]) {
-    rotate([90,0,0]) import("../../../models/original/cam_A_V21ZZ3Z.stl");
-    label("A (referencja)");
+    import("../../../models/generated/cam_A.stl");
+    label("A1");
 }
 translate([-0.5*SPACING, 0, 0]) {
     import("../../../models/generated/cam_B.stl");
-    label("B");
+    label("B1");
 }
 translate([0.5*SPACING, 0, 0]) {
     import("../../../models/generated/cam_C.stl");
-    label("C");
+    label("C1");
 }
 translate([1.5*SPACING, 0, 0]) {
     import("../../../models/generated/cam_D.stl");
-    label("D");
+    label("D (eksp.)");
 }

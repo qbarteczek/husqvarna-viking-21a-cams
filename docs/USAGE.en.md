@@ -1,71 +1,50 @@
-# Usage instructions — mounting and using stitch drums in the machine
+# Operating Instructions — Installation, Service Calibration, and Usage of Stitch Drums
 
-*(Polish original: [`USAGE.md`](USAGE.md))*
+Applies to stitch drums (**A1, B1, C1, D**) for **Husqvarna Automatic 21E** and related models in the family (19, 20, 21A) equipped with a stitch cam bay.
 
-Applies to sets A, B, C, D (this project — a generator) for the Husqvarna 21E and related
-models (19, 20, 21A) sharing the same cam-stack mechanism.
+---
 
-## How it works (recap)
+## Drum Construction and Mechanism Contact
 
-The drum **has no bore running its full length** — it mounts via a stepped spindle (several
-diameters) and a threaded flange with a hole for the drive shaft (with a prismatic key that
-transmits rotation), which fit a specific socket in the machine's mechanism (see
-`docs/DIMENSIONS.en.md`). The cylinder's edge itself, at each of the 5 positions, is shaped as
-the stitch profile (teeth) — the machine's sensor/follower rides directly on this edge and
-converts its deflection into sideways needle motion. The stitch-selector lever on the machine
-moves the sensor **along the drum's axis** to one of the 5 positions (directly adjacent, no
-gap) — that selects which pattern is used.
+* **Central Bore and Internal Keyway:** The drum features a full-length through-bore (Ø 15.6 mm, $R = 7.8\text{ mm}$) that slides directly onto the machine's drive shaft. An internal keyway (width 4.5 mm, depth 2.2 mm, $Z \in [6.4, 26.0]\text{ mm}$) engages the shaft's drive key to lock rotation.
+* **Stitch Edge Tracks:** Five axial tracks feature profiled cam edges. The machine's spring-loaded follower rides directly along the outer perimeter, translating radial cam swing into lateral needle bar deflection.
+* **Baseline and Amplitude:** The crest of each tooth (`EDGE_MAX_R = 17.03 mm`) represents zero needle swing (straight stitch baseline). The root of the valley (`EDGE_MIN_R = 14.20 mm`) represents full rightward swing (radial tooth swing `EDGE_SWING = 2.83 mm`).
 
-Before mounting a whole drum, it's worth printing and testing
-[`tools/openscad/mating_shaft_reference.scad`](../tools/openscad/mating_shaft_reference.scad)
-— a simple pin that checks the hole and key fit, see `docs/PRINTABILITY.en.md`.
+---
 
-## Mounting the drum
+## Factory Cam Replacement Procedure (from Husqvarna 21E Manual, pp. 28 & 30)
 
-1. Turn the machine off / unplug it before replacing the drum.
-2. Remove the currently mounted drum following the machine's manual.
-3. Seat the new drum (A/B/C/D) in the machine's socket — **the large, threaded flange
-   (Ø 29.94 mm, the side with the letter) and the shaft hole with its key** oriented the same
-   way the original was (check the orientation on the original drum before replacing it, if
-   this is your first time mounting one). If the mechanism requires screwing the thread in —
-   thread it gently, don't force it.
-4. Make sure the stepped spindle slides freely into the machine's socket, the key properly
-   engages the shaft, and the sensor/follower touches the drum's edge at each of the 5
-   positions — move the stitch-selector lever through its full range **by hand, with the
-   machine off**, to confirm nothing binds, before running the machine.
-5. Close the cover.
+1. **Set Straight Stitch:** Turn the zigzag width dial to `0` (*rettsöm*).
+2. **Select Position 5:** Shift the stitch selector lever (*Mönstervelger*) to **position 5**.
+   > [!IMPORTANT]
+   > Setting the selector to position 5 is essential — it relieves follower spring tension and allows the retaining arm to swing clear.
+3. **Open Access Hatch:** Open the inspection door at the rear of the machine arm (fig. 39).
+4. **Remove Cam:**
+   * Grip the drum with the right thumb and index finger.
+   * With the middle finger, lift the retaining arm (*A*, fig. 40) into the upright vertical position.
+   * Pull the drum axially off the drive shaft.
+5. **Install New Cam:**
+   * Slide the new drum onto the shaft with the **letter (A, B, or C) facing straight up**.
+   * Push the drum fully home until the retaining arm drops into the index notch on the flange (*A*, fig. 38).
+   * Close the inspection door.
 
-## Selecting a stitch
+---
 
-The stitch-selector lever on the machine has 5 positions corresponding to positions 1–5
-described in `docs/STITCH_DESIGN.en.md` (for B/C/D) or in the original description of set A
-(positions 1–2 = 3-step zigzag, 3–5 = zigzag). Set the lever to the desired position **with
-the needle stationary** (machine off, or the handwheel at rest), only then start sewing.
+## Service Adjustments and Factory Tolerances (from Class 21 Service Manual)
 
-## First run after replacement — recommended procedure
+1. **Follower Play Calibration (Service Manual, p. 1):**
+   * With stitch width set to `0` and stitch selector at `5`, the follower contacts the high point of the cam (`EDGE_MAX_R = 17.03 mm`).
+   * The play between the follower and the cam crest must be adjusted to *minimum play* using the lever clamp screw.
+2. **Needle Centering (Service Manual, p. 3):**
+   * Center position in the throat plate hole is fine-tuned using follower adjusting screw 1 (Fig. 4).
+3. **Never Run Without a Cam (*OBS!*, User Manual p. 31):**
+   > [!CAUTION]
+   > **Never run the machine without a stitch drum installed!** Running the machine empty will cause the follower to strike the bare shaft, potentially damaging the needle bar drive mechanism.
 
-1. Turn the handwheel through a full rotation **with no thread**, watching the needle motion —
-   check that the zigzag is smooth, with no jerking or binding of the follower.
-2. Test all 5 positions in turn the same way.
-3. Only after confirming smooth motion at every position — thread the machine and sew a sample
-   on a scrap of fabric.
-4. If the stitch is narrower/wider than expected compared to set A — see the "Calibration"
-   section in `docs/STITCH_DESIGN.en.md` (`EDGE_MAX_R`/`EDGE_MIN_R`) and consider reprinting.
+---
 
-## Safety and durability
+## Initial Testing After Installation
 
-- These are **3D prints** — they don't have the hardness/durability of the original factory
-  cams (metal/bakelite). Treat this as a hobbyist/service solution, not a durable replacement
-  for intensive professional use.
-- Regularly check the edge (teeth) for signs of wear (abrasion) — an FDM print may wear faster
-  than the original under frequent use.
-- Never change the stitch-selector lever position while the needle is moving — risk of
-  breaking the follower pin or the drum.
-- If you feel resistance moving the lever — stop and check the drum/mechanism instead of
-  forcing it.
-
-## Reading the marking after printing
-
-The set's letter is engraved on the underside (the Ø29.94 mm flange face, which sits on the
-print bed during printing — see `docs/PRINTABILITY.en.md`). Turn the printed part upside down
-to read it.
+1. Turn the handwheel by hand for 2–3 full cycles before engaging the motor to verify smooth needle bar motion.
+2. Test stitch selector positions 1–5 with the needle stationary at its top dead center.
+3. Perform test stitching on scrap fabric using the appropriate presser foot (for dense satin patterns, the **S 15801** embroidery foot with underside clearance is recommended).

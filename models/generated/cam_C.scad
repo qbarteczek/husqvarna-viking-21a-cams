@@ -1,13 +1,17 @@
-// Zestaw C — "Ściegi ozdobne otwarte" (oryginalny wzór, nowoprojektowany — nie
-// jest odtworzeniem historycznej krzywki, bo źródła historyczne nie były dostępne).
-// Wymiary mechaniczne = zestaw A (thing:6018240). Patrz ../../docs/STITCH_DESIGN.md.
+// Bęben C1 (mönsterkamsats C:1, nr kat. S 41-10952) dla Husqvarna 21E / 21A.
+// Odtworzenie fabrycznych ściegów z instrukcji obsługi Husqvarna 21E (str. 31):
+// Poz 1: Meander grecki / baszty (mekaniskt meander, stinglengde 0.3)
+// Poz 2: Ścieg płomieniowy / ostry trójkątny (flammesöm, stinglengde 0.3)
+// Poz 3: Bloki satynowe prostokątne (blokksöm, stinglengde 0.3)
+// Poz 4: Klepsydra / podwójny romb (stinglengde 0.3)
+// Poz 5: Zygzak standardowy referencyjny (stinglengde 1.5)
 include <../../tools/openscad/cam_common.scad>
 
-function c_pos1(a) = tri_wave(a, 9) * 0.5;                              // zygzak referencyjny
-function c_pos2(a) = feather(a, 6) * 0.85;                              // piórko
-function c_pos3(a) = (tri_wave(a, 6) + 0.4*tri_wave(a*2, 6)) / 1.4 * 0.85; // krzyżyk
-function c_pos4(a) = arrow_sharpen(a, 4, 0.5) * 0.9;                    // strzałka
-function c_pos5(a) = diamond_lattice(a, 6) * 0.8;                       // plaster miodu
+function c_pos1(a) = trap_wave(a, 4, 0.45) * 0.90;
+function c_pos2(a) = arrow_sharpen(a, 6, 0.50) * 0.90;
+function c_pos3(a) = block_satin(a, 16, 4);
+function c_pos4(a) = hourglass_satin(a, 18, 3);
+function c_pos5(a) = trap_wave(a, 9, 0.28) * 0.95;
 
 cam_with_grooves("C", [
     function(a) c_pos1(a),

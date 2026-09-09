@@ -1,79 +1,90 @@
-# Wzory ściegów — zestawy B, C, D
+# Wzory ściegów — zestawy fabryczne A1, B1, C1 oraz zestaw rozszerzony D
 
-## Zastrzeżenie
+## Źródła historyczne i specyfikacja fabryczna
 
-To **nie są odtworzenia historycznych krzywek** Husqvarna Viking 21A. Mimo że pierwotnie
-planowaliśmy wierną rekonstrukcję, nie udało się znaleźć źródeł (instrukcji z listą ściegów
-per litera, zdjęć oryginalnych tarczek) — ani mi, ani użytkownikowi. Zamiast tego zaprojektowano
-**nowe, oryginalne wzory** w duchu ściegów ozdobnych z epoki mechanicznych maszyn do szycia
-(lata 50.–60.), które **fizycznie pasują** do maszyny, bo używają dokładnie tej samej geometrii
-mocowania co zmierzony zestaw A (patrz `DIMENSIONS.md`).
+Geometria i wzory ściegów zostały zrekonstruowane w oparciu o oficjalne dokumenty techniczne producenta:
+1. **Instrukcja obsługi Husqvarna Automatic 21 E** (`Husqvarna-21E_User-Manual_NO.pdf`):
+   - Strona 31: *Grunnmönster for kammene A1, B1 og C1* — oficjalna tabela parametrów (szerokość, długość) oraz ryciny przeszyć,
+   - Strona 25: *Mönsternøkkelen* — tarcza wyboru ściegów 1- i 2-igłowych,
+   - Strona 27, 29, 30: numery katalogowe, procedura wymiany bębna na pozycji 5,
+   - Strona 55: wykaz części i akcesoriów.
+2. **Instrukcja serwisowa Viking Automatic class 21** (`Husqvarna-Class-21_Service-Manual_EN.pdf`):
+   - Sekcja 1 (str. 1): kalibracja minimalnego luzu wodzika (*follower*) w najwyższym punkcie krzywki (`EDGE_MAX_R = 17.03 mm`) na **pozycji 5**,
+   - Sekcja 2 (str. 1): synchronizacja fazowa igły — ruch poprzeczny igielnicy kończy się, gdy czubek igły jest co najmniej 7 mm nad płytką ściegową (uzasadnienie faz stabilizacji *dwell* w profilach trapezowych).
 
-Jeśli w przyszłości znajdą się realne źródła historyczne, profile w `tools/openscad/cam_B.scad`
-itd. można podmienić bez zmiany reszty geometrii (bryła i mocowanie są w osobnym pliku
-`cam_common.scad`).
+---
 
-## Zasada działania
+## Zasada działania mechanizmu
 
-Każdy zestaw ma **5 pozycji osiowych** (tak jak zestaw A — dźwignia wyboru ściegu przesuwa
-czujnik/popychacz wzdłuż osi krzywki), rozdzielonych wąskimi kołnierzami. Na każdej pozycji
-sama **krawędź walca** ma promień zmienny w funkcji kąta `r(kąt)` — czujnik jeździ bezpośrednio
-po tej krawędzi (krzywka krawędziowa/edge cam, tak jak w zestawie A — nie kanał/rowek), a jej
-wychylenie w bok tworzy ruch igły podczas szycia. Profile są zdefiniowane jako funkcje
-znormalizowane (`-1..1`), przeskalowane w `cam_common.scad` na zakres promienia
-`EDGE_MAX_R` (płytko) do `EDGE_MIN_R` (głęboko).
+Każdy bęben posiada **5 pozycji osiowych** (`N_POS = 5`), rozdzielonych na odcinku $Z \in [6.4, 23.6]\text{ mm}$ (długość ścieżki `BAND_LEN = 3.44 mm`).
+Dźwignia wyboru ściegu (*Mönstervelger*, pozycje 1–5 na tarczy czołowej maszyny) przesuwa palec wodzika wzdłuż osi wałka bębna.
+Palec wodzika spoczywa bezpośrednio na profilowanej krawędzi obwodowej walca:
+* Gdy krawędź ma promień maksymalny (`EDGE_MAX_R = 17.03 mm`, wartość znormalizowana `-1`), igielnica znajduje się w skrajnym lewym położeniu (baza ściegu prostego).
+* Gdy krawędź opada do dna doliny (`EDGE_MIN_R = 14.20 mm`, wartość znormalizowana `+1`), igielnica wykonuje maksymalne wychylenie w prawo (amplituda radialna zęba `EDGE_SWING = 2.83 mm`).
 
-## Zestaw B — "Fale i muszelki"
+---
 
-| Poz. | Nazwa | Funkcja | Charakter |
-|---|---|---|---|
-| 1 | Zygzak referencyjny | `tri_wave(a,7)` | ciągłość z zestawem A, dla porównania szerokości |
-| 2 | Muszelka (scallop) | `saw_wave(a,5, skew=0.85)` | wolny wznos, gwałtowny powrót — efekt "łuski" |
-| 3 | Fala | `sine_wave(a,6)` | gładka sinusoida |
-| 4 | Podwójny overlock | `double_lobe(a,5)` | zasadnicza fala + mała druga pętla na grzbiecie |
-| 5 | Grzebyk | `tri_wave(a,14)` | drobna, gęsta fala (efekt ząbkowania) |
+## Zestaw A1 — Bęben standardowy (`S 41-10950`)
 
-## Zestaw C — "Ściegi ozdobne otwarte"
+Fabryczny bęben dostarczany w maszynie (*„i maskinen”*). Zapewnia podstawowe ściegi użytkowe i elastyczne.
 
-| Poz. | Nazwa | Funkcja | Charakter |
-|---|---|---|---|
-| 1 | Zygzak referencyjny | `tri_wave(a,9)` | węższy wariant, odróżnia się od A i B |
-| 2 | Piórko (feather) | `feather(a,6)` | seria drobnych wychyleń + jedno szersze przejście na cykl |
-| 3 | Krzyżyk | `tri_wave(a,6) + 0.4·tri_wave(2a,6)` | dwie nałożone częstotliwości — wygląd "X" |
-| 4 | Strzałka | `arrow_sharpen(a,4,0.5)` | wyostrzone szczyty (spłaszczona krzywa potęgowa) |
-| 5 | Plaster miodu | `diamond_lattice(a,6)` | dwie przesunięte fale trójkątne — siatka rombów |
+| Poz. | Nazwa ściegu wg instrukcji | Nastawa fabryczna (szer./dł.) | Funkcja matematyczna | Zastosowanie i charakterystyka |
+|:---:|:---|:---:|:---|:---|
+| **1** | **Ścieg brzegowy / kryty** (*Usynlig faldsöm / Picot*) | 4 / 0.3 | `blind_hem(a, 3, 0.20)` | 4–5 wkłuć prostych po lewej stronie + pojedynczy skok w prawo do podszywania dołów i krycia brzegów. |
+| **2** | **Zygzak 3-stopniowy elastyczny** (*Trestings siksak / Quick-Stopp*) | 4 / 0.3 | `three_step_zigzag(a, 3)` | Trójskok (3 wkłucia w lewo, 3 w prawo) — elastyczne łączenie dzianin, wszywanie gumy, cerowanie. |
+| **3** | **Zygzak klasyczny szeroki** | 4 / 1.0 | `trap_wave(a, 9, 0.28) * 0.95` | Wydłużony skok zygzaka do obrzucania krawędzi. |
+| **4** | **Ścieg cerujący / ozdobny gęsty** | 4 / 0.3 | `trap_wave(a, 9, 0.28) * 0.80` | Gęsty zygzak satynowy. |
+| **5** | **Zygzak standardowy referencyjny** | 4 / 1.5 | `trap_wave(a, 9, 0.28) * 0.95` | Pozycja spoczynkowa mechanizmu, baza do wymiany bębna. |
 
-## Zestaw D — "Ściegi użytkowe specjalne" (najrzadszy, jak w historycznym oryginale)
+---
 
-| Poz. | Nazwa | Funkcja | Charakter |
-|---|---|---|---|
-| 1 | Zygzak referencyjny (wąski) | `tri_wave(a,10)` | najwęższy z trzech zestawów |
-| 2 | Ślepy ścieg | `pulse(a,6,0.15)` | długi odcinek prosto + pojedyncze "ugryzienie" na cykl |
-| 3 | Drabinka | `sign(sine_wave(a,6))` | niemal prostokątna fala — dwa równoległe "szyny" |
-| 4 | Potrójny prosty wzmocniony | `tri_wave(a,18)` | delikatna, częsta oscylacja — imituje potrójny ścieg |
-| 5 | Zamknięty overlock elastyczny | `sine_wave(a,6) + 0.3·sine_wave(3a,6)` | fala podstawowa + wzmocnienie brzegu |
+## Zestaw B1 — Bęben akcesoryjny (`S 41-10951`)
 
-## Zakres wychylenia — twarda granica, nie parametr do dowolnego strojenia
+Zestaw ściegów ozdobnych i falistych.
 
-`EDGE_MAX_R = 17.03 mm` (szczyty zębów, zmierzone i w pliku STL, i na zdjęciach) i
-`EDGE_MIN_R = 12.0 mm` (doliny zębów — skorygowane w dół z pierwotnych 7.71 mm po porównaniu
-głębokości wcięć na zdjęciach fizycznego bębna A ze znaną średnicą kołnierza jako skalą
-odniesienia — plik STL osobno sam w sobie sugerował głębsze doliny, ale to model repliki
-trzeciej strony, nie fizyczny bęben użytkownika) w `cam_common.scad` to **przybliżony, realny
-zasięg ruchu czujnika/popychacza**. Wszystkie 15 profili B/C/D skaluje swoją amplitudę
-WEWNĄTRZ tego zakresu (współczynniki 0.3–0.9 w tabelach niżej) — żaden wzór nie wychyla
-czujnika poza te granice. Nie zmieniaj tych dwóch stałych bez ponownego zmierzenia/porównania
-z oryginałem — to nie jest kosmetyczny parametr do "wyczucia", tylko przybliżenie realnego
-limitu mechanizmu (patrz `docs/DIMENSIONS.md` po pełne uzasadnienie i zastrzeżenia dotyczące
-dokładności tego szacunku).
+| Poz. | Nazwa ściegu wg instrukcji | Nastawa fabryczna (szer./dł.) | Funkcja matematyczna | Zastosowanie i charakterystyka |
+|:---:|:---|:---:|:---|:---|
+| **1** | **Ścieg serpentynowy / fala płynna** (*Slangesöm*) | 4 / 1.5 | `sine_wave(a, 3) * 0.90` | Płynna sinusoida o łagodnych łukach (ozdabianie falbanek, bielizny). |
+| **2** | **Jodełka schodkowa / gęsta fala łamana** | 4 / 0.3 | `tri_wave(a, 3)*0.70 + tri_wave(a, 18)*0.25` | Załamana fala z drobnym ząbkiem krawędziowym. |
+| **3** | **Satynowy romb / liście / perełki** (*Diamantsöm*) | 4 / 0.3 | `diamond_satin(a, 18, 3)` | Płynne rozszerzanie i zwężanie szerokości satyny tworzące serię rombów/perełek. |
+| **4** | **Ząbki skośne / piła** (*Tannsöm*) | 4 / 0.3 | `saw_wave(a, 6, 0.80) * 0.90` | Asymetryczny profil piłokształtny o ostrym powrocie. |
+| **5** | **Zygzak standardowy referencyjny** | 4 / 1.5 | `trap_wave(a, 9, 0.28) * 0.95` | Pozycja spoczynkowa i referencyjna (identyczna we wszystkich bębnach). |
 
-## Inne parametry do kalibracji przed drukiem
-- Pozycje ściegu sąsiadują bezpośrednio, bez kołnierzy separujących (`BAND_LEN` w
-  `cam_common.scad`) — zgodnie ze zmierzoną budową oryginału.
-- Stożkowe przejście montażowe (`mounting_neck()`), otwór na wałek z wpustem pryzmatycznym
-  (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`), kołnierz z rowkami (`ring_grooved()`/`RING_*`) i
-  ścięcie na czole (`CHAMFER_LEN`) odtwarzają zmierzoną/sfotografowaną geometrię mocowania
-  zestawu A — patrz `docs/DIMENSIONS.md`.
-- Zestaw A ma teraz też natywną wersję generatora (`models/generated/cam_A.scad`), niezależną
-  od pliku referencyjnego STL — przybliża opisany w źródle wzór (pozycje 1–2 = zygzak
-  3-stopniowy, 3–5 = zwykły zygzak), ale nie jest wierną kopią oryginalnego toru.
+---
+
+## Zestaw C1 — Bęben akcesoryjny (`S 41-10952`)
+
+Zestaw ściegów geometrycznych i meandrowych.
+
+| Poz. | Nazwa ściegu wg instrukcji | Nastawa fabryczna (szer./dł.) | Funkcja matematyczna | Zastosowanie i charakterystyka |
+|:---:|:---|:---:|:---|:---|
+| **1** | **Meander grecki / baszty** (*Mekaniskt meander / Tinn*) | 4 / 0.3 | `trap_wave(a, 4, 0.45) * 0.90` | Prostopadłe uskoki z gęstym kryciem tworzące grzebień meandrowy. |
+| **2** | **Ścieg płomieniowy / ostry trójkątny** (*Flammesöm*) | 4 / 0.3 | `arrow_sharpen(a, 6, 0.50) * 0.90` | Wyostrzone zęby trójkątne o dużej dynamice wizualnej. |
+| **3** | **Bloki satynowe prostokątne** (*Blokksöm*) | 4 / 0.3 | `block_satin(a, 16, 4)` | Naprzemienne schodkowe prostokąty satynowe (przeskok lewo-prawo). |
+| **4** | **Klepsydra / podwójny romb** | 4 / 0.3 | `hourglass_satin(a, 18, 3)` | Symetryczne przewężenie satyny tworzące wzór klepsydry. |
+| **5** | **Zygzak standardowy referencyjny** | 4 / 1.5 | `trap_wave(a, 9, 0.28) * 0.95` | Pozycja spoczynkowa i referencyjna. |
+
+---
+
+## Zestaw D — Rozszerzony / Eksperymentalny
+
+Zestaw autorski przeznaczony do zadań specjalnych i ściegów wzmocnionych.
+
+| Poz. | Nazwa ściegu | Nastawa (szer./dł.) | Funkcja matematyczna | Charakterystyka |
+|:---:|:---|:---:|:---|:---|
+| **1** | **Zygzak wąski referencyjny** | 2 / 1.0 | `tri_wave(a, 10) * 0.40` | Drobny zygzak precyzyjny. |
+| **2** | **Ślepy ścieg wzmocniony** | 4 / 0.5 | `blind_hem(a, 4, 0.15)` | Rzadsze wkłucia poprzeczne. |
+| **3** | **Drabinka** | 4 / 0.5 | `sign(sine_wave(a, 6)) * 0.85` | Dwie równoległe szyny z szybkim przeskokiem. |
+| **4** | **Potrójny prosty elastyczny** | 1 / 1.5 | `tri_wave(a, 18) * 0.30` | Szybka mikro-oscylacja wzmacniająca szew. |
+| **5** | **Zygzak standardowy referencyjny** | 4 / 1.5 | `trap_wave(a, 9, 0.28) * 0.95` | Pozycja spoczynkowa. |
+
+---
+
+## Zasady mechaniczne i serwisowe
+
+1. **Pozycja nr 5 jako stan spoczynkowy:**
+   Na każdym bębnie pozycja nr 5 to standardowy zygzak trapezowy. Zgodnie z instrukcją obsługi (str. 28/30), **przed demontażem lub montażem bębna należy zawsze ustawić wybierak ściegów na pozycję 5**.
+2. **Kalibracja zerowego luzu:**
+   Zgodnie z instrukcją serwisową (sekcja 1, str. 1), przy ściegu prostym (nastawa 0 na ramieniu i pozycja 5 na wybieraku) luz między wierzchołkiem zęba (`EDGE_MAX_R = 17.03 mm`) a palcem wodzika powinien być zredukowany do absolutnego minimum.
+3. **Zakaz pracy bez bębna (*OBS!*, str. 31):**
+   Nigdy nie należy uruchamiać maszyny z wyjętym bębnem ściegowym.

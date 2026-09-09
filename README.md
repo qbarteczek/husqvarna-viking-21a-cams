@@ -32,42 +32,42 @@ niezależnymi źródłami:
    ("HUSQVARNA SWEDEN" + litera zestawu).
 
 Na tej podstawie zbudowano parametryczny generator OpenSCAD z trzema gotowymi, oryginalnymi
-zestawami — **B, C, D** — z tą samą, zweryfikowaną geometrią mocowania, ale nowymi wzorami
-ściegów (nie odtworzeniem historii — źródeł do wiernej rekonstrukcji nie udało się znaleźć).
+zestawami — **B1, C1, D** — z tą samą, zweryfikowaną geometrią mocowania. Zestawy A1, B1, C1
+stanowią wierną rekonstrukcję historycznych bębnów fabrycznych z oficjalnej instrukcji
+obsługi Husqvarna 21E (str. 31) oraz instrukcji serwisowej Class 21.
 
 ### Status
 
-| Zestaw | Źródło | Status |
-|---|---|---|
-| A | thing:6018240 (maxkrippler) + zdjęcia fizycznego bębna | referencyjny plik w `models/original/`, wymiary w `docs/DIMENSIONS.md`; jest też natywna wersja generatora `models/generated/cam_A.scad` — **niezweryfikowana drukiem** |
-| B | oryginalny wzór "Fale i muszelki" | wygenerowany (`models/generated/cam_B.scad` + `.stl`) — **niezweryfikowany drukiem** |
-| C | oryginalny wzór "Ściegi ozdobne otwarte" | wygenerowany (`models/generated/cam_C.scad` + `.stl`) — **niezweryfikowany drukiem** |
-| D | oryginalny wzór "Ściegi użytkowe specjalne" | wygenerowany (`models/generated/cam_D.scad` + `.stl`) — **niezweryfikowany drukiem** |
+| Zestaw | Oznaczenie fabryczne | Źródło wzorów | Status |
+|---|---|---|---|
+| **A1** | `S 41-10950` | Instrukcja 21E (str. 31) + zdjęcia bębna A | Pełna rekonstrukcja fabryczna (`models/generated/cam_A.scad` + `.stl`) |
+| **B1** | `S 41-10951` | Instrukcja 21E (str. 31: *Grunnmönster B1*) | Pełna rekonstrukcja fabryczna (`models/generated/cam_B.scad` + `.stl`) |
+| **C1** | `S 41-10952` | Instrukcja 21E (str. 31: *Grunnmönster C1*) | Pełna rekonstrukcja fabryczna (`models/generated/cam_C.scad` + `.stl`) |
+| **D**  | — | Wzór autorski (ściegi użytkowe specjalne) | Wygenerowany (`models/generated/cam_D.scad` + `.stl`) |
 
 Element pomocniczy [`tools/openscad/mating_shaft_reference.scad`](tools/openscad/mating_shaft_reference.scad)
 — testowy trzpień do sprawdzenia dopasowania otworu i wpustu przed drukiem całego bębna.
 
-Kolejny krok: wydruk próbny i ew. kalibracja (`EDGE_MAX_R`/`EDGE_MIN_R`, `THREAD_*` w
-`cam_common.scad`) — patrz [`docs/WORKFLOW.md`](docs/WORKFLOW.md) i
-[`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
+### Generator nowych bębnów (Stitch Drum Generator)
 
-### Chcesz zaprojektować własny bęben?
+Projekt zawiera uniwersalny generator umożliwiający stworzenie własnego bębna z **katalogu ponad 35 znanych ściegów** (użytkowe, elastyczne, ozdobne fale, satynowe romby, meandry i szachownice):
+1. **Wizualna aplikacja webowa** ([`tools/generator/index.html`](tools/generator/index.html)): interaktywny konfigurator w przeglądarce (Canvas HTML5) z podglądem przeszycia igłą na tkaninie na żywo.
+2. **Panel okienkowy OpenSCAD Customizer GUI** ([`tools/openscad/cam_generator.scad`](tools/openscad/cam_generator.scad)): rozwijane menu wyboru ściegów dla każdej pozycji bezpośrednio w OpenSCAD bez pisania kodu.
+3. **Skrypt wsadowy PowerShell** ([`tools/generator/generate_drum.ps1`](tools/generator/generate_drum.ps1)): automatyczne generowanie kodu i natychmiastowa kompilacja siatki STL.
 
-Zobacz [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md) — krok po kroku, jak
-skopiować szablon [`tools/openscad/cam_template.scad`](tools/openscad/cam_template.scad),
-zaprojektować 5 własnych kształtów krawędzi i wygenerować nowy bęben ściegowy, bez dotykania
-zweryfikowanej geometrii mocowania.
+Szczegółowy podręcznik użytkownika: [`docs/GENERATOR.md`](docs/GENERATOR.md) / [`docs/GENERATOR.en.md`](docs/GENERATOR.en.md).
+Zobacz też: [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md) dla projektowania własnych funkcji matematycznych.
 
 ### Podgląd
 
-![Zestawienie A/B/C/D](docs/renders/assembly_all.png)
+![Zestawienie A1/B1/C1/D](docs/renders/assembly_all.png)
 
-| | Widok izometryczny | Przekrój (pokazuje kształt ściegu) |
-|---|---|---|
-| **A** (referencja) | ![A iso](docs/renders/cam_A_iso.png) | ![A przekrój](docs/renders/cam_A_cross_section.png) |
-| **B** | ![B iso](docs/renders/cam_B_iso.png) | ![B przekrój](docs/renders/cam_B_cross_section.png) |
-| **C** | ![C iso](docs/renders/cam_C_iso.png) | ![C przekrój](docs/renders/cam_C_cross_section.png) |
-| **D** | ![D iso](docs/renders/cam_D_iso.png) | ![D przekrój](docs/renders/cam_D_cross_section.png) |
+| Bęben | Widok izometryczny 3D | Czoło z grawerunkiem i wpustem |
+|:---:|:---:|:---:|
+| **A1** (fabryczny) | ![A1 iso](docs/renders/cam_A_iso.png) | ![A1 czoło](docs/renders/cam_A_front.png) |
+| **B1** (fabryczny) | ![B1 iso](docs/renders/cam_B_iso.png) | ![B1 czoło](docs/renders/cam_B_front.png) |
+| **C1** (fabryczny) | ![C1 iso](docs/renders/cam_C_iso.png) | ![C1 czoło](docs/renders/cam_C_front.png) |
+| **D** (autorski)   | ![D iso](docs/renders/cam_D_iso.png)   | ![D czoło](docs/renders/cam_D_front.png) |
 
 Więcej widoków (z przodu) w [`docs/renders/`](docs/renders/).
 
@@ -133,44 +133,43 @@ sources:
    a thread on the large flange, the exact shape of the socket's keyway, and the engraving
    layout ("HUSQVARNA SWEDEN" + the set's letter).
 
-Based on this, a parametric OpenSCAD generator was built with three ready-made, original
-sets — **B, C, D** — sharing the same, verified mounting geometry, but with new stitch
-patterns (not a historical reconstruction — no source material for a faithful recreation
-could be found).
+Based on this, a parametric OpenSCAD generator was built with ready-made sets: **A1, B1, C1, D**,
+sharing the identical, verified mounting geometry. Sets A1, B1, and C1 are faithful historical
+reconstructions based on official factory documentation: the Husqvarna 21E User Manual (p. 31)
+and the Viking Class 21 Service Manual.
 
 ### Status
 
-| Set | Source | Status |
-|---|---|---|
-| A | thing:6018240 (maxkrippler) + photos of the physical drum | reference file in `models/original/`, dimensions in `docs/DIMENSIONS.en.md`; a native generator version also exists, `models/generated/cam_A.scad` — **not verified by printing** |
-| B | original pattern "Waves and shells" | generated (`models/generated/cam_B.scad` + `.stl`) — **not verified by printing** |
-| C | original pattern "Open decorative stitches" | generated (`models/generated/cam_C.scad` + `.stl`) — **not verified by printing** |
-| D | original pattern "Special utility stitches" | generated (`models/generated/cam_D.scad` + `.stl`) — **not verified by printing** |
+| Set | Factory Part No. | Source / Reference | Status |
+|---|---|---|---|
+| **A1** | `S 41-10950` | 21E Manual (p. 31) + photos of physical drum A | Full factory reconstruction (`models/generated/cam_A.scad` + `.stl`) |
+| **B1** | `S 41-10951` | 21E Manual (p. 31: *Grunnmönster B1*) | Full factory reconstruction (`models/generated/cam_B.scad` + `.stl`) |
+| **C1** | `S 41-10952` | 21E Manual (p. 31: *Grunnmönster C1*) | Full factory reconstruction (`models/generated/cam_C.scad` + `.stl`) |
+| **D**  | — | Custom pattern (special utility stitches) | Generated (`models/generated/cam_D.scad` + `.stl`) |
 
 Auxiliary part [`tools/openscad/mating_shaft_reference.scad`](tools/openscad/mating_shaft_reference.scad)
 — a test pin for checking the hole/key fit before printing a whole drum.
 
-Next step: a test print and possible calibration (`EDGE_MAX_R`/`EDGE_MIN_R`, `THREAD_*` in
-`cam_common.scad`) — see [`docs/WORKFLOW.md`](docs/WORKFLOW.md) and
-[`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
+### Custom Stitch Drum Generator
 
-### Want to design your own drum?
+The project includes an open generator suite allowing users to create custom stitch drums from a **catalog of 35+ verified stitches** (utility, stretch, decorative waves, modulated satin, meanders, and checkerboards):
+1. **Interactive Web Application** ([`tools/generator/index.html`](tools/generator/index.html)): browser-based visual configurator (HTML5 Canvas) featuring live simulated needle sewing paths on fabric.
+2. **OpenSCAD Customizer GUI** ([`tools/openscad/cam_generator.scad`](tools/openscad/cam_generator.scad)): native dropdown menus to pick stitches for each position without writing code.
+3. **PowerShell CLI Script** ([`tools/generator/generate_drum.ps1`](tools/generator/generate_drum.ps1)): command-line automation for code generation and one-step STL compilation.
 
-See [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md) — a step-by-step guide to
-copying the [`tools/openscad/cam_template.scad`](tools/openscad/cam_template.scad) template,
-designing 5 of your own edge shapes, and generating a new stitch drum, without touching the
-verified mounting geometry.
+User Guide: [`docs/GENERATOR.en.md`](docs/GENERATOR.en.md) / [`docs/GENERATOR.md`](docs/GENERATOR.md).
+See also: [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md) for custom mathematical curve design.
 
 ### Preview
 
-![A/B/C/D lineup](docs/renders/assembly_all.png)
+![A1/B1/C1/D lineup](docs/renders/assembly_all.png)
 
-| | Isometric view | Cross-section (shows the stitch shape) |
-|---|---|---|
-| **A** (reference) | ![A iso](docs/renders/cam_A_iso.png) | ![A cross-section](docs/renders/cam_A_cross_section.png) |
-| **B** | ![B iso](docs/renders/cam_B_iso.png) | ![B cross-section](docs/renders/cam_B_cross_section.png) |
-| **C** | ![C iso](docs/renders/cam_C_iso.png) | ![C cross-section](docs/renders/cam_C_cross_section.png) |
-| **D** | ![D iso](docs/renders/cam_D_iso.png) | ![D cross-section](docs/renders/cam_D_cross_section.png) |
+| Drum | 3D Isometric View | Front Dial & Keyway Face |
+|:---:|:---:|:---:|
+| **A1** (factory) | ![A1 iso](docs/renders/cam_A_iso.png) | ![A1 front](docs/renders/cam_A_front.png) |
+| **B1** (factory) | ![B1 iso](docs/renders/cam_B_iso.png) | ![B1 front](docs/renders/cam_B_front.png) |
+| **C1** (factory) | ![C1 iso](docs/renders/cam_C_iso.png) | ![C1 front](docs/renders/cam_C_front.png) |
+| **D** (custom)   | ![D iso](docs/renders/cam_D_iso.png)   | ![D front](docs/renders/cam_D_front.png) |
 
 More views (front) in [`docs/renders/`](docs/renders/).
 

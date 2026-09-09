@@ -1,13 +1,17 @@
-// Zestaw B — "Fale i muszelki" (oryginalny wzór, nowoprojektowany — nie jest
-// odtworzeniem historycznej krzywki, bo źródła historyczne nie były dostępne).
-// Wymiary mechaniczne = zestaw A (thing:6018240). Patrz ../../docs/STITCH_DESIGN.md.
+// Bęben B1 (mönsterkamsats B:1, nr kat. S 41-10951) dla Husqvarna 21E / 21A.
+// Odtworzenie fabrycznych ściegów z instrukcji obsługi Husqvarna 21E (str. 31):
+// Poz 1: Ścieg serpentynowy / fala płynna (slangesöm, stinglengde 1.5)
+// Poz 2: Jodełka schodkowa / gęsta fala łamana (stinglengde 0.3)
+// Poz 3: Satynowy romb / perełki / liście (diamantsöm, stinglengde 0.3)
+// Poz 4: Ząbki skośne / piła (tannsöm, stinglengde 0.3)
+// Poz 5: Zygzak standardowy referencyjny (stinglengde 1.5)
 include <../../tools/openscad/cam_common.scad>
 
-function b_pos1(a) = tri_wave(a, 7) * 0.55;                 // zygzak referencyjny
-function b_pos2(a) = saw_wave(a, 5, 0.85) * 0.9;             // muszelka (scallop)
-function b_pos3(a) = sine_wave(a, 6) * 0.8;                  // fala
-function b_pos4(a) = double_lobe(a, 5) * 0.9;                // podwójny overlock
-function b_pos5(a) = tri_wave(a, 14) * 0.5;                  // grzebyk (drobna fala)
+function b_pos1(a) = sine_wave(a, 3) * 0.90;
+function b_pos2(a) = (tri_wave(a, 3) * 0.70 + tri_wave(a, 18) * 0.25);
+function b_pos3(a) = diamond_satin(a, 18, 3);
+function b_pos4(a) = saw_wave(a, 6, 0.80) * 0.90;
+function b_pos5(a) = trap_wave(a, 9, 0.28) * 0.95;
 
 cam_with_grooves("B", [
     function(a) b_pos1(a),
