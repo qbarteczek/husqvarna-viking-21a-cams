@@ -4,20 +4,33 @@ Projekt zawiera wbudowany, uniwersalny system generowania własnych bębnów śc
 
 ---
 
+## 🌐 Generator Online w Przeglądarce (Zalecany dla każdego użytkownika!)
+
+> [!TIP]
+> **Nie musisz instalować żadnego programu (w tym OpenSCAD)!**
+> Wejdź bezpośrednio na stronę generatora:
+> 👉 **[https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)**
+
+Aplikacja działa w 100% w przeglądarce internetowej (na komputerze lub telefonie) i umożliwia wygenerowanie oraz natychmiastowe pobranie gotowego pliku `.stl` do druku 3D w ułamku sekundy.
+
+---
+
 ## 3 Sposoby korzystania z generatora
 
-### Sposób 1: Aplikacja GUI z podglądem 3D i haftem na tkaninie (Najprostszy dla amatorów!)
+### Sposób 1: Aplikacja Webowa Online / Lokalna (Najprostszy dla amatorów!)
 
-Najprostszy, w pełni wizualny sposób bez instalowania czegokolwiek:
-1. W głównym katalogu projektu kliknij dwukrotnie plik:
-   👉 **`Uruchom_Generator.bat`** (lub otwórz w przeglądarce [`tools/generator/index.html`](../tools/generator/index.html)).
-2. W aplikacji zobaczysz:
-   * **Interaktywny model 3D bębna ściegowego (WebGL / Three.js):** obracaj myszką, przybliżaj i oglądaj rzeczywistą geometrię zębów, rowków i kołnierza bębna w czasie rzeczywistym!
-   * **Wirtualny haft na tkaninie:** podgląd przeszycia igłą nici w kolorze na materiale dla wszystkich 5 pozycji,
-   * **Gotowe presety fabryczne:** 1-kliknięciem załaduj wzorzec `A1`, `B1`, `C1` lub `D`,
-   * **Katalog 36 ściegów ozdobnych:** filtrowany według kategorii (użytkowe, fale, satynowe, meandry) z wyszukiwarką.
-3. Kliknij wybraną pozycję (1–5) na górnym pasku, a następnie kliknij dowolny ścieg z katalogu.
-4. Kliknij **„💾 Pobierz cam_X.scad”** lub **„📦 Plik Samodzielny (Standalone)”**.
+1. **Uruchomienie:**
+   * **Online (zalecane):** Otwórz [https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)
+   * **Lokalnie bez internetu:** Kliknij dwukrotnie plik `Uruchom_Generator.bat` w głównym katalogu projektu (lub otwórz `index.html`).
+2. **Możliwości aplikacji:**
+   * **Błyskawiczny podgląd 3D bębna (WebGL / Three.js):** obracaj myszką, powiększaj i oglądaj rzeczywisty bęben z ząbkami, rowkami i wpustem montażowym. Każda zmiana ściegu jest widoczna w czasie rzeczywistym (0 sekund oczekiwania, brak długiego renderowania jak w OpenSCAD).
+   * **Wirtualny haft na tkaninie:** dynamiczna symulacja przeszycia igłą nici w kolorze dla wszystkich 5 pozycji.
+   * **Gotowe presety:** 1-kliknięciem załaduj historyczny zestaw `A1`, `B1`, `C1` lub `D`.
+   * **Katalog 36 ściegów ozdobnych:** podzielony na kategorie (użytkowe, elastyczne, fale, satynowe, meandry) z natychmiastowym wyszukiwaniem.
+3. **Wybór ściegów:** Kliknij wybraną pozycję (1–5) na górnym pasku, a następnie kliknij dowolny ścieg z katalogu.
+4. **Pobranie pliku do druku 3D:**
+   * Kliknij zielony przycisk **„💾 Pobierz gotowy plik STL do druku 3D”** – w ciągu 0.01 s otrzymujesz gotowy, zamknięty (watertight / 2-manifold) plik `cam_X.stl`, który możesz bezpośrednio otworzyć w Cura, PrusaSlicer, Bambu Studio czy OrcaSlicer i puścić na drukarkę 3D!
+   * Opcjonalnie: możesz też pobrać kod `.scad`, jeśli chcesz go zachować w bibliotece OpenSCAD.
 
 ---
 

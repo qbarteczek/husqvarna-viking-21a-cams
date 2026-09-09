@@ -7,5 +7,9 @@ echo  Husqvarna Viking 21E / 21A
 echo ============================================================
 echo.
 echo Otwieranie aplikacji w domyslnej przegladarce...
-start "" "%~dp0tools\generator\index.html"
+if exist "%~dp0index.html" (
+    start "" "%~dp0index.html"
+) else (
+    start "" "%~dp0tools\generator\index.html"
+)
 exit

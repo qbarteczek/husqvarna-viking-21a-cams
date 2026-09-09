@@ -4,11 +4,19 @@
 
 ---
 
+> [!TIP]
+> ### 🌐 [URUCHOM GENERATOR BĘBNÓW ONLINE (BEZ INSTALOWANIA PROGRAMÓW)](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)
+> **Dla każdego użytkownika maszyny:** wybierz dowolne ściegi z katalogu kilkudziesięciu wzorów, zobacz bęben w 3D w czasie rzeczywistym i pobierz gotowy plik `.stl` do druku 3D jednym kliknięciem!
+> 
+> *English: [CLICK HERE TO LAUNCH THE 3D DRUM GENERATOR IN BROWSER (NO SOFTWARE NEEDED)](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)*
+
+---
+
 ## PL
 
 Otwarty **generator** bębnów ściegowych (stitch cams) do maszyny **Husqvarna 21E**
 (rodzina mechanizmu obejmuje też pokrewne oznaczenia: 19, 20, 21A). Nie jest to
-zamknięty zestaw czterech wzorów — to parametryczna biblioteka OpenSCAD, w której
+zamknięty zestaw czterech wzorów — to parametryczna biblioteka i aplikacja internetowa, w której
 mocowanie jest raz zweryfikowane i wspólne, a Ty projektujesz dowolną liczbę
 własnych wzorów ściegów. Patrz [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md).
 
@@ -51,9 +59,13 @@ Element pomocniczy [`tools/openscad/mating_shaft_reference.scad`](tools/openscad
 ### Generator nowych bębnów (Stitch Drum Generator)
 
 Projekt zawiera uniwersalny generator umożliwiający stworzenie własnego bębna z **katalogu ponad 35 znanych ściegów** (użytkowe, elastyczne, ozdobne fale, satynowe romby, meandry i szachownice):
-1. **Wizualna aplikacja webowa** ([`tools/generator/index.html`](tools/generator/index.html)): interaktywny konfigurator w przeglądarce (Canvas HTML5) z podglądem przeszycia igłą na tkaninie na żywo.
+1. **🌐 Interaktywna aplikacja online ([https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)):**
+   - **Podgląd 3D w czasie rzeczywistym (WebGL / Three.js):** natychmiastowe obracanie i oglądanie bębna (koniec z czekaniem 30–40 s na renderowanie OpenSCAD),
+   - **Bezpośrednie generowanie STL:** klikasz „Pobierz plik STL do druku 3D” i w 0.01 sekundy pobierasz gotowy plik `.stl` gotowy do slicera (Cura, PrusaSlicer, Bambu Studio),
+   - **Symulacja przeszycia na tkaninie:** podgląd nici igłowej na żywo dla 5 pozycji bębna,
+   - **Offline:** dwuklik w plik `Uruchom_Generator.bat` w katalogu projektu.
 2. **Panel okienkowy OpenSCAD Customizer GUI** ([`tools/openscad/cam_generator.scad`](tools/openscad/cam_generator.scad)): rozwijane menu wyboru ściegów dla każdej pozycji bezpośrednio w OpenSCAD bez pisania kodu.
-3. **Skrypt wsadowy PowerShell** ([`tools/generator/generate_drum.ps1`](tools/generator/generate_drum.ps1)): automatyczne generowanie kodu i natychmiastowa kompilacja siatki STL.
+3. **Skrypt wsadowy PowerShell** ([`tools/generator/generate_drum.ps1`](tools/generator/generate_drum.ps1)): automatyczne generowanie kodu i kompilacja siatki STL z wiersza poleceń.
 
 Szczegółowy podręcznik użytkownika: [`docs/GENERATOR.md`](docs/GENERATOR.md) / [`docs/GENERATOR.en.md`](docs/GENERATOR.en.md).
 Zobacz też: [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_NEW_DRUMS.md) dla projektowania własnych funkcji matematycznych.
@@ -153,7 +165,11 @@ Auxiliary part [`tools/openscad/mating_shaft_reference.scad`](tools/openscad/mat
 ### Custom Stitch Drum Generator
 
 The project includes an open generator suite allowing users to create custom stitch drums from a **catalog of 35+ verified stitches** (utility, stretch, decorative waves, modulated satin, meanders, and checkerboards):
-1. **Interactive Web Application** ([`tools/generator/index.html`](tools/generator/index.html)): browser-based visual configurator (HTML5 Canvas) featuring live simulated needle sewing paths on fabric.
+1. **🌐 Interactive Web Application ([https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)):**
+   - **Real-Time 3D Drum View (WebGL / Three.js):** Instant rendering without waiting 30–40 s for CSG compile in OpenSCAD.
+   - **Direct STL Export:** 1-click download of a watertight, 3D-printable `.stl` file in 0.01 seconds directly in your browser.
+   - **Live Thread Simulation:** Visual stitch representation on virtual fabric across 5 positions.
+   - **Offline Mode:** Simply double-click `Uruchom_Generator.bat` in the root folder.
 2. **OpenSCAD Customizer GUI** ([`tools/openscad/cam_generator.scad`](tools/openscad/cam_generator.scad)): native dropdown menus to pick stitches for each position without writing code.
 3. **PowerShell CLI Script** ([`tools/generator/generate_drum.ps1`](tools/generator/generate_drum.ps1)): command-line automation for code generation and one-step STL compilation.
 

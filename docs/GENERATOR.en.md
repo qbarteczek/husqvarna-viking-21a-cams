@@ -4,32 +4,37 @@ This project includes a universal, parametric stitch drum generation system feat
 
 ---
 
-## 3 Ways to Use the Generator
+## 🌐 Online Web Generator in Browser (Recommended for Everyone!)
 
-### Method 1: OpenSCAD Customizer GUI (No coding required)
+> [!TIP]
+> **No installation required (no OpenSCAD or technical tools needed)!**
+> Launch the generator directly in your browser:
+> 👉 **[https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)**
 
-The recommended native method for desktop users:
-1. Open free [OpenSCAD](https://openscad.org/) (version 2021.01 or newer).
-2. Open the file [`tools/openscad/cam_generator.scad`](../tools/openscad/cam_generator.scad).
-3. Enable the GUI parameter panel: **Window -> Customizer** (or uncheck *Hide Customizer*).
-4. The panel provides intuitive controls:
-   * **Drum_Letter:** enter the letter engraved on the front face (e.g. `E`, `M`, `S`),
-   * **Position_1 .. Position_5:** select any stitch from the dropdown menus (0–35),
-   * *(Note: position 5 is recommended to remain as standard zigzag `4`, serving as the resting baseline for cam installation).*
-5. Press **F6** (Render), then **F7** (Export as STL).
+The application runs 100% in your browser (desktop or mobile) and lets you design custom stitch drums and immediately download a 3D-printable `.stl` file in a fraction of a second.
 
 ---
 
-### Method 2: Visual Web Application in Browser (`tools/generator/index.html`)
+## 3 Ways to Use the Generator
 
-A 100% client-side web application suitable for local use or hosting on GitHub Pages:
-1. Open [`tools/generator/index.html`](../tools/generator/index.html) in any browser (Chrome, Edge, Firefox).
-2. Features:
-   * **Live Fabric Sewing Simulation:** Real-time multi-track needle path rendering on fabric canvas,
-   * **Visual 36-Stitch Catalog:** Filter by category (Utility, Decorative, Satin, Geometric) with live mini-wave cards,
-   * **Factory Presets:** Quick one-click setups for `Set A1`, `Set B1`, `Set C1`, `Set D`.
-3. Click any track slot 1–5, then click the desired stitch from the catalog.
-4. Click **"Download .SCAD File"** to save your custom drum model.
+### Method 1: Web Application Online / Local (Easiest for Sewing Machine Users)
+
+1. **How to open:**
+   * **Online (recommended):** Go to [https://qbarteczek.github.io/husqvarna-viking-21a-cams/](https://qbarteczek.github.io/husqvarna-viking-21a-cams/)
+   * **Offline:** Double-click `Uruchom_Generator.bat` in the project root directory (or open `index.html`).
+2. **Key Features:**
+   * **Real-time 3D Drum Model (WebGL / Three.js):** Rotate, zoom, and inspect the drum geometry with actual teeth profiles, grooves, and mounting keyway in real-time. No waiting 30–40 seconds for CSG renders as in OpenSCAD!
+   * **Live Fabric Simulation:** Visual thread stitching across all 5 positions.
+   * **Historical Presets:** 1-click loading for factory sets `A1`, `B1`, `C1`, and `D`.
+   * **36 Decorative Stitches:** Categorized, searchable library.
+3. **Customize:** Click any slot (1–5), then click any stitch card to assign it.
+4. **Direct 3D Print Export:**
+   * Click the green button **„💾 Pobierz gotowy plik STL do druku 3D”** to instantly download a clean, watertight (2-manifold) `.stl` file ready for slicing in Bambu Studio, PrusaSlicer, Cura, or OrcaSlicer!
+   * Optionally download the `.scad` script if you wish to archive the parametric code.
+
+---
+
+### Method 2: OpenSCAD Customizer GUI (Desktop Users)
 
 ---
 
