@@ -22,7 +22,7 @@ Simple: yes
      - Maximum dimensional accuracy for the cam tooth profile in the XY plane (belt/motor resolution instead of Z-layer steps).
      - A perfectly round central hole and keyway slot with no supports needed inside the hole.
      - The face disc's grooves run horizontally, creating no overhangs.
-     - The toothed section runs all the way to the very end of the barrel (no separate flange at the far end) — it just ends flat, with nothing extra to print on top.
+     - The rear flange with its conical chamfer (`end_collar()`) prints last, at the top — radius decreases as Z increases (a step down from the toothed section to `COLLAR_R`, then a taper to `COLLAR_TOP_R`), so no overhangs there either.
 
 2. **No supports required**:
    - Thanks to removing the artificial gap in front of the cams (red arrow from the user's annotations) and replacing the sharp radius jump between the neck and the main flange (11.5 → 17.03 mm) with a smooth taper (`NECK_TAPER_LEN` in `cam_common.scad`), the model can be printed **entirely without supports** — there's no longer any few-millimeter, single-layer overhang that used to need support under the main flange's edge.
@@ -57,7 +57,7 @@ Simple: yes
 Earlier iterations of this project went through several rounds of geometry corrections — full history in the Polish original and in `docs/DIMENSIONS.en.md`. Summary of the two biggest, most consequential fixes:
 
 - **Wrong mechanism model** (fixed early on): an initial version modeled the stitch profile as a narrow, shallow channel cut into an otherwise full-diameter cylinder. Comparison against the real appearance of set A showed the actual mechanism is different: the cylinder's edge itself, at each of the 5 positions, IS the stitch profile (visible teeth around the full circumference) — a classic edge/plate cam, not a hidden channel.
-- **Geometry based on a mismatched reference STL, corrected via direct photo analysis**: earlier versions derived the mounting geometry (between the engraved face and the toothed section) mainly from a third-party reference STL file (`V21ZZ3Z.stl`, thing:6018240). After a systematic review of all 46 photos of the user's physical drum, several structural differences emerged (see `docs/DIMENSIONS.en.md` for the full breakdown): the engraved disc is narrower than the toothed section, not the same width; there's a separate, wider intermediate flange that sets the maximum diameter; there's no separate small flange at the far end; the hole runs all the way through rather than being blind. The current geometry (`cam_common.scad`: `disc_grooved()`, `neck_section()`, `main_flange()`, `socket_cut()`) reflects the photo-based read, with the sharp radius jump between sections replaced by a smooth taper for printability.
+- **Geometry based on a mismatched reference STL, corrected via direct photo analysis**: earlier versions derived the mounting geometry (between the engraved face and the toothed section) mainly from a third-party reference STL file (`V21ZZ3Z.stl`, thing:6018240). After a systematic review of all 46 photos of the user's physical drum, several structural differences emerged (see `docs/DIMENSIONS.en.md` for the full breakdown): the engraved disc is narrower than the toothed section, not the same width; there's a separate, wider intermediate flange that sets the maximum diameter; the hole runs all the way through rather than being blind, but the keyway itself only extends from the main flange to the rear end, not through the face disc. The current geometry (`cam_common.scad`: `disc_grooved()`, `neck_section()`, `main_flange()`, `end_collar()`, `socket_cut()`) reflects the photo-based read, with the sharp radius jump between the neck and main flange replaced by a smooth taper for printability (an improvement over a version found to still have that sharp jump when compared against an independent analysis of the same photos — see `docs/DIMENSIONS.en.md`).
 
 ### Auxiliary part for verifying the fit
 
@@ -70,7 +70,7 @@ Earlier iterations of this project went through several rounds of geometry corre
 Reasons:
 - The central hole and keyway print as a clean, perpendicular-to-axis hole — no bridging.
 - The transition from the neck to the main flange is now a single, smooth taper (`NECK_TAPER_LEN`) — standard, trouble-free FDM geometry without supports.
-- The toothed section runs straight to the far end with no separate collar to print on top.
+- The rear flange's chamfer only narrows going up (never widens), so it prints cleanly on top with no supports.
 
 **Known geometric imperfection**: between adjacent stitch positions (which sit directly adjacent, with no separating collar), the edge radius can change fairly abruptly at the boundary between two positions, if one ends on a deep "valley" and the next starts at a shallow point. This is a local, single-layer effect, usually printable without supports, but it's worth inspecting these boundaries after printing and lightly cleaning them up if needed.
 

@@ -30,8 +30,9 @@ się rozjeżdżały z plikiem referencyjnym:
    [`references/husqvarna_photos_A/`](references/husqvarna_photos_A/)) — ujawniła, że
    szczegóły elementu mocującego między dużym kołnierzem a częścią zębatą różnią się od
    pliku STL repliki trzeciej strony: dysk z grawerunkiem jest WĘŻSZY niż część zębata, a to
-   osobny, szeroki kołnierzyk pośredni wyznacza maksymalną średnicę bębna; otwór na wałek
-   jest przelotowy (nie ślepy); nie ma osobnego, mniejszego kołnierza na dalekim końcu; na
+   osobny, szeroki kołnierzyk pośredni wyznacza maksymalną średnicę bębna; główny otwór na
+   wałek jest przelotowy (nie ślepy), ale wpust w nim sięga tylko od kołnierza głównego do
+   tyłu, nie przez cały bęben; na dalekim końcu jest osobny kołnierzyk ze ścięciem; na
    dysku czołowym są płaskie, poziome rowki (nie gwint śrubowy, jak wcześniej sądzono); czoło
    ma małe ścięcie. Pełna historia korekt: [`docs/DIMENSIONS.md`](docs/DIMENSIONS.md).
 
@@ -135,9 +136,10 @@ disagreed with the reference file:
    that the mounting feature between the large flange and the toothed section differs from
    the third-party replica STL file: the engraved disc is NARROWER than the toothed section,
    and it's a separate, wide intermediate flange that sets the drum's maximum diameter; the
-   shaft hole runs all the way through (not blind); there's no separate, smaller flange at the
-   far end; the face disc has plain, horizontal grooves (not a screw thread, as first assumed);
-   the face has a small chamfer. Full correction history:
+   main shaft hole runs all the way through (not blind), but its keyway only extends from the
+   main flange to the rear end, not through the whole drum; there's a separate, chamfered
+   flange at the far end; the face disc has plain, horizontal grooves (not a screw thread, as
+   first assumed); the face has a small chamfer. Full correction history:
    [`docs/DIMENSIONS.en.md`](docs/DIMENSIONS.en.md).
 
 Based on this, a parametric OpenSCAD generator was built with three ready-made, original

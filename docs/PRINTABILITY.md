@@ -21,7 +21,7 @@ Wynik `Simple: yes` gwarantuje, że bryły są w 100% zamkniętymi, poprawnymi r
      - Maksymalną dokładność wymiarową profilu zębów krzywki w płaszczyźnie XY (rozdzielczość pasów i silników osi XY zamiast skoków warstwy Z).
      - Idealnie okrągły otwór centralny oraz rowek wpustowy bez konieczności podpór wewnątrz otworu.
      - Rowki na dysku czołowym układają się poziomo, nie tworząc nawisów.
-     - Część zębata ciągnie się aż do samego końca walca (brak osobnego kołnierza na dalekim końcu) — kończy się płasko, bez dodatkowych przejść do wydrukowania na górze.
+     - Kołnierz tylny ze stożkową fazą (`end_collar()`) drukuje się na samej górze — promień maleje w miarę wzrostu Z (najpierw skok w dół z części zębatej do `COLLAR_R`, potem stożek do `COLLAR_TOP_R`), więc bez nawisów.
 
 2. **Druk bez podpór (No Supports Required)**:
    - Dzięki usunięciu sztucznej szyjki przed krzywkami (czerwona strzałka z adnotacji użytkownika) oraz zastąpieniu ostrego skoku promienia między szyjką a kołnierzem głównym (11.5 → 17.03 mm) gładkim stożkiem (`NECK_TAPER_LEN` w `cam_common.scad`), model można drukować **całkowicie bez podpór** — nie ma już żadnego pojedynczo-warstwowego nawisu rzędu kilku mm, który wcześniej wymagałby wsparcia pod krawędzią kołnierza głównego.

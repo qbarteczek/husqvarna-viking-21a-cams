@@ -10,12 +10,15 @@ LENGTH = 26.0;   // całkowita długość walca wzdłuż osi Z [mm]
 // EDGE_MIN_R - promień dna doliny ząbków. Poprawka użytkownika: poprzednia wartość
 // (12.00 mm, wychylenie 5.03 mm, ok. 29.5% promienia) nadal dawała zbyt głębokie,
 // ostro zakończone zęby względem tego, co widać na zdjęciach fizycznego bębna A
-// (subtelna, "szachownicowa" faktura, nie ostre kolce) — zmniejszono wychylenie
-// mniej więcej o połowę. To nadal szacunek proporcji ze zdjęć (brak twardej skali) -
-// do potwierdzenia wydrukiem próbnym i porównaniem z oryginałem.
+// (subtelna, "szachownicowa" faktura, nie ostre kolce). Ustawione na 14.20 mm
+// (wychylenie 2.83 mm) — na zdjęciach dno ząbków leży tuż poniżej krawędzi dysku
+// czołowego (DISC_R=14.5 mm), używanego tu jako bezpośrednia skala odniesienia w tym
+// samym kadrze, więc promień dna dolin powinien być tylko odrobinę mniejszy niż
+// DISC_R, nie znacząco mniejszy. To nadal szacunek proporcji ze zdjęć (brak twardej
+// skali) - do potwierdzenia wydrukiem próbnym i porównaniem z oryginałem.
 EDGE_MAX_R = 17.03;
-EDGE_MIN_R = 14.50;
-EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R; // 2.53 mm
+EDGE_MIN_R = 14.20;
+EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R; // 2.83 mm
 
 // 1. Dysk czołowy z 3 rowkami (Z = 0 .. DISC_LEN)
 // Na czole Z=0 znajduje się grawerunek litery oraz napisów HUSQVARNA SWEDEN.
@@ -43,26 +46,41 @@ NECK_TAPER_LEN  = 1.2;    // ostatnia część szyjki, stożek NECK_R -> FLANGE_
 FLANGE_R        = EDGE_MAX_R; // 17.03 mm
 FLANGE_LEN      = 2.0;
 
-// 4. Ścieżki krzywek (Z = 6.4 .. 26.0)
-// Zaczynają się BEZPOŚREDNIO przy kołnierzu głównym — brak zbędnej szyjki —
-// i ciągną się AŻ DO KOŃCA walca. Poprawka (przegląd Claude): zdjęcia dalekiego
-// końca bębna (IMG_20260909_081617, _081625 — strona przeciwna do grawerunku)
-// pokazują płaski koniec BEZPOŚREDNIO za częścią zębatą, bez osobnego,
-// mniejszego kołnierza montażowego — usunięto poprzedni end_collar().
+// 4. Ścieżki krzywek (Z = 6.4 .. 23.6)
+// Zaczynają się BEZPOŚREDNIO przy kołnierzu głównym — brak zbędnej szyjki.
 CAM_START_Z     = DISC_LEN + NECK_LEN + FLANGE_LEN; // 6.4 mm
 N_POS           = 5;
-CAM_TOTAL_LEN   = LENGTH - CAM_START_Z; // 19.6 mm
-BAND_LEN        = CAM_TOTAL_LEN / N_POS;             // 3.92 mm na pozycję
+COLLAR_LEN      = 2.4;
+CAM_TOTAL_LEN   = LENGTH - CAM_START_Z - COLLAR_LEN; // 17.2 mm
+BAND_LEN        = CAM_TOTAL_LEN / N_POS;             // 3.44 mm na pozycję
 
 function position_z(i) = CAM_START_Z + i * BAND_LEN;
 
+// 5. Kołnierz tylny (Z = 23.6 .. 26.0)
+// Ponowny przegląd zdjęć (po porównaniu z niezależną analizą drugiego agenta) —
+// zdjęcie 08_far_end_gear_collar_keyway.jpg pokazuje wyraźny, stopniowany
+// kołnierzyk dookoła otworu na dalekim końcu, osobny od pierścienia zębatego —
+// poprzednia wersja (przegląd Claude, oparta głównie na dwóch zdjęciach bocznych)
+// błędnie to pominęła jako "płaski koniec". Walec bazowy zakończony fazą stożkową
+// ułatwiającą osadzenie bębna na osi maszyny.
+COLLAR_R            = 11.5;   // Ø 23.0 mm
+COLLAR_TOP_R        = 10.3;   // Ø 20.6 mm
+COLLAR_CHAMFER_LEN  = 1.4;
+
 // 6. Otwór centralny przelotowy i wpust (rowek)
-// Poprawka użytkownika: otwór centralny I wpust są OBA przelotowe na wylot,
-// przez CAŁĄ długość bębna (Z = 0 .. 26 mm) — wcześniejsza wersja kończyła
-// wpust przed czołem (Z < 4.4 mm pełne), co było błędne.
+// Otwór centralny jest przelotowy na wylot (Z = 0 .. 26 mm).
+// Wpust (rowek pod klin) NIE przechodzi przez całą długość bębna — ponowna analiza
+// zdjęć (04_engraving_angle.jpg, 05_engraving_closeup.jpg: bore od strony czoła jest
+// czysty, bez wycięcia; IMG_20260909_081514.jpg, 08/09_far_end_*: wycięcie wyraźnie
+// widoczne od dalekiego końca) pokazuje, że wpust zaczyna się dopiero na wysokości
+// kołnierza głównego / początku krzywek (Z = KEY_START_Z = 6.4 mm) i biegnie do
+// końca (Z = 26.0). Czoło, szyjka i kołnierz główny (Z = 0 .. 6.4 mm) pozostają
+// pełną, nienaruszoną tuleją — także z powodów wytrzymałościowych: przy R=11.5 mm
+// w szyjce, wpust sięgający głębiej zostawiłby tam zbyt cienką ściankę.
 SOCKET_R            = 7.8;    // Ø 15.6 mm (przelotowy na wylot)
 SOCKET_KEY_WIDTH    = 4.5;    // szerokość rowka wpustowego
 SOCKET_KEY_DEPTH    = 2.2;    // głębokość wcięcia w ściankę (promień zewn. wpustu = 10.0 mm)
+KEY_START_Z         = 6.4;    // początek wpustu w osi Z [mm] (czoło+szyjka+kołnierz Z=0..6.4 pozostają pełne)
 
 // --- Podstawowe kształty fal, zwracają wartości znormalizowane -1..1 ---
 
@@ -165,6 +183,16 @@ module main_flange() {
         cylinder(h=FLANGE_LEN, r=FLANGE_R, $fn=96);
 }
 
+// 5. Kołnierz tylny ze stożkową fazą montażową (patrz uwaga przy COLLAR_* wyżej)
+module end_collar() {
+    collar_cyl_h = COLLAR_LEN - COLLAR_CHAMFER_LEN;
+    translate([0, 0, LENGTH - COLLAR_LEN]) {
+        cylinder(h=collar_cyl_h, r=COLLAR_R, $fn=96);
+        translate([0, 0, collar_cyl_h])
+            cylinder(h=COLLAR_CHAMFER_LEN, r1=COLLAR_R, r2=COLLAR_TOP_R, $fn=96);
+    }
+}
+
 // Grawerunek na czole Z=0 wzorowany na zdjęciach fizycznego bębna A
 module arc_text(str, radius, center_angle, angle_span, size, depth) {
     n = len(str);
@@ -198,15 +226,16 @@ module cam_label_cut(letter) {
     }
 }
 
-// Otwór centralny i wpust — oba przelotowe na wylot przez całą długość bębna.
+// Otwór przelotowy z wpustem, który sięga od KEY_START_Z do końca (patrz uwaga
+// przy KEY_START_Z wyżej) — czoło/szyjka/kołnierz główny pozostają pełną tuleją.
 module socket_cut() {
     union() {
         // Otwór centralny przelotowy na wylot
         translate([0, 0, -1])
             cylinder(h=LENGTH + 2, r=SOCKET_R, $fn=64);
-        // Wpust (rowek pod klin) przelotowy na wylot przez całą długość
-        translate([SOCKET_R - 0.5, -SOCKET_KEY_WIDTH/2, -1])
-            cube([SOCKET_KEY_DEPTH + 0.5, SOCKET_KEY_WIDTH, LENGTH + 2]);
+        // Wpust (rowek pod klin) wycięty tylko od KEY_START_Z do końca tylnego Z=LENGTH
+        translate([SOCKET_R - 0.5, -SOCKET_KEY_WIDTH/2, KEY_START_Z])
+            cube([SOCKET_KEY_DEPTH + 0.5, SOCKET_KEY_WIDTH, LENGTH - KEY_START_Z + 1]);
     }
 }
 
@@ -219,6 +248,7 @@ module cam_solid(profile_fns) {
             for (i = [0:N_POS-1])
                 translate([0, 0, position_z(i)])
                     tooth_band(profile_fns[i], BAND_LEN);
+            end_collar();
         }
         socket_cut();
     }
