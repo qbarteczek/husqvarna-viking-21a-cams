@@ -3,61 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Generator Bębnów Ściegowych Husqvarna 21E / Stitch Drum Generator</title>
+  <title>Husqvarna 21E / 21A — Studio Projektowania Bębnów Ściegowych</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Three.js do realistycznej wizualizacji 3D bębna -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
   <style>
     :root {
-      --bg-base: #0b0f19;
-      --bg-surface: #131b2e;
-      --bg-surface-elevated: #1c2640;
-      --bg-card: rgba(28, 38, 64, 0.7);
+      --bg-base: #090d16;
+      --bg-surface: #111827;
+      --bg-surface-elevated: #1a2337;
+      --bg-card: rgba(26, 35, 55, 0.75);
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-accent: rgba(56, 189, 248, 0.3);
-      --text-main: #f1f5f9;
+      --border-accent: rgba(56, 189, 248, 0.35);
+      --border-active: #38bdf8;
+      --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --accent-cyan: #38bdf8;
       --accent-emerald: #10b981;
       --accent-amber: #f59e0b;
       --accent-purple: #a855f7;
       --accent-rose: #f43f5e;
-      --thread-color: #38bdf8;
-      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.15);
+      --shadow-glow: 0 0 25px rgba(56, 189, 248, 0.18);
+      --slot-active-glow: 0 0 20px rgba(56, 189, 248, 0.4);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Outfit', -apple-system, sans-serif;
-      background: radial-gradient(circle at top right, #172554, #0b0f19 60%);
+      background: radial-gradient(circle at 85% 10%, #1e293b 0%, #090d16 55%);
       color: var(--text-main);
       min-height: 100vh;
       line-height: 1.5;
-      padding-bottom: 4rem;
+      padding-bottom: 5rem;
     }
 
+    /* --- Nagłówek --- */
     header {
       border-bottom: 1px solid var(--border-subtle);
-      background: rgba(11, 15, 25, 0.85);
-      backdrop-filter: blur(12px);
+      background: rgba(9, 13, 22, 0.88);
+      backdrop-filter: blur(14px);
       position: sticky;
       top: 0;
-      z-index: 50;
-      padding: 1rem 2rem;
+      z-index: 100;
+      padding: 0.85rem 2rem;
     }
 
     .header-container {
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 1.5rem;
+      flex-wrap: wrap;
     }
 
     .brand {
@@ -67,24 +70,24 @@
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0284c7, #8b5cf6);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 1.3rem;
+      font-weight: 800;
+      font-size: 1.4rem;
       color: #fff;
-      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+      box-shadow: 0 4px 16px rgba(56, 189, 248, 0.35);
     }
 
     .brand-title h1 {
       font-size: 1.25rem;
       font-weight: 700;
       letter-spacing: -0.02em;
-      background: linear-gradient(90deg, #fff, #93c5fd);
+      background: linear-gradient(90deg, #ffffff, #93c5fd);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -96,8 +99,9 @@
 
     .header-actions {
       display: flex;
-      gap: 0.75rem;
       align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
     .btn {
@@ -105,12 +109,12 @@
       align-items: center;
       gap: 0.5rem;
       padding: 0.55rem 1.1rem;
-      font-size: 0.85rem;
+      border-radius: 9px;
+      font-size: 0.875rem;
       font-weight: 600;
-      border-radius: 8px;
-      border: 1px solid transparent;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid transparent;
       text-decoration: none;
       font-family: inherit;
     }
@@ -118,237 +122,315 @@
     .btn-primary {
       background: linear-gradient(135deg, #0284c7, #2563eb);
       color: #fff;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
     }
     .btn-primary:hover {
-      background: linear-gradient(135deg, #0369a1, #1d4ed8);
+      background: linear-gradient(135deg, #0ea5e9, #3b82f6);
       transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
     }
 
     .btn-secondary {
-      background: var(--bg-surface-elevated);
-      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.06);
       border-color: var(--border-subtle);
+      color: var(--text-main);
     }
     .btn-secondary:hover {
-      background: #273556;
-      border-color: var(--accent-cyan);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--border-accent);
+      transform: translateY(-1px);
     }
 
-    .main-container {
-      max-width: 1400px;
-      margin: 2rem auto;
+    /* --- Główny kontener --- */
+    main {
+      max-width: 1440px;
+      margin: 1.5rem auto;
       padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    /* --- Pasek Presetów i Oznaczenia Bębna --- */
+    .preset-toolbar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .preset-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .preset-group-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.3rem;
+    }
+
+    .preset-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .preset-pill:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--border-accent);
+      color: #fff;
+    }
+    .preset-pill.active {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.35), rgba(139, 92, 246, 0.35));
+      border-color: var(--accent-cyan);
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.25);
+    }
+
+    .drum-letter-box {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(0,0,0,0.25);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9px;
+      border: 1px solid var(--border-subtle);
+    }
+    .drum-letter-box label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .drum-letter-input {
+      width: 48px;
+      text-align: center;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-accent);
+      color: var(--accent-cyan);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 6px;
+      padding: 0.2rem 0.4rem;
+      outline: none;
+    }
+
+    /* --- Gniazda 5 Pozycji Bębna --- */
+    .tracks-deck {
       display: grid;
-      grid-template-columns: 460px 1fr;
-      gap: 2rem;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
     }
-
     @media (max-width: 1080px) {
-      .main-container {
-        grid-template-columns: 1fr;
-      }
+      .tracks-deck { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .tracks-deck { grid-template-columns: 1fr; }
     }
 
-    /* Left Sidebar: Drum Builder */
-    .builder-panel {
+    .track-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1rem;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .track-card:hover {
+      border-color: var(--border-accent);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+    }
+    .track-card.active {
+      border-color: var(--accent-cyan);
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.12) 0%, var(--bg-surface) 100%);
+      box-shadow: var(--slot-active-glow);
+    }
+
+    .track-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .track-pos-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.08);
+      color: var(--text-muted);
+    }
+    .track-card.active .track-pos-badge {
+      background: var(--accent-cyan);
+      color: #0b0f19;
+    }
+    .track-idle-badge {
+      font-size: 0.65rem;
+      color: var(--accent-amber);
+      font-weight: 600;
+      background: rgba(245, 158, 11, 0.15);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .track-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .track-category {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .track-wave-preview {
+      height: 48px;
+      background: rgba(0, 0, 0, 0.35);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      width: 100%;
+    }
+
+    /* --- Wizualizatory Środkowe (Tkanina + 3D) --- */
+    .visualizer-section {
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 1024px) {
+      .visualizer-section { grid-template-columns: 1fr; }
+    }
+
+    .panel-box {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 16px;
-      padding: 1.5rem;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      position: sticky;
-      top: 5.5rem;
-      height: fit-content;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
     }
 
     .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .panel-header h2 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .presets-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .preset-pill {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      padding: 0.35rem 0.75rem;
-      font-size: 0.78rem;
-      border-radius: 9999px;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.15s ease;
-    }
-    .preset-pill:hover, .preset-pill.active {
-      color: #fff;
-      background: #2563eb;
-      border-color: #3b82f6;
-    }
-
-    .drum-meta-row {
-      display: flex;
-      align-items: center;
       gap: 1rem;
-      background: var(--bg-surface-elevated);
-      padding: 0.85rem 1rem;
-      border-radius: 12px;
-      border: 1px solid var(--border-subtle);
     }
-
-    .drum-meta-row label {
-      font-size: 0.85rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      flex: 1;
-    }
-
-    .drum-meta-row input {
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.1rem;
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      text-align: center;
-      padding: 0.4rem 0.75rem;
-      border-radius: 8px;
-      width: 70px;
-      text-transform: uppercase;
     }
-    .drum-meta-row input:focus {
-      outline: none;
-      border-color: var(--accent-cyan);
+    .panel-title span.icon {
+      font-size: 1.2rem;
     }
 
-    /* Track Slots (Positions 1 to 5) */
-    .tracks-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .track-slot {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
+    /* Wizualizacja tkaniny */
+    .fabric-canvas-container {
+      background: #0f172a;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 12px;
-      padding: 0.75rem 1rem;
-      display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      cursor: pointer;
-      transition: all 0.15s ease;
       position: relative;
-    }
-
-    .track-slot:hover {
-      border-color: var(--accent-cyan);
-      background: rgba(37, 99, 235, 0.12);
-    }
-
-    .track-slot.active {
-      border-color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.12);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.15);
-    }
-
-    .track-badge {
-      width: 28px;
-      height: 28px;
-      background: var(--bg-surface-elevated);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      flex-shrink: 0;
-    }
-
-    .track-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .track-name {
-      font-size: 0.85rem;
-      font-weight: 600;
-      white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
     }
-
-    .track-cat {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    .track-mini-canvas {
-      width: 80px;
-      height: 32px;
-      background: #070a12;
-      border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.05);
-      flex-shrink: 0;
-    }
-
-    /* Right Column: Visualizer + Catalog */
-    .content-column {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    .visualizer-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    .visualizer-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .fabric-simulation-wrapper {
-      background: #090e18;
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      overflow: hidden;
-      position: relative;
-    }
-
     #fabricCanvas {
+      display: block;
       width: 100%;
-      height: 220px;
+      height: 380px;
+    }
+
+    /* Wizualizacja 3D bębna */
+    .three-canvas-container {
+      background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      position: relative;
+      height: 380px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    #threeCanvas {
+      width: 100%;
+      height: 100%;
       display: block;
     }
+    .three-controls-hint {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(9, 13, 22, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border: 1px solid var(--border-subtle);
+      pointer-events: none;
+    }
+    .three-reset-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(9, 13, 22, 0.75);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.35rem 0.7rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      transition: all 0.2s;
+    }
+    .three-reset-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-cyan);
+    }
 
-    /* Catalog Section */
+    /* --- Dolny Panel: Katalog Ściegów --- */
     .catalog-section {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: 16px;
       padding: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
     }
 
     .catalog-filters {
@@ -356,363 +438,373 @@
       justify-content: space-between;
       align-items: center;
       gap: 1rem;
-      margin-bottom: 1.5rem;
       flex-wrap: wrap;
     }
 
-    .cat-buttons {
+    .filter-pills {
       display: flex;
       gap: 0.5rem;
       flex-wrap: wrap;
     }
-
-    .cat-btn {
-      background: var(--bg-surface-elevated);
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
       color: var(--text-muted);
-      border: 1px solid var(--border-subtle);
       padding: 0.4rem 0.85rem;
-      font-size: 0.8rem;
-      border-radius: 8px;
+      border-radius: 20px;
+      font-size: 0.825rem;
+      font-weight: 500;
       cursor: pointer;
-      font-family: inherit;
+      transition: all 0.2s;
     }
-    .cat-btn:hover, .cat-btn.active {
+    .filter-pill:hover, .filter-pill.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--border-accent);
       color: #fff;
-      background: #2563eb;
-      border-color: #3b82f6;
+    }
+    .filter-pill.active {
+      background: var(--accent-cyan);
+      color: #0b0f19;
+      font-weight: 700;
     }
 
+    .search-box {
+      position: relative;
+      min-width: 260px;
+    }
     .search-input {
+      width: 100%;
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
+      border-radius: 9px;
+      padding: 0.5rem 1rem 0.5rem 2.2rem;
       color: #fff;
-      padding: 0.4rem 0.85rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      width: 200px;
       font-family: inherit;
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s;
     }
     .search-input:focus {
-      outline: none;
       border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 0.9rem;
     }
 
     .catalog-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
       gap: 1rem;
-      max-height: 600px;
+      max-height: 520px;
       overflow-y: auto;
       padding-right: 0.5rem;
     }
 
     .stitch-card {
-      background: var(--bg-surface-elevated);
+      background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 12px;
       padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
+      gap: 0.6rem;
     }
-
     .stitch-card:hover {
-      border-color: var(--accent-cyan);
+      border-color: var(--border-accent);
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
     }
 
-    .stitch-card-header {
+    .stitch-card-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       gap: 0.5rem;
     }
-
-    .stitch-card-title {
-      font-size: 0.85rem;
+    .stitch-title {
+      font-size: 0.925rem;
       font-weight: 600;
       color: #fff;
     }
-
     .badge-tag {
-      font-size: 0.65rem;
-      font-weight: 600;
+      font-size: 0.7rem;
       padding: 0.15rem 0.45rem;
       border-radius: 4px;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.03em;
     }
-    .badge-utility { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); }
-    .badge-decorative { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
-    .badge-satin { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
-    .badge-geometric { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .badge-utility { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+    .badge-wave { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-satin { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-geometric { background: rgba(168, 85, 247, 0.15); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3); }
 
-    .stitch-card canvas {
+    .stitch-wave-canvas {
+      height: 44px;
       width: 100%;
-      height: 56px;
-      background: #080c16;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.05);
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+      display: block;
     }
-
     .stitch-card-desc {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-
-    /* Export Modal & Code Box */
-    .code-export-box {
-      background: #080c16;
+    .stitch-add-btn {
+      margin-top: auto;
+      background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-top: 1rem;
+      color: var(--text-main);
+      padding: 0.4rem;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .stitch-card:hover .stitch-add-btn {
+      background: var(--accent-cyan);
+      color: #0b0f19;
+      border-color: var(--accent-cyan);
     }
 
-    .code-export-box pre {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      color: #93c5fd;
+    /* --- Sekcja Kodu i Eksportu --- */
+    .export-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .code-preview-container {
+      background: #060910;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.2rem;
       overflow-x: auto;
-      max-height: 160px;
+    }
+    pre code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.825rem;
+      color: #cbd5e1;
+      line-height: 1.6;
     }
 
-    .toast {
+    /* Toast */
+    #toast {
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      background: #10b981;
+      background: #0284c7;
       color: #fff;
       padding: 0.75rem 1.5rem;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 0.85rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.4);
       display: none;
-      z-index: 100;
-      animation: fadeIn 0.2s ease;
+      z-index: 1000;
+      animation: slideUp 0.3s ease-out;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Nagłówek -->
   <header>
     <div class="header-container">
       <div class="brand">
         <div class="brand-logo">H</div>
         <div class="brand-title">
-          <h1>Husqvarna 21E Stitch Drum Generator</h1>
-          <p>Parametryczny kreator bębnów ściegowych do druku 3D (FDM / SLA)</p>
+          <h1>Husqvarna 21E / 21A — Studio Bębnów Ściegowych</h1>
+          <p>Interaktywny wizualizator przeszycia i generator bębnów do druku 3D</p>
         </div>
       </div>
       <div class="header-actions">
-        <a href="https://github.com/qbarteczek/husqvarna-viking-21a-cams" target="_blank" class="btn btn-secondary">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-          GitHub
-        </a>
-        <button id="downloadScadBtn" class="btn btn-primary">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          Pobierz plik .SCAD
-        </button>
+        <button class="btn btn-secondary" id="copyCodeBtn">📋 Kopiuj kod SCAD</button>
+        <button class="btn btn-primary" id="downloadScadBtn">💾 Pobierz cam_<span id="btnLetter">E</span>.scad</button>
+        <button class="btn btn-secondary" id="downloadStandaloneBtn" title="Plik SCAD działający bez instalacji dodatkowych bibliotek">📦 Plik Samodzielny (Standalone)</button>
       </div>
     </div>
   </header>
 
-  <main class="main-container">
+  <main>
+    <!-- Pasek wyboru wzorców (Presetów) -->
+    <div class="preset-toolbar">
+      <div class="preset-group">
+        <span class="preset-group-title">Wzorce fabryczne i gotowe zestawy:</span>
+        <button class="preset-pill" onclick="applyPreset('A1')">⭐ A1 (Fabryczny Husqvarna 21E)</button>
+        <button class="preset-pill" onclick="applyPreset('B1')">🌊 B1 (Ozdobne fale i romby)</button>
+        <button class="preset-pill" onclick="applyPreset('C1')">🏛️ C1 (Meandry geometryczne)</button>
+        <button class="preset-pill" onclick="applyPreset('D')">🔧 D (Użytkowy specjalny)</button>
+        <button class="preset-pill active" onclick="applyPreset('CUSTOM')">✨ Własna kompozycja</button>
+      </div>
+      <div class="drum-letter-box">
+        <label for="drumLetterInput">Litera na czole bębna:</label>
+        <input type="text" id="drumLetterInput" class="drum-letter-input" maxlength="2" value="E" oninput="updateDrumLetter(this.value)">
+      </div>
+    </div>
 
-    <!-- Left Column: Drum Builder -->
-    <aside class="builder-panel">
+    <!-- 5 Pozycji Bębna (Ścieżki na wałku) -->
+    <div class="tracks-deck" id="tracksDeck">
+      <!-- Generowane dynamicznie w JS -->
+    </div>
+
+    <!-- Środkowe panele: Symulator tkaniny + Bęben 3D -->
+    <div class="visualizer-section">
+      <!-- Panel 1: Tkanina / Ścieg haftowany -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="icon">🧵</span>
+            <span>Wirtualny haft na tkaninie (Ściegi 1 – 5)</span>
+          </div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Symulacja przeszycia igłą maszyny</span>
+        </div>
+        <div class="fabric-canvas-container">
+          <canvas id="fabricCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Panel 2: Obiekt 3D Bębna (Three.js) -->
+      <div class="panel-box">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="icon">🧊</span>
+            <span>Interaktywny Model 3D Bębna Ściegowego</span>
+          </div>
+          <button class="three-reset-btn" onclick="resetThreeCamera()">🔄 Reset kamery</button>
+        </div>
+        <div class="three-canvas-container" id="threeContainer">
+          <!-- Canvas WebGL Three.js -->
+          <div class="three-controls-hint">🖱️ Przeciągnij lewym przyciskiem myszy, aby obrócić • Kółko myszy = Zoom</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Katalog ściegów ozdobnych (Dziesiątki ściegów do wyboru) -->
+    <div class="catalog-section">
+      <div class="catalog-filters">
+        <div class="filter-pills" id="categoryFilters">
+          <button class="filter-pill active" onclick="filterCatalog('all')">Wszystkie ściegi (36)</button>
+          <button class="filter-pill" onclick="filterCatalog('utility')">Użytkowe i elastyczne</button>
+          <button class="filter-pill" onclick="filterCatalog('wave')">Faliste i organiczne</button>
+          <button class="filter-pill" onclick="filterCatalog('satin')">Satynowe modulowane</button>
+          <button class="filter-pill" onclick="filterCatalog('geometric')">Geometryczne i meandrowe</button>
+        </div>
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="Szukaj ściegu (np. kryty, romb, piła)..." oninput="searchCatalog(this.value)">
+        </div>
+      </div>
+
+      <div class="catalog-grid" id="catalogGrid">
+        <!-- Karty ściegów generowane w JS -->
+      </div>
+    </div>
+
+    <!-- Podgląd Kodu OpenSCAD -->
+    <div class="export-section">
       <div class="panel-header">
-        <h2>Konfigurator Bębna</h2>
-        <span style="font-size:0.75rem; color:var(--text-muted);">5 pozycji ściegów</span>
+        <div class="panel-title">
+          <span class="icon">📐</span>
+          <span>Wygenerowany kod OpenSCAD (w 100% zgodny ze standardem projektu)</span>
+        </div>
+        <span style="font-size:0.8rem; color:var(--text-muted);">Modele cam_A, cam_B, cam_C, cam_D</span>
       </div>
-
-      <!-- Presets -->
-      <div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Fabryczne Presety</div>
-        <div class="presets-row">
-          <button class="preset-pill" onclick="applyPreset('A1')">Zestaw A1 (Fabryczny)</button>
-          <button class="preset-pill" onclick="applyPreset('B1')">Zestaw B1 (Ozdobny)</button>
-          <button class="preset-pill" onclick="applyPreset('C1')">Zestaw C1 (Meandry)</button>
-          <button class="preset-pill" onclick="applyPreset('D')">Zestaw D (Specjalny)</button>
-        </div>
+      <div class="code-preview-container">
+        <pre><code id="scadCodePreview"></code></pre>
       </div>
-
-      <!-- Drum Meta: Letter -->
-      <div class="drum-meta-row">
-        <label for="drumLetterInput">Litera bębna (wytłoczenie na czole Z=0):</label>
-        <input type="text" id="drumLetterInput" value="E" maxlength="2" oninput="updateDrumLetter(this.value)">
-      </div>
-
-      <!-- 5 Track Slots -->
-      <div class="tracks-list">
-        <div class="track-slot active" id="slot-0" onclick="selectActiveSlot(0)">
-          <div class="track-badge">1</div>
-          <div class="track-info">
-            <div class="track-name" id="slot-name-0">Ścieg kryty standardowy</div>
-            <div class="track-cat" id="slot-cat-0">Użytkowy · Poz. 1 (blisko czoła)</div>
-          </div>
-          <canvas class="track-mini-canvas" id="slot-canvas-0"></canvas>
-        </div>
-
-        <div class="track-slot" id="slot-1" onclick="selectActiveSlot(1)">
-          <div class="track-badge">2</div>
-          <div class="track-info">
-            <div class="track-name" id="slot-name-1">Serpentyna szeroka</div>
-            <div class="track-cat" id="slot-cat-1">Ozdobny · Poz. 2</div>
-          </div>
-          <canvas class="track-mini-canvas" id="slot-canvas-1"></canvas>
-        </div>
-
-        <div class="track-slot" id="slot-2" onclick="selectActiveSlot(2)">
-          <div class="track-badge">3</div>
-          <div class="track-info">
-            <div class="track-name" id="slot-name-2">Satynowy romb liść</div>
-            <div class="track-cat" id="slot-cat-2">Satynowy · Poz. 3</div>
-          </div>
-          <canvas class="track-mini-canvas" id="slot-canvas-2"></canvas>
-        </div>
-
-        <div class="track-slot" id="slot-3" onclick="selectActiveSlot(3)">
-          <div class="track-badge">4</div>
-          <div class="track-info">
-            <div class="track-name" id="slot-name-3">Grecki klucz meander</div>
-            <div class="track-cat" id="slot-cat-3">Geometryczny · Poz. 4</div>
-          </div>
-          <canvas class="track-mini-canvas" id="slot-canvas-3"></canvas>
-        </div>
-
-        <div class="track-slot" id="slot-4" onclick="selectActiveSlot(4)">
-          <div class="track-badge">5</div>
-          <div class="track-info">
-            <div class="track-name" id="slot-name-4">Zygzak referencyjny</div>
-            <div class="track-cat" id="slot-cat-4">Baza mechanizmu · Poz. 5 (stan zerowy)</div>
-          </div>
-          <canvas class="track-mini-canvas" id="slot-canvas-4"></canvas>
-        </div>
-      </div>
-
-      <!-- Live SCAD Code Preview -->
-      <div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:0.4rem; font-weight:600; text-transform:uppercase;">Wygenerowany kod OpenSCAD</div>
-        <div class="code-export-box">
-          <pre id="scadCodePreview"></pre>
-        </div>
-      </div>
-    </aside>
-
-    <!-- Right Column: Visualizer & Catalog -->
-    <div class="content-column">
-
-      <!-- Real-time Fabric Stitch Simulation -->
-      <section class="visualizer-card">
-        <div class="visualizer-header">
-          <div>
-            <h2 style="font-size:1.1rem; font-weight:600;">Symulacja Przeszycia na Tkaninie</h2>
-            <p style="font-size:0.78rem; color:var(--text-muted);">Realny tor igły dla wybranego bębna na 5 pozycjach dźwigni maszyny</p>
-          </div>
-          <button class="btn btn-secondary" onclick="redrawFabric()" style="padding:0.35rem 0.75rem; font-size:0.75rem;">
-            Odśwież podgląd
-          </button>
-        </div>
-
-        <div class="fabric-simulation-wrapper">
-          <canvas id="fabricCanvas" width="900" height="240"></canvas>
-        </div>
-      </section>
-
-      <!-- Stitch Catalog -->
-      <section class="catalog-section">
-        <div class="catalog-filters">
-          <div>
-            <h2 style="font-size:1.1rem; font-weight:600;">Katalog Ściegów</h2>
-            <p style="font-size:0.78rem; color:var(--text-muted);">Kliknij dowolny ścieg, aby przypisać go do aktywnej pozycji <span id="activeSlotIndicator" style="color:var(--accent-cyan); font-weight:700;">1</span></p>
-          </div>
-
-          <div style="display:flex; gap:0.75rem; align-items:center; flex-wrap:wrap;">
-            <div class="cat-buttons">
-              <button class="cat-btn active" onclick="filterCatalog('all', this)">Wszystkie (36)</button>
-              <button class="cat-btn" onclick="filterCatalog('utility', this)">Użytkowe</button>
-              <button class="cat-btn" onclick="filterCatalog('decorative', this)">Ozdobne</button>
-              <button class="cat-btn" onclick="filterCatalog('satin', this)">Satynowe</button>
-              <button class="cat-btn" onclick="filterCatalog('geometric', this)">Geometryczne</button>
-            </div>
-            <input type="text" class="search-input" id="catalogSearch" placeholder="Szukaj ściegu..." oninput="searchCatalog(this.value)">
-          </div>
-        </div>
-
-        <div class="catalog-grid" id="catalogGrid"></div>
-      </section>
-
     </div>
   </main>
 
-  <div class="toast" id="toast">Kod skopiowany do schowka!</div>
+  <div id="toast">Gotowe!</div>
 
   <script>
-    // --- STITCH DATABASE (36 STITCHES) ---
+    // ==============================================================================
+    // BAZA DANYCH 36 ŚCIEGÓW HUSQVARNA 21E
+    // Każdy ścieg posiada unikalne ID, wzór matematyczny, kategorię i opis.
+    // ==============================================================================
     const STITCHES = [
-      { id: 0, key: "straight", name_pl: "Ścieg prosty zerowy", name_en: "Straight Stitch", category: "utility", desc: "Brak wychylenia igły (ścieg prosty).", fn: (a) => -1.0 },
-      { id: 1, key: "blind_hem_std", name_pl: "Ścieg kryty standard (A1)", name_en: "Blind Hem Std", category: "utility", desc: "4-5 ściegów prostych + skok w prawo.", fn: (a) => { let t = (a*3/360) % 1; return t < 0.2 ? Math.sin(Math.PI*t/0.2)*2 - 1 : -1; } },
-      { id: 2, key: "blind_hem_dense", name_pl: "Ścieg kryty gęsty", name_en: "Blind Hem Dense", category: "utility", desc: "Ścieg kryty 4 cykle na obrót.", fn: (a) => { let t = (a*4/360) % 1; return t < 0.16 ? Math.sin(Math.PI*t/0.16)*2 - 1 : -1; } },
-      { id: 3, key: "blind_hem_wide", name_pl: "Ścieg kryty szeroki", name_en: "Blind Hem Wide", category: "utility", desc: "Poszerzone wkłucie brzegowe.", fn: (a) => { let t = (a*3/360) % 1; return t < 0.28 ? Math.sin(Math.PI*t/0.28)*2 - 1 : -1; } },
-      { id: 4, key: "zigzag_std", name_pl: "Zygzak standardowy (A1/B1/C1)", name_en: "Standard Zigzag Ref", category: "utility", desc: "9 zębów trapezowych, stan spoczynkowy.", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
-      { id: 5, key: "zigzag_wide", name_pl: "Zygzak szeroki (A1)", name_en: "Wide Zigzag", category: "utility", desc: "Wydłużony skok do obrzucania krawędzi.", fn: (a) => trapWave(a, 6, 0.30) * 0.95 },
-      { id: 6, key: "zigzag_narrow", name_pl: "Zygzak wąski", name_en: "Narrow Zigzag", category: "utility", desc: "Drobny zygzak o zredukowanej amplitudzie (40%).", fn: (a) => trapWave(a, 10, 0.25) * 0.40 },
-      { id: 7, key: "zigzag_satin", name_pl: "Zygzak gęsty satynowy (A1)", name_en: "Satin Dense Zigzag", category: "utility", desc: "18 zębów na obrót, gęste krycie.", fn: (a) => trapWave(a, 18, 0.20) * 0.85 },
-      { id: 8, key: "three_step_elastic", name_pl: "Trójskok elastyczny (A1)", name_en: "3-Step Elastic", category: "utility", desc: "3 wkłucia w lewo, 3 w prawo (dzianiny).", fn: (a) => { let step = Math.floor(((a*3/360)%1)*6); return [-0.9, -0.3, 0.3, 0.9, 0.3, -0.3][step] || 0; } },
-      { id: 9, key: "four_step_elastic", name_pl: "Zygzak 4-stopniowy", name_en: "4-Step Super Stretch", category: "utility", desc: "4 stopnie w lewo i 4 w prawo.", fn: (a) => { let s = Math.floor(((a*3/360)%1)*8); return s < 4 ? -0.9 + s*0.6 : 0.9 - (s-4)*0.6; } },
-      { id: 10, key: "overlock_open", name_pl: "Owerlok otwarty", name_en: "Open Overlock", category: "utility", desc: "Fala podkładowa ze skokiem brzegowym.", fn: (a) => Math.sin(a*4*Math.PI/180)*0.6 + (((a*4/360)%1)<0.2 ? 0.4 : -0.4) },
-      { id: 11, key: "overlock_closed", name_pl: "Owerlok zamknięty", name_en: "Closed Overlock", category: "utility", desc: "Podwójna częstotliwość wzmacniająca brzeg.", fn: (a) => (Math.sin(a*6*Math.PI/180) + 0.3*Math.sin(a*18*Math.PI/180))/1.3 * 0.85 },
-      { id: 12, key: "triple_stretch", name_pl: "Potrójny prosty elastyczny", name_en: "Triple Stretch", category: "utility", desc: "Szybkie mikro-oscylacje igły.", fn: (a) => triWave(a, 18) * 0.35 },
-      { id: 13, key: "ladder", name_pl: "Ścieg drabinkowy", name_en: "Ladder Stitch", category: "utility", desc: "Równoległe szyny z natychmiastowym przeskokiem.", fn: (a) => Math.sign(Math.sin(a*6*Math.PI/180)) * 0.85 },
-      { id: 14, key: "serpentine_wide", name_pl: "Serpentyna szeroka (B1)", name_en: "Wide Serpentine", category: "decorative", desc: "Gładka sinusoida 3 cykle na obrót.", fn: (a) => Math.sin(a*3*Math.PI/180) * 0.90 },
-      { id: 15, key: "serpentine_med", name_pl: "Serpentyna średnia", name_en: "Medium Serpentine", category: "decorative", desc: "Fala sinusoidalna 4 cykle na obrót.", fn: (a) => Math.sin(a*4*Math.PI/180) * 0.85 },
-      { id: 16, key: "serpentine_dense", name_pl: "Serpentyna gęsta", name_en: "Dense Serpentine", category: "decorative", desc: "Fala sinusoidalna 6 cykli na obrót.", fn: (a) => Math.sin(a*6*Math.PI/180) * 0.80 },
-      { id: 17, key: "scallop_wave", name_pl: "Muszelka łuskowa", name_en: "Scallop Shell", category: "decorative", desc: "Łagodny wznios i ostre ścięcie krawędzi.", fn: (a) => sawWave(a, 5, 0.85) * 0.90 },
-      { id: 18, key: "double_lobe", name_pl: "Podwójna pętla", name_en: "Double Lobe Wave", category: "decorative", desc: "Fala z harmonicznym wybrzuszeniem.", fn: (a) => (Math.sin(a*5*Math.PI/180) + 0.35*Math.sin(a*10*Math.PI/180))/1.35 * 0.90 },
-      { id: 19, key: "feather", name_pl: "Piórko gałązkowe", name_en: "Feather Stitch", category: "decorative", desc: "Drobne gałązki połączone z szerokim ruchem.", fn: (a) => { let t = (a*6/360)%1; return t < 0.75 ? 0.5*triWave(a, 54) : Math.sin(a*6*Math.PI/180); } },
-      { id: 20, key: "stepped_chevron", name_pl: "Jodełka schodkowa (B1)", name_en: "Stepped Chevron", category: "decorative", desc: "Fala trójkątna z mikroząbkiem krawędziowym.", fn: (a) => triWave(a, 3)*0.70 + triWave(a, 18)*0.25 },
-      { id: 21, key: "angled_teeth", name_pl: "Ząbki skośne piła (B1)", name_en: "Angled Teeth", category: "decorative", desc: "Asymetryczny profil zęba piły.", fn: (a) => sawWave(a, 6, 0.80) * 0.90 },
-      { id: 22, key: "fine_comb", name_pl: "Grzebyk drobny", name_en: "Fine Comb", category: "decorative", desc: "Gęsta, subtelna fala ząbkowana.", fn: (a) => triWave(a, 14) * 0.50 },
-      { id: 23, key: "diamond_satin_3", name_pl: "Satynowy romb liść (B1)", name_en: "Diamond Satin 3c", category: "satin", desc: "Modulowana satyna rozszerzająca się w romby.", fn: (a) => { let env = (1 - Math.cos(a*3*Math.PI/180))/2; return trapWave(a, 18, 0.22) * (env*0.75 + 0.20); } },
-      { id: 24, key: "diamond_satin_4", name_pl: "Satynowy romb gęsty (4c)", name_en: "Diamond Satin 4c", category: "satin", desc: "4 romby satynowe na pełny obrót.", fn: (a) => { let env = (1 - Math.cos(a*4*Math.PI/180))/2; return trapWave(a, 20, 0.20) * (env*0.75 + 0.20); } },
-      { id: 25, key: "pearl_beads", name_pl: "Perełki satynowe", name_en: "Pearl Beads", category: "satin", desc: "Zaokrąglona obwiednia koralikowa.", fn: (a) => { let env = Math.pow(Math.sin(a*1.5*Math.PI/180), 2); return trapWave(a, 18, 0.20)*(env*0.80 + 0.15); } },
-      { id: 26, key: "hourglass_satin", name_pl: "Klepsydra satynowa (C1)", name_en: "Hourglass Satin", category: "satin", desc: "Satyna o symetrycznym przewężeniu w środku.", fn: (a) => { let env = Math.abs(Math.cos(a*3*Math.PI/180)); return trapWave(a, 18, 0.22)*(env*0.75 + 0.20); } },
-      { id: 27, key: "flame_satin", name_pl: "Płomienie satynowe (C1)", name_en: "Flame Satin", category: "satin", desc: "Dynamiczne wyostrzone szczyty satynowe.", fn: (a) => { let env = (1 - Math.cos(a*4*Math.PI/180))/2; return sawWave(a, 16, 0.60)*(env*0.75 + 0.20); } },
-      { id: 28, key: "taper_satin", name_pl: "Stożek satynowy", name_en: "Taper Satin Wedge", category: "satin", desc: "Klin rosnący od zera do pełnej szerokości.", fn: (a) => { let t = (a*3/360)%1; return trapWave(a, 18, 0.22)*(t*0.80 + 0.15); } },
-      { id: 29, key: "greek_key_4", name_pl: "Grecki klucz meander (C1)", name_en: "Greek Key Meander 4c", category: "geometric", desc: "4 prostokątne baszty meandrowe na obrót.", fn: (a) => trapWave(a, 4, 0.45) * 0.90 },
-      { id: 30, key: "greek_key_5", name_pl: "Grecki klucz gęsty (5c)", name_en: "Greek Key 5c", category: "geometric", desc: "Kompaktowy meander o 5 basztach.", fn: (a) => trapWave(a, 5, 0.45) * 0.90 },
-      { id: 31, key: "satin_blocks", name_pl: "Bloki satynowe (C1)", name_en: "Satin Blocks", category: "geometric", desc: "Naprzemienne schodkowe panele satynowe.", fn: (a) => { let s = Math.sign(Math.sin(a*4*Math.PI/180)); return trapWave(a, 16, 0.22)*0.45 + s*0.45; } },
-      { id: 32, key: "checker_step", name_pl: "Szachownica schodkowa", name_en: "Checkerboard Step", category: "geometric", desc: "Przeskok schodkowy między dwoma pasami.", fn: (a) => { let t = (a*4/360)%1; return t < 0.5 ? triWave(a, 16)*0.4 + 0.5 : triWave(a, 16)*0.4 - 0.5; } },
-      { id: 33, key: "cross_stitch", name_pl: "Krzyżyki geometryczne", name_en: "Cross Stitch", category: "geometric", desc: "Dwie harmoniczne tworzące wzór X.", fn: (a) => (triWave(a, 6) + 0.4*triWave(a*2, 6))/1.4 * 0.85 },
-      { id: 34, key: "arrowhead", name_pl: "Strzałka ostra", name_en: "Arrowhead Sharp", category: "geometric", desc: "Wyostrzone geometryczne groty strzał.", fn: (a) => { let v = sawWave(a, 6, 0.5); return Math.sign(v)*Math.pow(Math.abs(v), 0.6)*0.9; } },
-      { id: 35, key: "honeycomb", name_pl: "Plaster miodu", name_en: "Honeycomb Lattice", category: "geometric", desc: "Siatka rombowa z przesuniętych fal.", fn: (a) => (triWave(a, 6) + triWave(a+30, 6))/2 * 0.80 }
+      { id: 0, key: "straight", name_pl: "Ścieg prosty zerowy", name_en: "Straight Stitch", category: "utility", formula: "-1.0", desc: "Czysty ścieg prosty (brak wychylenia igły, promień maksymalny).", fn: (a) => -1.0 },
+      { id: 1, key: "blind_hem_std", name_pl: "Ścieg kryty standardowy (A1)", name_en: "Blind Hem Standard (A1)", category: "utility", formula: "blind_hem(a, 3, 0.20)", desc: "4-5 wkłuć po lewej + pojedynczy skok w prawo do podszywania dołów i krawędzi.", fn: (a) => blindHem(a, 3, 0.20) },
+      { id: 2, key: "blind_hem_dense", name_pl: "Ścieg kryty gęsty", name_en: "Blind Hem Dense", category: "utility", formula: "blind_hem(a, 4, 0.16)", desc: "Ścieg kryty o 4 cyklach na obrót bębna (częstsze podchwytywanie tkaniny).", fn: (a) => blindHem(a, 4, 0.16) },
+      { id: 3, key: "blind_hem_wide", name_pl: "Ścieg kryty szeroki", name_en: "Blind Hem Wide", category: "utility", formula: "blind_hem(a, 3, 0.28)", desc: "Ścieg kryty o poszerzonym skoku poprzecznym igły.", fn: (a) => blindHem(a, 3, 0.28) },
+      { id: 4, key: "zigzag_std", name_pl: "Zygzak referencyjny / spoczynkowy", name_en: "Zigzag Reference (A1/B1/C1)", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.95", desc: "Fabryczna pozycja spoczynkowa mechanizmu (zalecana na pozycji 5 do wymiany bębna).", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
+      { id: 5, key: "zigzag_wide", name_pl: "Zygzak szeroki (A1 poz. 3)", name_en: "Wide Zigzag", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.95", desc: "Szeroki zygzak stabilizowany o pełnym wychyleniu igły.", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
+      { id: 6, key: "zigzag_narrow", name_pl: "Zygzak wąski precyzyjny (D poz. 1)", name_en: "Narrow Zigzag", category: "utility", formula: "tri_wave(a, 10) * 0.40", desc: "Drobny zygzak o zredukowanej szerokości (amplituda 40%).", fn: (a) => triWave(a, 10) * 0.40 },
+      { id: 7, key: "zigzag_satin", name_pl: "Zygzak gęsty cerujący (A1 poz. 4)", name_en: "Dense Satin Zigzag", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.80", desc: "Gęsty zygzak cerujący do wzmacniania przetarć.", fn: (a) => trapWave(a, 9, 0.28) * 0.80 },
+      { id: 8, key: "three_step_elastic", name_pl: "Zygzak 3-stopniowy elastyczny (A1 poz. 2)", name_en: "3-Step Elastic Zigzag", category: "utility", formula: "three_step_zigzag(a, 3)", desc: "Elastyczny trójskok (3 wkłucia w lewo, 3 w prawo) do dzianin i gumy.", fn: (a) => threeStepZigzag(a, 3) },
+      { id: 9, key: "four_step_elastic", name_pl: "Zygzak 4-stopniowy elastyczny", name_en: "4-Step Elastic", category: "utility", formula: "let(t = (a*3/360) - floor(a*3/360), step = floor(t * 8)) (step < 4 ? -0.9 + step * 0.6 : 0.9 - (step - 4) * 0.6)", desc: "Czterostopniowy zygzak do materiałów wysokoelastycznych (spandex/lycra).", fn: (a) => fourStepElastic(a) },
+      { id: 10, key: "overlock_open", name_pl: "Owerlok otwarty", name_en: "Open Overlock", category: "utility", formula: "(sine_wave(a, 4) * 0.6 + blind_hem(a, 4, 0.20) * 0.4)", desc: "Ścieg owerlokowy do jednoczesnego łączenia i obrzucania krawędzi.", fn: (a) => (Math.sin(a*4*Math.PI/180)*0.6 + blindHem(a, 4, 0.20)*0.4) },
+      { id: 11, key: "overlock_closed", name_pl: "Owerlok zamknięty elastyczny", name_en: "Closed Elastic Overlock", category: "utility", formula: "(sine_wave(a, 6) + 0.3*sine_wave(a, 18)) / 1.3 * 0.85", desc: "Zamknięty ścieg owerlokowy o wzmocnionej krawędzi.", fn: (a) => (Math.sin(a*6*Math.PI/180) + 0.3*Math.sin(a*18*Math.PI/180))/1.3 * 0.85 },
+      { id: 12, key: "triple_stretch", name_pl: "Potrójny elastyczny prosty (D poz. 4)", name_en: "Triple Stretch Stitch", category: "utility", formula: "tri_wave(a, 18) * 0.30", desc: "Trzykrotne wzmocnienie szwu o wysokiej elastyczności na rozerwanie.", fn: (a) => triWave(a, 18) * 0.30 },
+      { id: 13, key: "ladder", name_pl: "Drabinka cerująca (D poz. 3)", name_en: "Ladder Stitch", category: "utility", formula: "sign(sine_wave(a, 6)) * 0.85", desc: "Dwie równoległe ścieżki z gwałtownym przeskokiem igły.", fn: (a) => Math.sign(Math.sin(a*6*Math.PI/180)) * 0.85 },
+
+      // Grupa II: Faliste i organiczne
+      { id: 14, key: "serpentine_wide", name_pl: "Serpentyna szeroka / fala (B1 poz. 1)", name_en: "Wide Serpentine (B1)", category: "wave", formula: "sine_wave(a, 3) * 0.90", desc: "Klasyczny ścieg wężowy o łagodnych, miękkich łukach (ozdoba bielizny i obrusów).", fn: (a) => Math.sin(a*3*Math.PI/180) * 0.90 },
+      { id: 15, key: "serpentine_med", name_pl: "Serpentyna średnia", name_en: "Medium Serpentine", category: "wave", formula: "sine_wave(a, 4) * 0.85", desc: "Cztery łuki sinusoidalne na obrót bębna.", fn: (a) => Math.sin(a*4*Math.PI/180) * 0.85 },
+      { id: 16, key: "serpentine_dense", name_pl: "Serpentyna gęsta", name_en: "Dense Serpentine", category: "wave", formula: "sine_wave(a, 6) * 0.80", desc: "Drobna serpentyna dekoracyjna o częstych łukach.", fn: (a) => Math.sin(a*6*Math.PI/180) * 0.80 },
+      { id: 17, key: "scallop_wave", name_pl: "Muszelka łuskowa", name_en: "Scallop Shell Wave", category: "wave", formula: "saw_wave(a, 5, 0.85) * 0.90", desc: "Łagodne narastanie fali i ostry powrót tworzące wzór muszelki brzegowej.", fn: (a) => sawWave(a, 5, 0.85) * 0.90 },
+      { id: 18, key: "double_lobe", name_pl: "Podwójna pętla", name_en: "Double Lobe Wave", category: "wave", formula: "double_lobe(a, 5) * 0.90", desc: "Fala z dodatkowym zagięciem harmonicznym tworząca wypustki.", fn: (a) => (Math.sin(a*5*Math.PI/180) + 0.35*Math.sin(a*10*Math.PI/180))/1.35 * 0.90 },
+      { id: 19, key: "feather", name_pl: "Piórko gałązkowe", name_en: "Feather Stitch", category: "wave", formula: "feather(a, 6) * 0.85", desc: "Wzór przypominający gałązki jodełki lub piórka.", fn: (a) => featherFn(a, 6) * 0.85 },
+      { id: 20, key: "stepped_chevron", name_pl: "Jodełka schodkowa / fala łamana (B1 poz. 2)", name_en: "Stepped Chevron (B1)", category: "wave", formula: "(tri_wave(a, 3) * 0.70 + tri_wave(a, 18) * 0.25)", desc: "Szeroka fala trójkątna z nałożonym drobnym ząbkiem krawędziowym.", fn: (a) => (triWave(a, 3)*0.70 + triWave(a, 18)*0.25) },
+      { id: 21, key: "angled_teeth", name_pl: "Ząbki skośne piła (B1 poz. 4)", name_en: "Angled Saw Teeth (B1)", category: "wave", formula: "saw_wave(a, 6, 0.80) * 0.90", desc: "Asymetryczny profil piłokształtny o ostrym powrocie.", fn: (a) => sawWave(a, 6, 0.80) * 0.90 },
+      { id: 22, key: "fine_comb", name_pl: "Grzebyk drobny", name_en: "Fine Comb Stitch", category: "wave", formula: "tri_wave(a, 14) * 0.50", desc: "Gęsty grzebień o płytkim skoku (14 ząbków na obrót).", fn: (a) => triWave(a, 14) * 0.50 },
+
+      // Grupa III: Satynowe modulowane
+      { id: 23, key: "diamond_satin_3", name_pl: "Satynowy romb / perełki (B1 poz. 3)", name_en: "Diamond Satin 3c (B1)", category: "satin", formula: "diamond_satin(a, 18, 3)", desc: "Płynnie rosnąca i malejąca szerokość satyny tworząca łańcuch rombów/perełek.", fn: (a) => diamondSatin(a, 18, 3) },
+      { id: 24, key: "diamond_satin_4", name_pl: "Satynowy romb gęsty (4 cykle)", name_en: "Diamond Satin 4c", category: "satin", formula: "diamond_satin(a, 20, 4)", desc: "Cztery romby satynowe na obrót wałka.", fn: (a) => diamondSatin(a, 20, 4) },
+      { id: 25, key: "pearl_beads", name_pl: "Perełki satynowe okrągłe", name_en: "Pearl Beads", category: "satin", formula: "let(env = pow(sin(a*3/2), 2)) trap_wave(a, 18, 0.20) * (env * 0.80 + 0.15)", desc: "Krople satynowe o zaokrąglonej obwiedni.", fn: (a) => { let env = Math.pow(Math.sin(a*3*Math.PI/360), 2); return trapWave(a, 18, 0.20) * (env * 0.80 + 0.15); } },
+      { id: 26, key: "hourglass_satin", name_pl: "Klepsydra / podwójny romb (C1 poz. 4)", name_en: "Hourglass Satin (C1)", category: "satin", formula: "hourglass_satin(a, 18, 3)", desc: "Symetryczne przewężenie satyny w talii tworzące efekt klepsydry.", fn: (a) => hourglassSatin(a, 18, 3) },
+      { id: 27, key: "flame_satin", name_pl: "Ścieg płomieniowy ostry (C1 poz. 2)", name_en: "Flame Sharp Satin (C1)", category: "satin", formula: "arrow_sharpen(a, 6, 0.50) * 0.90", desc: "Ostre, dynamiczne trójkąty płomieniowe o wyostrzonych wierzchołkach.", fn: (a) => arrowSharpen(a, 6, 0.50) * 0.90 },
+      { id: 28, key: "taper_satin", name_pl: "Stożek satynowy / klin", name_en: "Taper Satin Wedge", category: "satin", formula: "let(t = (a*3/360) - floor(a*3/360)) trap_wave(a, 18, 0.22) * (t * 0.80 + 0.15)", desc: "Ciągłe narastanie szerokości zygzaka i nagły powrót do zera.", fn: (a) => { let t = (a*3/360)%1; return trapWave(a, 18, 0.22)*(t*0.80 + 0.15); } },
+
+      // Grupa IV: Geometryczne i meandrowe
+      { id: 29, key: "greek_key_4", name_pl: "Meander grecki / baszty (C1 poz. 1)", name_en: "Greek Key 4c (C1)", category: "geometric", formula: "trap_wave(a, 4, 0.45) * 0.90", desc: "Klasyczny meander antyczny o prostopadłych uskokach igły (kształt baszty).", fn: (a) => trapWave(a, 4, 0.45) * 0.90 },
+      { id: 30, key: "greek_key_5", name_pl: "Meander grecki gęsty (5 cykli)", name_en: "Greek Key 5c", category: "geometric", formula: "trap_wave(a, 5, 0.45) * 0.90", desc: "Pięć powtórzeń meandra na obrót bębna.", fn: (a) => trapWave(a, 5, 0.45) * 0.90 },
+      { id: 31, key: "satin_blocks", name_pl: "Bloki satynowe prostokątne (C1 poz. 3)", name_en: "Satin Blocks (C1)", category: "geometric", formula: "block_satin(a, 16, 4)", desc: "Naprzemienne schodkowe prostokąty satynowe (przeskok lewo-prawo).", fn: (a) => blockSatin(a, 16, 4) },
+      { id: 32, key: "checker_step", name_pl: "Szachownica schodkowa", name_en: "Checker Step", category: "geometric", formula: "let(t = (a*4/360) - floor(a*4/360)) (t < 0.5 ? (tri_wave(a, 16)*0.4 + 0.5) : (tri_wave(a, 16)*0.4 - 0.5))", desc: "Dwa poziomy zygzaka tworzące efekt szachownicy.", fn: (a) => { let t = (a*4/360)%1; return t < 0.5 ? (triWave(a, 16)*0.4 + 0.5) : (triWave(a, 16)*0.4 - 0.5); } },
+      { id: 33, key: "cross_stitch", name_pl: "Krzyżyki dekoracyjne", name_en: "Cross Stitch Pattern", category: "geometric", formula: "(tri_wave(a, 6) + 0.4*tri_wave(a*2, 6)) / 1.4 * 0.85", desc: "Złożenie dwóch częstotliwości dające efekt ściegu krzyżykowego.", fn: (a) => (triWave(a, 6) + 0.4*triWave(a*2, 6)) / 1.4 * 0.85 },
+      { id: 34, key: "arrowhead", name_pl: "Grot strzały ostry", name_en: "Arrowhead Stitch", category: "geometric", formula: "arrow_sharpen(a, 6, 0.50) * 0.90", desc: "Wyostrzone groty geometryczne skierowane w jednym kierunku.", fn: (a) => arrowSharpen(a, 6, 0.50) * 0.90 },
+      { id: 35, key: "honeycomb", name_pl: "Plaster miodu", name_en: "Honeycomb Lattice", category: "geometric", formula: "diamond_lattice(a, 6) * 0.80", desc: "Siatka rombowa przypominająca komórki plastra miodu.", fn: (a) => (triWave(a, 6) + triWave(a+30, 6))/2 * 0.80 }
     ];
 
-    // Math helper waves
+    // Funkcje fal matematycznych
     function triWave(a, reps) {
       let t = (a * reps / 360) % 1;
+      if (t < 0) t += 1;
       return 4 * Math.abs(t - 0.5) - 1;
     }
 
     function sawWave(a, reps, skew = 0.5) {
       let t = (a * reps / 360) % 1;
+      if (t < 0) t += 1;
       return t < skew ? (2 * (t / skew) - 1) : (1 - 2 * (t - skew) / (1 - skew));
     }
 
     function trapWave(a, reps, dwell = 0.28) {
       let t = (a * reps / 360) % 1;
+      if (t < 0) t += 1;
       let ramp = (1.0 - 2.0 * dwell) / 2.0;
       if (t < dwell) return 1.0;
       if (t < dwell + ramp) return 1.0 - 2.0 * (t - dwell) / ramp;
@@ -720,48 +812,120 @@
       return -1.0 + 2.0 * (t - 2.0 * dwell - ramp) / ramp;
     }
 
-    // Current State
+    function blindHem(a, reps = 3, spikeW = 0.20) {
+      let t = (a * reps / 360) % 1;
+      if (t < 0) t += 1;
+      return (t < spikeW) ? (Math.sin(Math.PI * t / spikeW) * 2 - 1) : -1;
+    }
+
+    function threeStepZigzag(a, reps = 3) {
+      let t = (a * reps / 360) % 1;
+      if (t < 0) t += 1;
+      let step = Math.floor(t * 6);
+      if (step === 0) return -0.9;
+      if (step === 1) return -0.3;
+      if (step === 2) return 0.3;
+      if (step === 3) return 0.9;
+      if (step === 4) return 0.3;
+      return -0.3;
+    }
+
+    function fourStepElastic(a) {
+      let t = (a * 3 / 360) % 1;
+      if (t < 0) t += 1;
+      let step = Math.floor(t * 8);
+      return step < 4 ? -0.9 + step * 0.6 : 0.9 - (step - 4) * 0.6;
+    }
+
+    function diamondSatin(a, satinReps = 18, cycleReps = 3) {
+      let env = (1 - Math.cos(a * cycleReps * Math.PI / 180)) / 2;
+      return trapWave(a, satinReps, 0.22) * (env * 0.75 + 0.2);
+    }
+
+    function blockSatin(a, satinReps = 16, blockReps = 4) {
+      let side = Math.sign(Math.sin(a * blockReps * Math.PI / 180)) || 1;
+      return trapWave(a, satinReps, 0.22) * 0.45 + side * 0.45;
+    }
+
+    function hourglassSatin(a, satinReps = 18, cycleReps = 3) {
+      let env = Math.abs(Math.cos(a * cycleReps * Math.PI / 180));
+      return trapWave(a, satinReps, 0.22) * (env * 0.75 + 0.2);
+    }
+
+    function arrowSharpen(a, reps, skew = 0.5) {
+      let v = sawWave(a, reps, skew);
+      return Math.sign(v) * Math.pow(Math.abs(v), 0.6);
+    }
+
+    function featherFn(a, clusters) {
+      let macro = 360 / clusters;
+      let t = (a % macro) / macro;
+      if (t < 0) t += 1;
+      return (t < 0.75) ? 0.5 * triWave(a, clusters * 9) : Math.sin(a * clusters * Math.PI / 180);
+    }
+
+    // Stan bieżący
     let currentDrum = {
       letter: "E",
-      slots: [1, 14, 23, 29, 4] // Default custom mix: Blind hem, Serpentine, Diamond, Greek key, Zigzag ref
+      slots: [1, 14, 23, 29, 4] // Domyślny custom mix
     };
     let activeSlotIndex = 0;
 
-    // Presets
+    // Presety wzorowane na modelach projektu
     const PRESETS = {
       "A1": { letter: "A", slots: [1, 8, 5, 7, 4] },
       "B1": { letter: "B", slots: [14, 20, 23, 21, 4] },
       "C1": { letter: "C", slots: [29, 27, 31, 26, 4] },
-      "D":  { letter: "D", slots: [6, 3, 13, 12, 4] }
+      "D":  { letter: "D", slots: [6, 1, 13, 12, 4] },
+      "CUSTOM": { letter: "E", slots: [1, 14, 23, 29, 4] }
     };
 
+    // --- Inicjalizacja aplikacji ---
     function init() {
+      buildTrackCards();
       renderCatalog(STITCHES);
       updateAllSlotUI();
-      redrawFabric();
+      drawFabricSimulation();
+      initThreeJS();
       updateScadPreview();
 
       document.getElementById('downloadScadBtn').addEventListener('click', downloadScadFile);
+      document.getElementById('downloadStandaloneBtn').addEventListener('click', downloadStandaloneFile);
+      document.getElementById('copyCodeBtn').addEventListener('click', copyCodeToClipboard);
+    }
+
+    // Tworzenie 5 kart pozycji
+    function buildTrackCards() {
+      const container = document.getElementById('tracksDeck');
+      container.innerHTML = "";
+      for (let i = 0; i < 5; i++) {
+        const card = document.createElement('div');
+        card.className = `track-card ${i === activeSlotIndex ? 'active' : ''}`;
+        card.id = `track-card-${i}`;
+        card.onclick = () => selectActiveSlot(i);
+
+        card.innerHTML = `
+          <div class="track-card-header">
+            <span class="track-pos-badge">Pozycja ${i + 1}</span>
+            ${i === 4 ? '<span class="track-idle-badge">Spoczynkowa</span>' : ''}
+          </div>
+          <div>
+            <div class="track-name" id="slot-name-${i}">...</div>
+            <div class="track-category" id="slot-cat-${i}">...</div>
+          </div>
+          <canvas class="track-wave-preview" id="slot-canvas-${i}"></canvas>
+        `;
+        container.appendChild(card);
+      }
     }
 
     function selectActiveSlot(index) {
       activeSlotIndex = index;
-      document.querySelectorAll('.track-slot').forEach((slot, i) => {
-        slot.classList.toggle('active', i === index);
-      });
-      document.getElementById('activeSlotIndicator').textContent = (index + 1);
-    }
-
-    function assignStitchToActiveSlot(stitchId) {
-      currentDrum.slots[activeSlotIndex] = stitchId;
-      updateSlotUI(activeSlotIndex);
-      redrawFabric();
-      updateScadPreview();
-
-      // Automatically advance to next slot for rapid configuration
-      if (activeSlotIndex < 4) {
-        selectActiveSlot(activeSlotIndex + 1);
+      for (let i = 0; i < 5; i++) {
+        const c = document.getElementById(`track-card-${i}`);
+        if (c) c.classList.toggle('active', i === index);
       }
+      updateThreeHighlight();
     }
 
     function updateSlotUI(index) {
@@ -769,40 +933,16 @@
       if (!stitch) return;
 
       document.getElementById(`slot-name-${index}`).textContent = stitch.name_pl;
-      document.getElementById(`slot-cat-${index}`).textContent = `${stitch.category.toUpperCase()} · Poz. ${index + 1}`;
+      document.getElementById(`slot-cat-${index}`).textContent = `${stitch.category.toUpperCase()} · Ząbki/fala`;
 
-      // Draw mini canvas
-      const miniCanvas = document.getElementById(`slot-canvas-${index}`);
-      drawMiniWave(miniCanvas, stitch.fn);
+      const cvs = document.getElementById(`slot-canvas-${index}`);
+      if (cvs) drawMiniWave(cvs, stitch.fn);
     }
 
     function updateAllSlotUI() {
-      for (let i = 0; i < 5; i++) {
-        updateSlotUI(i);
-      }
+      for (let i = 0; i < 5; i++) updateSlotUI(i);
     }
 
-    function updateDrumLetter(val) {
-      currentDrum.letter = (val || "X").toUpperCase().substring(0, 2);
-      updateScadPreview();
-    }
-
-    function applyPreset(name) {
-      const preset = PRESETS[name];
-      if (!preset) return;
-      currentDrum.letter = preset.letter;
-      currentDrum.slots = [...preset.slots];
-      document.getElementById('drumLetterInput').value = preset.letter;
-      updateAllSlotUI();
-      redrawFabric();
-      updateScadPreview();
-
-      document.querySelectorAll('.preset-pill').forEach(btn => {
-        btn.classList.toggle('active', btn.textContent.includes(name));
-      });
-    }
-
-    // Mini Wave Drawing
     function drawMiniWave(canvas, fn) {
       const ctx = canvas.getContext('2d');
       const w = canvas.width = canvas.offsetWidth * 2;
@@ -810,11 +950,11 @@
       ctx.clearRect(0, 0, w, h);
 
       ctx.strokeStyle = "#38bdf8";
-      ctx.lineWidth = 2.5;
+      ctx.lineWidth = 3;
       ctx.beginPath();
       for (let x = 0; x < w; x++) {
         let a = (x / w) * 360;
-        let v = fn(a); // -1 to 1
+        let v = fn(a); // -1 do 1
         let y = h / 2 - (v * (h * 0.38));
         if (x === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
@@ -822,7 +962,47 @@
       ctx.stroke();
     }
 
-    // Render Catalog
+    function assignStitchToActiveSlot(stitchId) {
+      currentDrum.slots[activeSlotIndex] = stitchId;
+      updateSlotUI(activeSlotIndex);
+      drawFabricSimulation();
+      updateThreeDrumGeometry();
+      updateScadPreview();
+
+      // Automatyczne przejście do kolejnego gniazda dla wygody
+      if (activeSlotIndex < 4) {
+        selectActiveSlot(activeSlotIndex + 1);
+      }
+    }
+
+    function applyPreset(presetName) {
+      const preset = PRESETS[presetName];
+      if (!preset) return;
+
+      currentDrum.letter = preset.letter;
+      currentDrum.slots = [...preset.slots];
+      document.getElementById('drumLetterInput').value = preset.letter;
+      document.getElementById('btnLetter').textContent = preset.letter;
+
+      document.querySelectorAll('.preset-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(presetName));
+      });
+
+      updateAllSlotUI();
+      drawFabricSimulation();
+      updateThreeDrumGeometry();
+      updateScadPreview();
+      showToast(`Załadowano wzorzec ${presetName}!`);
+    }
+
+    function updateDrumLetter(val) {
+      currentDrum.letter = (val || "E").toUpperCase().substring(0, 2);
+      document.getElementById('btnLetter').textContent = currentDrum.letter;
+      updateScadPreview();
+      updateThreeDrumGeometry();
+    }
+
+    // --- Renderowanie Katalogu Ściegów ---
     function renderCatalog(items) {
       const grid = document.getElementById('catalogGrid');
       grid.innerHTML = "";
@@ -833,157 +1013,423 @@
         card.onclick = () => assignStitchToActiveSlot(st.id);
 
         card.innerHTML = `
-          <div class="stitch-card-header">
-            <div class="stitch-card-title">${st.name_pl}</div>
+          <div class="stitch-card-top">
+            <span class="stitch-title">${st.name_pl}</span>
             <span class="badge-tag badge-${st.category}">${st.category}</span>
           </div>
-          <canvas id="cat-canvas-${st.id}"></canvas>
+          <canvas class="stitch-wave-canvas" id="cat-cvs-${st.id}"></canvas>
           <div class="stitch-card-desc">${st.desc}</div>
+          <div class="stitch-add-btn">Wstaw do Pozycji ${activeSlotIndex + 1} ➔</div>
         `;
 
         grid.appendChild(card);
         setTimeout(() => {
-          const cvs = document.getElementById(`cat-canvas-${st.id}`);
+          const cvs = document.getElementById(`cat-cvs-${st.id}`);
           if (cvs) drawMiniWave(cvs, st.fn);
-        }, 10);
+        }, 15);
       });
     }
 
-    function filterCatalog(category, btn) {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      if (category === 'all') {
+    function filterCatalog(cat) {
+      document.querySelectorAll('.filter-pill').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(cat));
+      });
+      if (cat === 'all') {
         renderCatalog(STITCHES);
       } else {
-        renderCatalog(STITCHES.filter(s => s.category === category));
+        renderCatalog(STITCHES.filter(s => s.category === cat));
       }
     }
 
     function searchCatalog(query) {
       const q = query.toLowerCase().trim();
-      const filtered = STITCHES.filter(s => s.name_pl.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q) || s.name_en.toLowerCase().includes(q));
+      if (!q) {
+        renderCatalog(STITCHES);
+        return;
+      }
+      const filtered = STITCHES.filter(s => 
+        s.name_pl.toLowerCase().includes(q) ||
+        s.name_en.toLowerCase().includes(q) ||
+        s.desc.toLowerCase().includes(q)
+      );
       renderCatalog(filtered);
     }
 
-    // Fabric Simulation
-    function redrawFabric() {
+    // --- Symulator Haftu na Tkaninie ---
+    function drawFabricSimulation() {
       const canvas = document.getElementById('fabricCanvas');
       const ctx = canvas.getContext('2d');
       const w = canvas.width = canvas.offsetWidth * 2;
       const h = canvas.height = canvas.offsetHeight * 2;
 
-      // Dark textile weave background
+      ctx.clearRect(0, 0, w, h);
+
+      // Tło tkaniny z fakturą splotu (bawełna/len)
       ctx.fillStyle = "#0c1322";
       ctx.fillRect(0, 0, w, h);
 
-      // Weave pattern texture
-      ctx.strokeStyle = "rgba(255,255,255,0.03)";
+      ctx.strokeStyle = "rgba(255, 255, 255, 0.025)";
       ctx.lineWidth = 1;
-      for (let x = 0; x < w; x += 8) {
+      const gridSize = 16;
+      for (let x = 0; x < w; x += gridSize) {
         ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
       }
-      for (let y = 0; y < h; y += 8) {
+      for (let y = 0; y < h; y += gridSize) {
         ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
       }
 
-      // Draw 5 rows of stitching (Tracks 1 to 5)
+      // 5 Pasów przeszycia
       const rowHeight = h / 5;
-      const trackColors = ["#38bdf8", "#818cf8", "#c084fc", "#f472b6", "#34d399"];
+      const stitchColors = ["#38bdf8", "#34d399", "#fbbf24", "#c084fc", "#f43f5e"];
 
       for (let row = 0; row < 5; row++) {
-        const stitch = STITCHES.find(s => s.id === currentDrum.slots[row]);
-        if (!stitch) continue;
+        const stitch = STITCHES.find(s => s.id === currentDrum.slots[row]) || STITCHES[4];
+        const centerY = rowHeight * (row + 0.5);
+        const color = stitchColors[row % stitchColors.length];
 
-        const centerY = rowHeight * row + rowHeight / 2;
-        const color = trackColors[row];
-
-        // Track label
-        ctx.fillStyle = "rgba(255,255,255,0.3)";
-        ctx.font = "bold 18px 'Outfit', sans-serif";
-        ctx.fillText(`Poz. ${row + 1} (${stitch.name_pl})`, 24, centerY - 14);
-
-        // Center guideline
-        ctx.strokeStyle = "rgba(255,255,255,0.08)";
-        ctx.setLineDash([4, 4]);
+        // Linia osi ściegu
+        ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
+        ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.moveTo(12, centerY); ctx.lineTo(w - 12, centerY);
+        ctx.moveTo(180, centerY); ctx.lineTo(w - 20, centerY);
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Thread stitch line
+        // Etykieta pozycji
+        ctx.fillStyle = (row === activeSlotIndex) ? "#38bdf8" : "rgba(255,255,255,0.45)";
+        ctx.font = "bold 20px 'Outfit', sans-serif";
+        ctx.fillText(`Poz. ${row + 1}: ${stitch.name_pl}`, 24, centerY + 7);
+
+        // Ścieg igłowy
         ctx.strokeStyle = color;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 3.5;
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 
-        // Stitch needle penetration points (simulating sewing cycle)
         ctx.beginPath();
-        const steps = 140;
-        const startX = 220;
+        const steps = 180;
+        const startX = 260;
         const endX = w - 40;
-        const widthX = endX - startX;
+        const spanX = endX - startX;
 
         for (let i = 0; i <= steps; i++) {
-          let a = (i / steps) * 720; // 2 drum revolutions across fabric width
-          let v = stitch.fn(a);      // -1 (left/top) to +1 (right/bottom)
-          let x = startX + (i / steps) * widthX;
-          let y = centerY + (v * (rowHeight * 0.32));
+          let a = (i / steps) * 720; // 2 pełne obroty wałka wzdłuż próbki tkaniny
+          let v = stitch.fn(a);      // -1 .. 1
+          let x = startX + (i / steps) * spanX;
+          let y = centerY + (v * (rowHeight * 0.35));
 
           if (i === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
+
+        // Punkty wkłucia igły
+        ctx.fillStyle = "rgba(0,0,0,0.5)";
+        for (let i = 0; i <= steps; i += 2) {
+          let a = (i / steps) * 720;
+          let v = stitch.fn(a);
+          let x = startX + (i / steps) * spanX;
+          let y = centerY + (v * (rowHeight * 0.35));
+          ctx.beginPath();
+          ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
     }
 
-    // OpenSCAD Code Generation
-    function generateScadCode() {
-      const s0 = STITCHES.find(s => s.id === currentDrum.slots[0]);
-      const s1 = STITCHES.find(s => s.id === currentDrum.slots[1]);
-      const s2 = STITCHES.find(s => s.id === currentDrum.slots[2]);
-      const s3 = STITCHES.find(s => s.id === currentDrum.slots[3]);
-      const s4 = STITCHES.find(s => s.id === currentDrum.slots[4]);
+    // ==============================================================================
+    // INTERAKTYWNA WIZUALIZACJA 3D BĘBNA W THREE.JS
+    // ==============================================================================
+    let scene, camera, renderer, controls, drumMeshGroup, highlightRing;
 
-      return `// ==============================================================================
-// BĘBEN ŚCIEGOWY HUSQVARNA 21E — ZESTAW ${currentDrum.letter}
-// Wygenerowano automatycznie za pomocą Husqvarna Stitch Drum Generator
+    function initThreeJS() {
+      const container = document.getElementById('threeContainer');
+      const width = container.clientWidth || 600;
+      const height = container.clientHeight || 380;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 1000);
+      camera.position.set(45, 30, 60);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 1.2;
+
+      // Oświetlenie studyjne
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+      scene.add(ambientLight);
+
+      const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 1.2);
+      dirLight1.position.set(40, 60, 50);
+      scene.add(dirLight1);
+
+      const dirLight2 = new THREE.DirectionalLight(0xa855f7, 0.8);
+      dirLight2.position.set(-40, -30, -50);
+      scene.add(dirLight2);
+
+      drumMeshGroup = new THREE.Group();
+      scene.add(drumMeshGroup);
+
+      buildThreeDrum();
+
+      window.addEventListener('resize', onThreeResize);
+      animateThree();
+    }
+
+    function onThreeResize() {
+      const container = document.getElementById('threeContainer');
+      if (!container || !renderer || !camera) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    function resetThreeCamera() {
+      camera.position.set(45, 30, 60);
+      controls.target.set(0, 0, 0);
+      controls.update();
+    }
+
+    function buildThreeDrum() {
+      // Usunięcie poprzednich elementów
+      while (drumMeshGroup.children.length > 0) {
+        drumMeshGroup.remove(drumMeshGroup.children[0]);
+      }
+
+      // Wymiary mechaniczne bębna (zgodne z cam_common.scad):
+      // EDGE_MAX_R = 17.03 mm, EDGE_MIN_R = 14.20 mm, LENGTH = 26.0 mm
+      const EDGE_MAX_R = 17.03;
+      const EDGE_MIN_R = 14.20;
+      const EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R; // 2.83 mm
+
+      const materialDrum = new THREE.MeshStandardMaterial({
+        color: 0xe2e8f0,
+        roughness: 0.35,
+        metalness: 0.25
+      });
+
+      const materialFlange = new THREE.MeshStandardMaterial({
+        color: 0x94a3b8,
+        roughness: 0.3,
+        metalness: 0.4
+      });
+
+      // 1. Dysk czołowy z rowkami (Z = 0 .. 2.4)
+      const discGeom = new THREE.CylinderGeometry(14.5, 14.5, 2.4, 64);
+      const disc = new THREE.Mesh(discGeom, materialFlange);
+      disc.position.y = 26/2 - 1.2;
+      drumMeshGroup.add(disc);
+
+      // 2. Szyjka (Z = 2.4 .. 4.4)
+      const neckGeom = new THREE.CylinderGeometry(11.5, 11.5, 2.0, 64);
+      const neck = new THREE.Mesh(neckGeom, materialFlange);
+      neck.position.y = 26/2 - 2.4 - 1.0;
+      drumMeshGroup.add(neck);
+
+      // 3. Kołnierz główny (Z = 4.4 .. 6.4)
+      const flangeGeom = new THREE.CylinderGeometry(17.03, 17.03, 2.0, 64);
+      const flange = new THREE.Mesh(flangeGeom, materialFlange);
+      flange.position.y = 26/2 - 4.4 - 1.0;
+      drumMeshGroup.add(flange);
+
+      // 4. Pięć ścieżek krzywek (Z = 6.4 .. 23.6, BAND_LEN = 3.44 mm)
+      const bandLen = 3.44;
+      const startZ = 26/2 - 6.4;
+
+      for (let i = 0; i < 5; i++) {
+        const stitch = STITCHES.find(s => s.id === currentDrum.slots[i]) || STITCHES[4];
+        const segs = 96;
+        const geom = new THREE.CylinderGeometry(1, 1, bandLen, segs, 1, false);
+
+        // Deformacja promienia wzdłuż kąta theta
+        const posAttr = geom.attributes.position;
+        for (let j = 0; j < posAttr.count; j++) {
+          let x = posAttr.getX(j);
+          let y = posAttr.getY(j);
+          let z = posAttr.getZ(j);
+
+          let angleDeg = Math.atan2(z, x) * 180 / Math.PI;
+          if (angleDeg < 0) angleDeg += 360;
+
+          let v = stitch.fn(angleDeg); // -1 .. 1
+          let depth = (v + 1) / 2;
+          let r = EDGE_MAX_R - EDGE_SWING * depth;
+
+          let norm = Math.sqrt(x*x + z*z);
+          if (norm > 0.001) {
+            posAttr.setX(j, (x / norm) * r);
+            posAttr.setZ(j, (z / norm) * r);
+          }
+        }
+        geom.computeVertexNormals();
+
+        const bandMat = new THREE.MeshStandardMaterial({
+          color: (i % 2 === 0) ? 0xf1f5f9 : 0xe2e8f0,
+          roughness: 0.32,
+          metalness: 0.3
+        });
+
+        const bandMesh = new THREE.Mesh(geom, bandMat);
+        bandMesh.position.y = startZ - i * bandLen - bandLen/2;
+        drumMeshGroup.add(bandMesh);
+      }
+
+      // 5. Kołnierz tylny ze stożkiem (Z = 23.6 .. 26.0)
+      const collarGeom = new THREE.CylinderGeometry(10.3, 11.5, 2.4, 64);
+      const collar = new THREE.Mesh(collarGeom, materialFlange);
+      collar.position.y = -26/2 + 1.2;
+      drumMeshGroup.add(collar);
+
+      // 6. Świecący pierścień zaznaczenia aktywnej pozycji
+      const ringGeom = new THREE.TorusGeometry(17.8, 0.4, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
+      highlightRing = new THREE.Mesh(ringGeom, ringMat);
+      highlightRing.rotation.x = Math.PI / 2;
+      drumMeshGroup.add(highlightRing);
+
+      updateThreeHighlight();
+    }
+
+    function updateThreeDrumGeometry() {
+      buildThreeDrum();
+    }
+
+    function updateThreeHighlight() {
+      if (!highlightRing) return;
+      const bandLen = 3.44;
+      const startZ = 26/2 - 6.4;
+      highlightRing.position.y = startZ - activeSlotIndex * bandLen - bandLen/2;
+    }
+
+    function animateThree() {
+      requestAnimationFrame(animateThree);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // ==============================================================================
+    // GENERATOR CZYSTEGO KODU OPENSCAD (MODEL ZGODNY Z CAM_A, CAM_B, CAM_C, CAM_D)
+    // ==============================================================================
+    function generateScadCode(standalone = false) {
+      const s0 = STITCHES.find(s => s.id === currentDrum.slots[0]) || STITCHES[1];
+      const s1 = STITCHES.find(s => s.id === currentDrum.slots[1]) || STITCHES[14];
+      const s2 = STITCHES.find(s => s.id === currentDrum.slots[2]) || STITCHES[23];
+      const s3 = STITCHES.find(s => s.id === currentDrum.slots[3]) || STITCHES[29];
+      const s4 = STITCHES.find(s => s.id === currentDrum.slots[4]) || STITCHES[4];
+
+      const letU = currentDrum.letter.toUpperCase();
+      const letL = letU.toLowerCase();
+
+      if (!standalone) {
+        return `// ==============================================================================
+// Bęben ściegowy ${letU} dla Husqvarna 21E / 21A.
+// Geometria mechaniczna bębna identyczna z zestawami wzorcowymi A, B, C, D.
+//
+// Poz 1: ${s0.name_pl}
+// Poz 2: ${s1.name_pl}
+// Poz 3: ${s2.name_pl}
+// Poz 4: ${s3.name_pl}
+// Poz 5: ${s4.name_pl} (zalecany stan spoczynkowy)
 // ==============================================================================
 include <../../tools/openscad/cam_common.scad>
-include <../../tools/openscad/stitch_catalog.scad>
 
-// Pozycja 1: ${s0.name_pl}
-function pos1(a) = get_stitch_by_id(${s0.id}, a);
+function ${letL}_pos1(a) = ${s0.formula};
+function ${letL}_pos2(a) = ${s1.formula};
+function ${letL}_pos3(a) = ${s2.formula};
+function ${letL}_pos4(a) = ${s3.formula};
+function ${letL}_pos5(a) = ${s4.formula};
 
-// Pozycja 2: ${s1.name_pl}
-function pos2(a) = get_stitch_by_id(${s1.id}, a);
-
-// Pozycja 3: ${s2.name_pl}
-function pos3(a) = get_stitch_by_id(${s2.id}, a);
-
-// Pozycja 4: ${s3.name_pl}
-function pos4(a) = get_stitch_by_id(${s3.id}, a);
-
-// Pozycja 5: ${s4.name_pl} (zalecany zygzak referencyjny)
-function pos5(a) = get_stitch_by_id(${s4.id}, a);
-
-cam_with_grooves("${currentDrum.letter}", [
-    function(a) pos1(a),
-    function(a) pos2(a),
-    function(a) pos3(a),
-    function(a) pos4(a),
-    function(a) pos5(a)
+cam_with_grooves("${letU}", [
+    function(a) ${letL}_pos1(a),
+    function(a) ${letL}_pos2(a),
+    function(a) ${letL}_pos3(a),
+    function(a) ${letL}_pos4(a),
+    function(a) ${letL}_pos5(a),
 ]);
 `;
+      } else {
+        // Samodzielny plik z pełną mechaniką
+        return `// ==============================================================================
+// BĘBEN ŚCIEGOWY ${letU} DLA HUSQVARNA 21E / 21A (PLIK SAMODZIELNY / STANDALONE)
+// Działa w programie OpenSCAD bez potrzeby posiadania dodatkowych bibliotek.
+// ==============================================================================
+
+LENGTH = 26.0;
+EDGE_MAX_R = 17.03;
+EDGE_MIN_R = 14.20;
+EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R;
+DISC_R = 14.5; DISC_LEN = 2.4; DISC_GROOVES = 3; DISC_GROOVE_W = 0.35; DISC_GROOVE_D = 0.4;
+NECK_R = 11.5; NECK_LEN = 2.0;
+FLANGE_R = EDGE_MAX_R; FLANGE_LEN = 2.0;
+CAM_START_Z = 6.4; N_POS = 5; COLLAR_LEN = 2.4;
+CAM_TOTAL_LEN = LENGTH - CAM_START_Z - COLLAR_LEN;
+BAND_LEN = CAM_TOTAL_LEN / N_POS;
+COLLAR_R = 11.5; COLLAR_TOP_R = 10.3; COLLAR_CHAMFER_LEN = 1.4;
+SOCKET_R = 7.8; SOCKET_KEY_WIDTH = 4.5; SOCKET_KEY_DEPTH = 2.2; KEY_START_Z = 6.4;
+
+function tri_wave(a, reps) = let(t = (a*reps/360) - floor(a*reps/360)) 4*abs(t - 0.5) - 1;
+function sine_wave(a, reps) = sin(a*reps);
+function saw_wave(a, reps, skew=0.5) = let(t = (a*reps/360) - floor(a*reps/360)) (t < skew ? (2*(t/skew) - 1) : (1 - 2*(t - skew)/(1 - skew)));
+function trap_wave(a, reps, dwell=0.28) = let(t = (a*reps/360) - floor(a*reps/360), ramp = (1.0 - 2.0*dwell)/2.0) (t < dwell ? 1.0 : (t < dwell + ramp ? 1.0 - 2.0*(t - dwell)/ramp : (t < 2.0*dwell + ramp ? -1.0 : -1.0 + 2.0*(t - 2.0*dwell - ramp)/ramp)));
+function blind_hem(a, reps=3, spike_w=0.20) = let(t = (a*reps/360) - floor(a*reps/360)) (t < spike_w ? (sin(180*t/spike_w) * 2 - 1) : -1);
+function three_step_zigzag(a, reps=3) = let(t = (a*reps/360) - floor(a*reps/360), step = floor(t * 6)) (step == 0 ? -0.9 : (step == 1 ? -0.3 : (step == 2 ? 0.3 : (step == 3 ? 0.9 : (step == 4 ? 0.3 : -0.3)))));
+function diamond_satin(a, satin_reps=18, cycle_reps=3) = let(env = (1 - cos(a*cycle_reps))/2) trap_wave(a, satin_reps, 0.22) * (env * 0.75 + 0.2);
+function block_satin(a, satin_reps=16, block_reps=4) = let(side = sign(sin(a*block_reps))) (trap_wave(a, satin_reps, 0.22) * 0.45 + side * 0.45);
+function hourglass_satin(a, satin_reps=18, cycle_reps=3) = let(env = abs(cos(a*cycle_reps))) trap_wave(a, satin_reps, 0.22) * (env * 0.75 + 0.2);
+function arrow_sharpen(a, reps, skew=0.5) = let(v = saw_wave(a, reps, skew)) sign(v) * pow(abs(v), 0.6);
+function diamond_lattice(a, reps) = (tri_wave(a, reps) + tri_wave(a + 180/reps, reps)) / 2;
+
+function edge_depth(v) = (v + 1) / 2;
+function edge_radius(profile_fn, a) = EDGE_MAX_R - EDGE_SWING*edge_depth(profile_fn(a));
+function edge_points(profile_fn, samples=96) = [ for (i = [0:samples-1]) let(a = i*360/samples, r = edge_radius(profile_fn, a)) [r*cos(a), r*sin(a)] ];
+
+module tooth_band(profile_fn, height, samples=96) { linear_extrude(height=height) polygon(edge_points(profile_fn, samples)); }
+
+// Wybrane ściegi:
+function ${letL}_pos1(a) = ${s0.formula};
+function ${letL}_pos2(a) = ${s1.formula};
+function ${letL}_pos3(a) = ${s2.formula};
+function ${letL}_pos4(a) = ${s3.formula};
+function ${letL}_pos5(a) = ${s4.formula};
+
+difference() {
+    union() {
+        cylinder(h=DISC_LEN, r=DISC_R, $fn=96);
+        translate([0, 0, DISC_LEN]) cylinder(h=NECK_LEN, r=NECK_R, $fn=96);
+        translate([0, 0, DISC_LEN + NECK_LEN]) cylinder(h=FLANGE_LEN, r=FLANGE_R, $fn=96);
+        translate([0, 0, CAM_START_Z + 0*BAND_LEN]) tooth_band(function(a) ${letL}_pos1(a), BAND_LEN);
+        translate([0, 0, CAM_START_Z + 1*BAND_LEN]) tooth_band(function(a) ${letL}_pos2(a), BAND_LEN);
+        translate([0, 0, CAM_START_Z + 2*BAND_LEN]) tooth_band(function(a) ${letL}_pos3(a), BAND_LEN);
+        translate([0, 0, CAM_START_Z + 3*BAND_LEN]) tooth_band(function(a) ${letL}_pos4(a), BAND_LEN);
+        translate([0, 0, CAM_START_Z + 4*BAND_LEN]) tooth_band(function(a) ${letL}_pos5(a), BAND_LEN);
+        translate([0, 0, LENGTH - COLLAR_LEN]) {
+            cylinder(h=COLLAR_LEN - COLLAR_CHAMFER_LEN, r=COLLAR_R, $fn=96);
+            translate([0, 0, COLLAR_LEN - COLLAR_CHAMFER_LEN]) cylinder(h=COLLAR_CHAMFER_LEN, r1=COLLAR_R, r2=COLLAR_TOP_R, $fn=96);
+        }
+    }
+    translate([0, 0, -1]) cylinder(h=LENGTH + 2, r=SOCKET_R, $fn=64);
+    translate([SOCKET_R - 0.5, -SOCKET_KEY_WIDTH/2, KEY_START_Z]) cube([SOCKET_KEY_DEPTH + 0.5, SOCKET_KEY_WIDTH, LENGTH - KEY_START_Z + 1]);
+}
+`;
+      }
     }
 
     function updateScadPreview() {
-      const code = generateScadCode();
+      const code = generateScadCode(false);
       document.getElementById('scadCodePreview').textContent = code;
     }
 
     function downloadScadFile() {
-      const code = generateScadCode();
+      const code = generateScadCode(false);
       const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -993,8 +1439,28 @@ cam_with_grooves("${currentDrum.letter}", [
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-
       showToast(`Pobrano plik cam_${currentDrum.letter}.scad!`);
+    }
+
+    function downloadStandaloneFile() {
+      const code = generateScadCode(true);
+      const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `cam_${currentDrum.letter}_standalone.scad`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`Pobrano plik cam_${currentDrum.letter}_standalone.scad!`);
+    }
+
+    function copyCodeToClipboard() {
+      const code = generateScadCode(false);
+      navigator.clipboard.writeText(code).then(() => {
+        showToast("Skopiowano kod do schowka!");
+      });
     }
 
     function showToast(msg) {
@@ -1004,7 +1470,6 @@ cam_with_grooves("${currentDrum.letter}", [
       setTimeout(() => { t.style.display = 'none'; }, 3000);
     }
 
-    // Run on load
     window.addEventListener('DOMContentLoaded', init);
   </script>
 </body>

@@ -101,6 +101,9 @@ function blind_hem(a, reps=3, spike_w=0.20) =
     let(t = (a*reps/360) - floor(a*reps/360))
     (t < spike_w ? (sin(180*t/spike_w) * 2 - 1) : -1);
 
+// Alias dla kompatybilności z wcześniejszymi projektami
+function pulse(a, reps=3, spike_w=0.20) = blind_hem(a, reps, spike_w);
+
 // Zygzak 3-stopniowy elastyczny (trestings siksak): 3 stopnie w prawo, 3 stopnie w lewo
 function three_step_zigzag(a, reps=3) =
     let(t = (a*reps/360) - floor(a*reps/360),

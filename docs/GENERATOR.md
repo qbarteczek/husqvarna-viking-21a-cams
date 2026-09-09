@@ -6,30 +6,29 @@ Projekt zawiera wbudowany, uniwersalny system generowania własnych bębnów śc
 
 ## 3 Sposoby korzystania z generatora
 
-### Sposób 1: W programie OpenSCAD (Panel okienkowy Customizer GUI)
+### Sposób 1: Aplikacja GUI z podglądem 3D i haftem na tkaninie (Najprostszy dla amatorów!)
 
-Najwygodniejszy sposób lokalny bez instalacji dodatkowego oprogramowania:
-1. Zainstaluj darmowy program [OpenSCAD](https://openscad.org/) (wersja 2021.01+).
-2. Otwórz plik [`tools/openscad/cam_generator.scad`](../tools/openscad/cam_generator.scad).
-3. W górnym menu włącz panel parametrów: **Window -> Customizer** (lub odznacz *Hide Customizer*).
-4. Po prawej stronie pojawi się wygodny panel:
-   * **Drum_Letter:** wpisz literę bębna (np. `E`, `M`, `S`),
-   * **Position_1 .. Position_5:** wybierz dowolny ścieg z listy rozwijanej (0–35),
-   * *(Zalecenie: dla pozycji 5 zaleca się pozostawienie standardowego zygzaka `4`, który stanowi stan zerowy/spoczynkowy mechanizmu przy wymianie bębna).*
-5. Wciśnij klawisz **F6** (Render), a po zakończeniu obliczeń **F7** (Export as STL).
+Najprostszy, w pełni wizualny sposób bez instalowania czegokolwiek:
+1. W głównym katalogu projektu kliknij dwukrotnie plik:
+   👉 **`Uruchom_Generator.bat`** (lub otwórz w przeglądarce [`tools/generator/index.html`](../tools/generator/index.html)).
+2. W aplikacji zobaczysz:
+   * **Interaktywny model 3D bębna ściegowego (WebGL / Three.js):** obracaj myszką, przybliżaj i oglądaj rzeczywistą geometrię zębów, rowków i kołnierza bębna w czasie rzeczywistym!
+   * **Wirtualny haft na tkaninie:** podgląd przeszycia igłą nici w kolorze na materiale dla wszystkich 5 pozycji,
+   * **Gotowe presety fabryczne:** 1-kliknięciem załaduj wzorzec `A1`, `B1`, `C1` lub `D`,
+   * **Katalog 36 ściegów ozdobnych:** filtrowany według kategorii (użytkowe, fale, satynowe, meandry) z wyszukiwarką.
+3. Kliknij wybraną pozycję (1–5) na górnym pasku, a następnie kliknij dowolny ścieg z katalogu.
+4. Kliknij **„💾 Pobierz cam_X.scad”** lub **„📦 Plik Samodzielny (Standalone)”**.
 
 ---
 
-### Sposób 2: Wizualna aplikacja webowa w przeglądarce (`tools/generator/index.html`)
+### Sposób 2: W programie OpenSCAD (Panel okienkowy Customizer GUI)
 
-Aplikacja działająca w 100% w przeglądarce internetowej (lokalnie lub przez GitHub Pages):
-1. Otwórz plik [`tools/generator/index.html`](../tools/generator/index.html) w dowolnej przeglądarce (Chrome, Firefox, Edge).
-2. Na ekranie zobaczysz:
-   * **Symulację przeszycia na tkaninie** generowaną na żywo na elemencie Canvas dla wszystkich 5 ścieżek,
-   * **Katalog 36 ściegów** z podglądem fal i filtrami kategorii (Użytkowe, Ozdobne, Satynowe, Geometryczne),
-   * **Szybkie presety** fabryczne: `Zestaw A1`, `Zestaw B1`, `Zestaw C1`, `Zestaw D`.
-3. Kliknij slot pozycji 1–5, a następnie kliknij żądany ścieg z galerii.
-4. Kliknij przycisk **„Pobierz plik .SCAD”** u góry strony, aby zapisać gotowy model.
+Dla użytkowników pracujących bezpośrednio w OpenSCAD:
+1. Zainstaluj darmowy program [OpenSCAD](https://openscad.org/) (wersja 2021.01+).
+2. Otwórz plik [`tools/openscad/cam_generator.scad`](../tools/openscad/cam_generator.scad).
+3. W górnym menu włącz panel parametrów: **Window -> Customizer** (lub odznacz *Hide Customizer*).
+4. Wybierz preset (`A1`, `B1`, `C1`, `D`) lub tryb `Custom` i wybierz ściegi dla pozycji 1–5.
+5. Wciśnij klawisz **F6** (Render), a po zakończeniu obliczeń **F7** (Export as STL).
 
 ---
 
