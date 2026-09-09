@@ -715,6 +715,12 @@
 
     <!-- Katalog ściegów ozdobnych (Dziesiątki ściegów do wyboru) -->
     <div class="catalog-section">
+      <div class="panel-header" style="margin-bottom: -0.25rem;">
+        <div class="panel-title">
+          <span class="icon">✨</span>
+          <span id="catalogTargetTitle" style="color: var(--accent-cyan);">Katalog ściegów — wybierz wzór dla Pozycji 1:</span>
+        </div>
+      </div>
       <div class="catalog-filters">
         <div class="filter-pills" id="categoryFilters">
           <button class="filter-pill active" onclick="filterCatalog('all')">Wszystkie ściegi (36)</button>
@@ -937,6 +943,15 @@
         if (c) c.classList.toggle('active', i === index);
       }
       updateThreeHighlight();
+
+      const titleElem = document.getElementById('catalogTargetTitle');
+      if (titleElem) {
+        titleElem.textContent = `Katalog ściegów — wybierz wzór dla Pozycji ${activeSlotIndex + 1}:`;
+      }
+
+      document.querySelectorAll('.stitch-add-btn').forEach(btn => {
+        btn.textContent = `Wstaw do Pozycji ${activeSlotIndex + 1} ➔`;
+      });
     }
 
     function updateSlotUI(index) {
