@@ -5,92 +5,54 @@
 // (thing:6018240) — patrz ../../docs/DIMENSIONS.md. Oś obrotu w tym pliku to Z
 // (w oryginalnym STL była to oś Y — sama nazwa osi nie wpływa na pasowanie).
 //
-// MECHANIZM (drugi raz poprawiony, po dokładnym skanie promienia co 0.1-0.25 mm
-// wzdłuż całej długości oryginału A):
+// MECHANIZM (trzeci raz poprawiony — tym razem na podstawie zdjęć fizycznego
+// bębna A z opisami użytkownika, narysowanymi bezpośrednio na renderze):
 // 1. Krawędź walca na każdej z 5 pozycji JEST profilem ściegu (ząbki jak w A),
-//    nie schowanym rowekiem — czujnik jeździ bezpośrednio po krawędzi.
+//    nie schowanym rowkiem — czujnik jeździ bezpośrednio po krawędzi.
 // 2. Pozycje NIE są rozdzielone kołnierzami — w oryginale sąsiadują bezpośrednio
-//    (brak odstępu). Wcześniejsza wersja błędnie dodawała 0.8 mm kołnierz
-//    między każdą parą pozycji.
-// 3. Między dużym kołnierzem (BOSS0) a częścią zębatą jest w oryginale
-//    wieloschodkowy trzpień (nie prosty walec!): 14.97 -> 9.75 -> 13.97 -> 7.75,
-//    a najwęższy odcinek (promień ~7.75 mm, dł. ~1.9 mm) to osobny, wyraźnie
-//    węższy "czop" — prawdopodobnie właściwy element pasujący do gniazda
-//    napędu maszyny.
-// 4. W dużym kołnierzu (Z=0, strona z literą) jest OTWÓR NA WAŁEK NAPĘDOWY
-//    maszyny Z WYPUSTEM (promień ~7.8 mm, wycięty od czoła) — wypust jest
-//    niezbędny do przeniesienia ruchu obrotowego z wałka na bęben, to nie
-//    kosmetyczny szczegół. To NIE otwór przelotowy przez całą krzywkę —
-//    całość poza tym otworem jest lita.
-// 5. Na kołnierzu BOSS0 jest gwint (kilka zwojów), a otwór ma wypust — oba
-//    potwierdzone zdjęciami fizycznego bębna A, patrz docs/DIMENSIONS.md.
-// Poprzednia wersja tego pliku zakładała prosty pełny otwór na wałek na całej
-// długości — było to błędne uproszczenie.
+//    (brak odstępu).
+// 3. Kołnierz BOSS0 (strona z grawerunkiem) ma średnicę RÓWNĄ maksymalnej
+//    amplitudzie krzywek (EDGE_MAX_R) — na zdjęciu użytkownika oznaczone
+//    niebieską strzałką jako element "szerszy", który "określa maksymalną
+//    średnicę/amplitudę krzywek". Wcześniej BOSS0_R (14.97) i EDGE_MAX_R
+//    (17.03) były różnymi, niezależnie zmierzonymi wartościami — błąd,
+//    teraz BOSS0_R = EDGE_MAX_R wprost.
+// 4. Tuż za kołnierzem jest pierścień z płytkimi, POZIOMYMI rowkami (nie
+//    helisą!) — na zdjęciu oznaczone żółtą strzałką: "to nie jest gwint, i
+//    jest znacznie mniejsze niż maksymalna amplituda krzywek". Wcześniejsza
+//    wersja modelowała to jako gwint śrubowy (boss0_threaded, helisa) — błąd
+//    interpretacji zdjęć, poprawione na ring_grooved() poniżej.
+// 5. Między tym pierścieniem a częścią zębatą jest pojedynczy, gładki stożek
+//    wprost do promienia doliny krzywek (EDGE_MIN_R) — bez węższych stopni.
+//    Wcześniejsza wersja (wieloschodkowy trzpień schodzący do ~7.75 mm,
+//    wyraźnie węższego niż dolina krzywek) tworzyła w renderze niezamierzoną
+//    szczelinę/wnękę — na zdjęciu oznaczone czerwoną strzałką: "to nie
+//    powinno istnieć, poszerz krzywki aby wypełnić tę przestrzeń". Usunięto
+//    wąskie stopnie, materiał wypełnia teraz całą tę przestrzeń.
+// 6. Czoło kołnierza BOSS0 (Z=0, strona z literą) ma ścięcie (fazę) na
+//    krawędzi — widoczne na zdjęciach na samej górze elementu.
+// 7. W kołnierzu BOSS0 jest OTWÓR NA WAŁEK NAPĘDOWY maszyny, wycięty od
+//    czoła (nie przelotowy przez całą krzywkę — całość poza tym otworem
+//    jest lita). WAŁEK maszyny ma wypust (klin wystający na zewnątrz), a
+//    BĘBEN (ten model) ma WPUST — rowek wycięty na zewnątrz od okrągłego
+//    otworu, w który ten wypust wchodzi (poprzednia wersja miała to
+//    odwrócone — żeberko wystające do wnętrza otworu bębna — błąd,
+//    poprawione po korekcie użytkownika mającego fizyczny bęben w ręku).
+//    Element pomocniczy tools/openscad/mating_shaft_reference.scad ma
+//    wypust pasujący do tego wpustu.
 
 LENGTH   = 26.0;   // długość całkowita walca
-MAIN_R   = 16.97;  // promień części zębatej, Ø ~33.94
-BOSS0_R  = 14.97;  // promień dużego kołnierza przy Z=0 (strona z literą), Ø ~29.94
-BOSS1_R  = 10.30;  // promień kołnierza przy Z=LENGTH (strona daleka), Ø ~20.6
 
-// --- Schodkowy trzpień montażowy między BOSS0 a częścią zębatą (zmierzone
-// z oryginału, długości ok. 0.1-0.5 mm zaokrąglone/uproszczone tam, gdzie
-// rozdzielczość pomiaru siatki nie pozwalała rozróżnić ostrego progu od
-// krótkiego stożka) ---
-BOSS0_LEN   = 3.2;
-NECK_R1     = 9.75;   // promień pierwszego "przewężenia"
-NECK_LEN1   = 2.1;    // Z = 3.7 .. 5.8
-NECK_R2     = 13.97;  // promień pośredniego kołnierzyka
-NECK_LEN2   = 1.0;    // Z = 6.3 .. 7.3
-NECK_PIN_R  = 7.75;   // promień najwęższego czopu montażowego
-NECK_PIN_LEN = 1.9;   // Z = 7.8 .. 9.7
-TAPER_LEN   = 0.5;    // długość każdego skosu/progu między odcinkami trzpienia
-
-NECK_START = BOSS0_LEN;                                    // 3.2
-NECK_END   = BOSS0_LEN + TAPER_LEN + NECK_LEN1 + TAPER_LEN + NECK_LEN2 + TAPER_LEN + NECK_PIN_LEN;  // 9.7
-
-// Otwór na wałek napędowy maszyny, wycięty od czoła Z=0 (nie przelotowy przez
-// całą długość — patrz punkt 4 wyżej). SOCKET_KEY_* niżej to wypust
-// przenoszący napęd z wałka na bęben.
-SOCKET_R     = 7.8;
-SOCKET_DEPTH = 2.5;
-// Wpust pryzmatyczny (zabierak) — sprawdzono w pliku referencyjnym STL
-// (V21ZZ3Z.stl, thing:6018240): otwór na wałek w tym pliku jest IDEALNIE
-// okrągły na całym obwodzie (skan kąta co ~5° na Y=0-3mm, promień stały
-// 7.80mm) — replika trzeciej strony NIE odwzorowuje wpustu. Jedynym źródłem
-// wymiarów są więc zdjęcia fizycznego bębna: prostokątny wypust wystaje
-// DO WEWNĄTRZ otworu (nie płaskie ścięcie) — bęben ma pełny, lity "żeberko"
-// pasujące do rowka w wałku maszyny (odwrotnie niż klasyczny luźny wpust
-// pryzmatyczny wg DIN 6885, gdzie klin siedzi w rowkach obu elementów).
-// Szacunek proporcji z fotografii (brak twardej skali na zdjęciach): szerokość
-// ok. 60% średnicy otworu, wysunięcie w głąb otworu ok. 25% promienia —
-// DO WERYFIKACJI dopasowaniem do prawdziwego wałka maszyny.
-SOCKET_KEY_WIDTH = 6.0;    // szerokość żeberka (na cięciwie otworu)
-SOCKET_KEY_PROTRUSION = 3.0; // jak daleko żeberko wystaje w głąb otworu
-
-// Gwint na kołnierzu BOSS0 — widoczny na zdjęciach fizycznego bębna A
-// (kilka zwojów gwintu tuż przy grawerowanym czole), nieobecny we
-// wcześniejszej wersji (modelowano gładki walec). Wysokość zwoju i skok
-// dobrane wizualnie ze zdjęć (brak wzorca z pliku STL) — do weryfikacji
-// wydrukiem próbnym i dopasowaniem do gniazda maszyny.
-THREAD_PITCH   = 1.1;
-THREAD_DEPTH   = 0.9;
-THREAD_R_OUT   = BOSS0_R + THREAD_DEPTH;
-THREAD_TURNS   = BOSS0_LEN / THREAD_PITCH;
-
-N_POS     = 5;     // liczba pozycji wyboru ściegu (jak w zestawie A)
-BOSS1_LEN = 1.75;
-BAND_LEN  = (LENGTH - NECK_END - BOSS1_LEN) / N_POS;  // pozycje sąsiadują bez odstępu
-
-function position_z(i) = NECK_END + i*BAND_LEN;
-
+// Amplituda krzywek — zdefiniowana najpierw, bo teraz to ONA determinuje
+// średnicę kołnierza BOSS0 (patrz punkt 3 wyżej).
 // Zakres promienia krawędzi ząbków = rzeczywisty, zmierzony zakres ruchu
 // czujnika/popychacza na oryginale A. Pierwsza wersja ([7.71, 17.03] mm)
 // pochodziła z pliku STL zestawu A (thing:6018240) — trzeciej strony repliki,
 // niekoniecznie identycznej z fizycznym bębnem użytkownika. Po dostarczeniu
-// zdjęć fizycznego bębna porównano głębokość wcięć zębów z pola widoku, w
-// którym widoczny jest też kołnierz o znanej średnicy (Ø 29.94 mm, BOSS0_R)
-// — jako skala odniesienia. Na tej podstawie doliny zębów sięgają wizualnie
-// płycej niż zakładał plik STL — ok. 70% promienia szczytu, nie ~45%.
+// zdjęć fizycznego bębna porównano głębokość wcięć zębów z polem widoku, w
+// którym widoczny jest też kołnierz o znanej średnicy — jako skala
+// odniesienia. Na tej podstawie doliny zębów sięgają wizualnie płycej niż
+// zakładał plik STL — ok. 70% promienia szczytu, nie ~45%.
 // EDGE_MAX_R pozostaje zgodny z Ø części zębatej (szczyty zębów, potwierdzone
 // i na zdjęciach, i w STL). EDGE_MIN_R podniesiono, więc amplituda (EDGE_SWING)
 // jest mniejsza — subtelniejszy, płytszy ścieg, bliższy temu, co widać na
@@ -99,6 +61,48 @@ function position_z(i) = NECK_END + i*BAND_LEN;
 EDGE_MAX_R = 17.03;
 EDGE_MIN_R = 12.0;
 EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R;
+
+BOSS0_R  = EDGE_MAX_R;  // kołnierz z grawerunkiem, Ø = maks. amplituda krzywek (niebieska strzałka)
+BOSS1_R  = 10.30;       // promień kołnierza przy Z=LENGTH (strona daleka), Ø ~20.6
+
+BOSS0_LEN   = 3.2;
+CHAMFER_LEN = 0.7;      // ścięcie na czole kołnierza (punkt 6 wyżej)
+
+// Pierścień z płytkimi, poziomymi rowkami tuż za kołnierzem (punkt 4 wyżej).
+RING_R        = BOSS0_R - 2.2;  // promień dna rowków, wyraźnie mniejszy niż EDGE_MAX_R
+RING_LEN      = 2.0;
+RING_GROOVES  = 3;
+RING_GROOVE_W = 0.5;
+
+// Przejście między pierścieniem a częścią zębatą: pojedynczy, gładki stożek
+// wprost do EDGE_MIN_R (punkt 5 wyżej) — długość dobrana tak, by
+// NECK_END wypadł w tym samym miejscu co w poprzedniej wersji (9.7 mm),
+// zachowując układ 5 pozycji ściegu bez dalszych przeliczeń.
+NECK_START = BOSS0_LEN + RING_LEN;   // 5.2
+NECK_LEN   = 4.5;
+NECK_END   = NECK_START + NECK_LEN;  // 9.7
+
+// Otwór na wałek napędowy maszyny, wycięty od czoła Z=0 (nie przelotowy przez
+// całą długość — patrz punkt 7 wyżej). SOCKET_KEY_* niżej to wpust
+// przyjmujący wypust wałka.
+SOCKET_R     = 7.8;
+SOCKET_DEPTH = 2.5;
+// Wpust pryzmatyczny — standardowy układ: to WAŁEK maszyny ma wypust (klin,
+// materiał wystający na zewnątrz), a BĘBEN (ten model) ma WPUST — rowek
+// wycięty NA ZEWNĄTRZ od okrągłego otworu, w które ten klin wchodzi.
+// Element pomocniczy `mating_shaft_reference.scad` ma wypust (protruding
+// key) pasujący do tego rowka.
+// Wymiary nadal szacowane wizualnie ze zdjęć (plik referencyjny STL nie ma
+// żadnego wpustu — jego otwór jest idealnie okrągły) — DO WERYFIKACJI
+// dopasowaniem do prawdziwego wałka maszyny.
+SOCKET_KEY_WIDTH = 6.0;    // szerokość rowka (wpustu)
+SOCKET_KEY_DEPTH = 3.0;    // jak daleko rowek wcina się na zewnątrz od SOCKET_R
+
+N_POS     = 5;     // liczba pozycji wyboru ściegu (jak w zestawie A)
+BOSS1_LEN = 1.75;
+BAND_LEN  = (LENGTH - NECK_END - BOSS1_LEN) / N_POS;  // pozycje sąsiadują bez odstępu
+
+function position_z(i) = NECK_END + i*BAND_LEN;
 
 // --- Podstawowe kształty fal, zwracają wartości znormalizowane -1..1 (chyba że zaznaczono inaczej) ---
 
@@ -152,48 +156,30 @@ module tooth_band(profile_fn, height, samples=96) {
         polygon(edge_points(profile_fn, samples));
 }
 
-module mounting_neck() {
-    // BOSS0_LEN..+TAPER: 14.97 -> NECK_R1
-    translate([0, 0, BOSS0_LEN])
-        cylinder(h=TAPER_LEN, r1=BOSS0_R, r2=NECK_R1, $fn=96);
-    // stała szyjka NECK_R1
-    translate([0, 0, BOSS0_LEN+TAPER_LEN])
-        cylinder(h=NECK_LEN1, r=NECK_R1, $fn=96);
-    // skos NECK_R1 -> NECK_R2
-    translate([0, 0, BOSS0_LEN+TAPER_LEN+NECK_LEN1])
-        cylinder(h=TAPER_LEN, r1=NECK_R1, r2=NECK_R2, $fn=96);
-    // stały kołnierzyk NECK_R2
-    translate([0, 0, BOSS0_LEN+2*TAPER_LEN+NECK_LEN1])
-        cylinder(h=NECK_LEN2, r=NECK_R2, $fn=96);
-    // skos NECK_R2 -> NECK_PIN_R
-    translate([0, 0, BOSS0_LEN+2*TAPER_LEN+NECK_LEN1+NECK_LEN2])
-        cylinder(h=TAPER_LEN, r1=NECK_R2, r2=NECK_PIN_R, $fn=96);
-    // czop montażowy NECK_PIN_R
-    translate([0, 0, BOSS0_LEN+3*TAPER_LEN+NECK_LEN1+NECK_LEN2])
-        cylinder(h=NECK_PIN_LEN, r=NECK_PIN_R, $fn=96);
+// Kołnierz z grawerunkiem: ścięcie na czole (Z=0), potem walec o promieniu
+// BOSS0_R (punkty 3 i 6 wyżej).
+module boss0_plain() {
+    cylinder(h=CHAMFER_LEN, r1=BOSS0_R-CHAMFER_LEN, r2=BOSS0_R, $fn=96);
+    translate([0, 0, CHAMFER_LEN])
+        cylinder(h=BOSS0_LEN-CHAMFER_LEN, r=BOSS0_R, $fn=96);
 }
 
-// Gwintowany kołnierz BOSS0 — walec bazowy + zwoje gwintu nawinięte helisą
-// (unia małych brył wzdłuż ścieżki spiralnej, ta sama metoda co przy
-// krawędziach ściegu, tylko addytywnie zamiast cięcia).
-module boss0_threaded(samples_per_turn=32) {
-    total_samples = floor(THREAD_TURNS * samples_per_turn);
-    union() {
-        cylinder(h=BOSS0_LEN, r=BOSS0_R, $fn=96);
-        for (i = [0:total_samples-1]) {
-            a0 = i*360/samples_per_turn;
-            a1 = (i+1)*360/samples_per_turn;
-            z0 = i*THREAD_PITCH/samples_per_turn;
-            z1 = (i+1)*THREAD_PITCH/samples_per_turn;
-            if (z1 <= BOSS0_LEN)
-                hull() {
-                    translate([THREAD_R_OUT*cos(a0), THREAD_R_OUT*sin(a0), z0])
-                        sphere(d=1.6, $fn=8);
-                    translate([THREAD_R_OUT*cos(a1), THREAD_R_OUT*sin(a1), z1])
-                        sphere(d=1.6, $fn=8);
-                }
+// Pierścień z poziomymi rowkami — NIE gwint (punkt 4 wyżej).
+module ring_grooved() {
+    difference() {
+        cylinder(h=RING_LEN, r=BOSS0_R, $fn=96);
+        for (i = [0:RING_GROOVES-1]) {
+            gz = RING_LEN * (i+0.5) / RING_GROOVES;
+            translate([0, 0, gz - RING_GROOVE_W/2])
+                cylinder(h=RING_GROOVE_W, r=RING_R, $fn=96);
         }
     }
+}
+
+// Przejście do części zębatej: pojedynczy, gładki stożek (punkt 5 wyżej).
+module mounting_neck() {
+    translate([0, 0, NECK_START])
+        cylinder(h=NECK_LEN, r1=RING_R, r2=EDGE_MIN_R, $fn=96);
 }
 
 // Grawerunek wzorowany na zdjęciach fizycznego bębna A: duża litera zestawu
@@ -212,30 +198,32 @@ module arc_text(str, radius, center_angle, angle_span, size, depth) {
 }
 
 module cam_label_cut(letter) {
-    translate([0, 11, -0.01])
+    // Promienie/rozmiary przeskalowane proporcjonalnie do nowego, większego
+    // BOSS0_R (dawniej 14.97, teraz = EDGE_MAX_R = 17.03 — punkt 3 wyżej).
+    translate([0, 12.5, -0.01])
         linear_extrude(0.7)
-            text(letter, size=6.5, halign="center", valign="center", font="Liberation Sans:style=Bold");
-    arc_text("HUSQVARNA", 10.6, 250, 130, 2.0, 0.7);
-    arc_text("SWEDEN", 8.8, 250, 90, 1.6, 0.7);
+            text(letter, size=7.4, halign="center", valign="center", font="Liberation Sans:style=Bold");
+    arc_text("HUSQVARNA", 12.0, 250, 130, 2.3, 0.7);
+    arc_text("SWEDEN", 10.0, 250, 90, 1.8, 0.7);
 }
 
-// Otwór na wałek z wypustem pryzmatycznym (zabierakiem): PEŁNE żeberko
-// wystające do wnętrza otworu, nie ścięcie/rowek. Zaimplementowane jako
-// walec-otwór, z którego wycinamy prostokąt tam, gdzie ma zostać żeberko —
-// czyli w tym miejscu materiał NIE jest usuwany z bryły (patrz zdjęcia
-// 08/09 w references/husqvarna_photos_A/, docs/DIMENSIONS.md).
+// Otwór na wałek z wpustem pryzmatycznym: okrągły otwór + rowek wycięty na
+// zewnątrz (dodatkowa przestrzeń usunięta z bryły), w który wchodzi wypust
+// (klin) wałka maszyny — patrz uwaga przy SOCKET_KEY_* wyżej.
 module socket_cut() {
-    difference() {
+    union() {
         cylinder(h=SOCKET_DEPTH, r=SOCKET_R, $fn=64);
-        translate([SOCKET_R - SOCKET_KEY_PROTRUSION, -SOCKET_KEY_WIDTH/2, -1])
-            cube([SOCKET_KEY_PROTRUSION + 1, SOCKET_KEY_WIDTH, SOCKET_DEPTH + 2]);
+        translate([SOCKET_R - 0.5, -SOCKET_KEY_WIDTH/2, 0])
+            cube([SOCKET_KEY_DEPTH + 0.5, SOCKET_KEY_WIDTH, SOCKET_DEPTH]);
     }
 }
 
 module cam_solid(profile_fns) {
     difference() {
         union() {
-            boss0_threaded();
+            boss0_plain();
+            translate([0, 0, BOSS0_LEN])
+                ring_grooved();
             mounting_neck();
             for (i = [0:N_POS-1])
                 translate([0, 0, position_z(i)])

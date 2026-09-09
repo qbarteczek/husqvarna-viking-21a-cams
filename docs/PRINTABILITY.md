@@ -85,25 +85,42 @@ replika STL.
 0.3–0.9 z `docs/STITCH_DESIGN.md`), więc żaden wzór nie żąda od czujnika wychylenia poza jego
 zasięg.
 
-### 6. Gwint, wpust pryzmatyczny i grawerunek dodane na podstawie zdjęć fizycznego bębna
+### 6. Rowki, wpust pryzmatyczny i grawerunek dodane na podstawie zdjęć fizycznego bębna
 
 Po otrzymaniu zdjęć prawdziwego bębna A (patrz `docs/DIMENSIONS.md`, sekcja "Poprawki na
 podstawie zdjęć...") dodano trzy elementy niewidoczne w samej siatce STL zestawu A:
 
-- **Gwint na dużym kołnierzu** (`boss0_threaded()` w `cam_common.scad`) — zamiast gładkiego
-  walca. Drukowalność: gwint drukowany z osią pionową (jak cała reszta bryły) jest
-  standardowo bezproblemowy w FDM — każdy zwój to tylko lekki, stopniowy narost promienia w
-  kolejnych warstwach, bez nawisów. Zalecana **dokładność wymiaru gwintu do potwierdzenia
-  próbnym wkręceniem w gniazdo maszyny** — skok/głębokość dobrano wizualnie ze zdjęć, nie z
-  pomiaru.
-- **Wpust pryzmatyczny (zabierak) w otworze na wałek** — pełne, prostokątne żeberko wystające
-  DO WEWNĄTRZ otworu (nie ścięcie/rowek, patrz `docs/DIMENSIONS.md`). Drukowalność: żeberko
-  to lita bryła w poprzek otworu, drukowana od pierwszej warstwy wraz z resztą kołnierza —
-  bez nawisów, bez podpór. Skorygowano wymiary (`SOCKET_KEY_WIDTH`/`SOCKET_KEY_PROTRUSION`)
-  po dokładniejszym przejrzeniu zdjęć dalekiego końca bębna — żeberko jest bardziej wystające,
-  niż wcześniej szacowano. **Do weryfikacji dopasowaniem do prawdziwego wałka.**
+- **Pierścień z poziomymi rowkami na dużym kołnierzu** (`ring_grooved()` w `cam_common.scad`)
+  — zamiast gładkiego walca. Drukowalność: rowki poziome (prostopadłe do osi) drukowane z osią
+  pionową to standardowo bezproblemowa geometria w FDM — bez nawisów. Zalecana **dokładność
+  wymiaru do potwierdzenia porównaniem z prawdziwym bębnem** — głębokość/rozstaw dobrano
+  wizualnie ze zdjęć, nie z pomiaru.
+- **Wpust pryzmatyczny w otworze na wałek** — rowek wycięty NA ZEWNĄTRZ od okrągłego otworu
+  (nie żeberko do środka, patrz `docs/DIMENSIONS.md` — poprawiony kierunek po korekcie
+  użytkownika). Drukowalność: to tylko dodatkowa wycięta przestrzeń w poprzek otworu, bez
+  nawisów, bez podpór. **Do weryfikacji dopasowaniem do prawdziwego wałka** —
+  `tools/openscad/mating_shaft_reference.scad` ma teraz pasujący wypust.
 - **Grawerunek** ("HUSQVARNA" + "SWEDEN" + litera zestawu) — płytki (0.7 mm), na płaskim
   czole, bez wpływu na drukowalność — jak poprzednio.
+
+### 7. Trzy poprawki geometrii po adnotacjach użytkownika na renderze (naprawione)
+
+Użytkownik, mając fizyczny bęben A w ręku, naniósł na render trzy strzałki (patrz
+`docs/DIMENSIONS.md`, sekcja "Poprawki na podstawie adnotacji..."):
+
+- **Czerwona strzałka** — wieloschodkowy trzpień montażowy (Y=3.2–9.7, zwężający się aż do
+  ~7.75 mm) tworzył w renderze niezamierzoną szczelinę, której na fizycznej części nie ma.
+  Naprawione: `mounting_neck()` to teraz pojedynczy, gładki stożek wprost do `EDGE_MIN_R`, bez
+  odcinków węższych niż dolina krzywek. Drukowalność: pojedynczy stożek jest prostszy i
+  bezpieczniejszy do druku niż poprzednie trzy naprzemienne zwężenia/rozszerzenia.
+- **Żółta strzałka** — element wcześniej modelowany jako gwint śrubowy (helisa) **nie jest
+  gwintem**. Naprawione: zamieniono na `ring_grooved()` (patrz punkt 6 wyżej) — prostsza i
+  pewniejsza geometria do druku niż spiralny gwint.
+- **Niebieska strzałka** — kołnierz z grawerunkiem (`BOSS0`) ma teraz średnicę równą maksymalnej
+  amplitudzie krzywek (`BOSS0_R = EDGE_MAX_R = 17.03 mm`, wcześniej 14.97 mm). Drukowalność: bez
+  wpływu — nadal pełny walec na dole bryły.
+- **Ścięcie na czole** (`CHAMFER_LEN` w `boss0_plain()`) — mała faza na górnej krawędzi czoła,
+  drukowana bez nawisów (kąt stożka dużo łagodniejszy niż typowy limit 45°).
 
 ### Element pomocniczy do weryfikacji dopasowania
 
@@ -120,11 +137,10 @@ podstawie zdjęć...") dodano trzy elementy niewidoczne w samej siatce STL zesta
 Powody:
 - Ślepe gniazdo montażowe w czole drukuje się poziomo, warstwa po warstwie, jak każdy inny
   otwór drukowany prostopadle do osi — bez mostkowania.
-- Schodkowy trzpień montażowy (Ø 29,94 → 19,5 → 27,94 → 15,5 mm) to seria krótkich stożków
-  i kołnierzyków, wszystkie **zwężające się** w miarę wzrostu Z na przemian — żaden pojedynczy
-  skok nie przekracza kilku mm i wszystkie mieszczą się w typowym zakresie bezproblemowego
-  druku FDM bez podpór.
-- Zwężenie Ø33,94 → Ø20,6 mm na dalekim końcu jest do wewnątrz — zawsze bezproblemowe.
+- Przejście do części zębatej to teraz pojedynczy, gładki stożek od pierścienia z rowkami do
+  doliny krzywek — prostsza geometria niż poprzednie naprzemienne zwężenia/rozszerzenia,
+  standardowo bezproblemowa w FDM bez podpór.
+- Zwężenie na dalekim końcu jest do wewnątrz — zawsze bezproblemowe.
 
 **Znana niedoskonałość geometrii**: między sąsiednimi pozycjami ściegu (bez separującego
 kołnierza — patrz wyżej) promień krawędzi może się zmieniać dość gwałtownie na granicy dwóch
@@ -160,7 +176,7 @@ oznaczenie, obróć gotową część spodem do góry. Grawerunek nie wpływa na 
 
 ## Kroki po wydruku
 
-1. Sprawdzić pasowanie otworu na wałek (z wpustem) i schodkowego trzpienia w maszynie —
+1. Sprawdzić pasowanie otworu na wałek (z wpustem) i stożkowego przejścia w maszynie —
    zacznij od elementu pomocniczego `mating_shaft_reference.scad`, taniej niż całym bębnem.
    Druk FDM często daje wymiary lekko mniejsze niż nominalne (skurcz materiału); w razie
    potrzeby delikatnie doszlifować/dopasować.

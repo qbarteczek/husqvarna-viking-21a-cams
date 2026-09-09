@@ -16,9 +16,8 @@
 ```
 
 Każda pozycja ściegu to pojedyncze `linear_extrude` wielokąta (profil krawędzi) — szybkie.
-Gwint na kołnierzu (`boss0_threaded()`) to helisa złożona z wielu `hull()` między kulkami —
-wolniejsza. Całość: ok. 1.5 minuty na plik bębna, ułamek sekundy na `mating_shaft_reference`
-(brak gwintu/ząbków).
+Całość: ok. 1.5 minuty na plik bębna, ułamek sekundy na `mating_shaft_reference`
+(brak ząbków).
 
 Żeby zobaczyć sam kształt profilu (przekrój), np. do szybkiej kontroli po zmianie wzoru:
 

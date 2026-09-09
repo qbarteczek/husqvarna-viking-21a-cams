@@ -73,9 +73,10 @@ the accuracy of this estimate).
 ## Other parameters to calibrate before printing
 - Stitch positions are directly adjacent, with no separating collar (`BAND_LEN` in
   `cam_common.scad`) — matching the measured structure of the original.
-- The stepped mounting spindle (`mounting_neck()`), the shaft hole with its prismatic key
-  (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`), and the thread (`THREAD_*`) reproduce the
-  measured/photographed mounting geometry of set A — see `docs/DIMENSIONS.en.md`.
+- The tapered mounting transition (`mounting_neck()`), the shaft hole with its prismatic
+  keyway (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`), the grooved ring (`ring_grooved()`/
+  `RING_*`), and the face chamfer (`CHAMFER_LEN`) reproduce the measured/photographed mounting
+  geometry of set A — see `docs/DIMENSIONS.en.md`.
 - Set A now also has a native generator version (`models/generated/cam_A.scad`), independent
   of the reference STL file — it approximates the pattern described in the source (positions
   1–2 = 3-step zigzag, 3–5 = plain zigzag), but is not a faithful copy of the original edge

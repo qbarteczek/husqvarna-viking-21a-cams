@@ -45,27 +45,63 @@ Współrzędna Y biegnie od 0 (duży kołnierz, strona z widoczną strukturą mo
 Głębokość gniazda montażowego od czoła Y=0: ok. 2.5 mm (do potwierdzenia — pomiar siatki nie
 rozstrzyga jednoznacznie dokładnego dna, tylko obecność i promień gniazda).
 
+**Uwaga:** tabela wyżej opisuje dokładnie to, co jest w pliku `V21ZZ3Z.stl` (replika trzeciej
+strony). Generowane bębny (`cam_common.scad`) **nie odwzorowują już dosłownie** wieloschodkowego
+trzpienia Y=3.2–9.7 z tej tabeli — na podstawie adnotacji użytkownika na fizycznym bębnie
+(sekcja niżej) zastąpiono go pojedynczym gładkim stożkiem, bo dosłowne odwzorowanie tworzyło w
+renderze wnękę, której na prawdziwej części nie ma. STL pozostaje wiarygodny dla promieni
+kołnierzy i zasięgu części zębatej, ale nie dla szczegółu tego konkretnego przejścia.
+
 ## Poprawki na podstawie zdjęć fizycznego bębna A
 
 Użytkownik dostarczył serię zdjęć fizycznego, oryginalnego bębna A (nie pliku STL) — folder
 `references/husqvarna_photos_A/` (patrz też `references/README.md`). Zdjęcia ujawniły trzy
 elementy niewidoczne/niejednoznaczne w samej siatce STL:
 
-1. **Gwint na dużym kołnierzu (Y=0–3.2)** — na zdjęciach widać wyraźnie kilka zwojów gwintu
-   tuż przy grawerowanym czole. Poprzednia wersja modelowała ten kołnierz jako gładki walec.
-   Skok i głębokość zwoju dobrano **wizualnie ze zdjęć** (brak w danych STL) —
-   `THREAD_PITCH=1.1mm`, `THREAD_DEPTH=0.9mm` w `cam_common.scad` — **do weryfikacji i
-   ew. korekty po dopasowaniu do prawdziwego gniazda maszyny**.
-2. **Wypust/klin w otworze na wałek** — zdjęcia pokazują płaskie ścięcie (D-shape) w otworze
-   od strony grawerowanego czoła. To **funkcjonalny element napędowy**, nie kosmetyczny —
-   bez niego wałek maszyny obracałby się swobodnie w otworze bez przenoszenia ruchu na bęben.
-   Dodano jako `SOCKET_KEY_DEPTH`/`SOCKET_KEY_WIDTH` w `cam_common.scad`. Drugi koniec bębna
-   (przy małym kołnierzu) ma na zdjęciach inny, bardziej wystający wypust (prostokątny klocek
-   do wewnątrz otworu) — **nieodwzorowany** w tej wersji (mniejszy priorytet — nie jest to
-   strona z wymiennym oznaczeniem litery, a napęd przenosi wypust od strony czoła).
+1. **Pierścień z poziomymi rowkami na dużym kołnierzu (Y=0–3.2)** — na zdjęciach widać wyraźnie
+   kilka poziomych rowków tuż przy grawerowanym czole. **Pierwsza wersja błędnie zinterpretowała
+   je jako gwint śrubowy** (helisa, `boss0_threaded()`); po adnotacji użytkownika bezpośrednio na
+   renderze (patrz sekcja niżej) poprawiono na zwykłe, poziome rowki — `ring_grooved()` w
+   `cam_common.scad`. Głębokość i rozstaw rowków dobrano **wizualnie ze zdjęć** — **do
+   weryfikacji i ew. korekty po dopasowaniu do prawdziwego gniazda maszyny**.
+2. **Wpust w otworze na wałek** — zdjęcia pokazują wcięcie w otworze od strony grawerowanego
+   czoła. To **funkcjonalny element napędowy**, nie kosmetyczny — bez niego wałek maszyny
+   obracałby się swobodnie w otworze bez przenoszenia ruchu na bęben. Dodano jako
+   `SOCKET_KEY_DEPTH`/`SOCKET_KEY_WIDTH` w `cam_common.scad` — **bęben ma wpust (rowek wycięty
+   na zewnątrz od otworu), wałek maszyny ma wypust (klin)**, patrz sekcja niżej o poprawce
+   kierunku wpust/wypust.
 3. **Grawerunek** — realny bęben ma wygrawerowane "HUSQVARNA" łukiem u dołu czoła, "SWEDEN"
    pod spodem, i dużą, osobną literę zestawu bliżej otworu od góry. Odwzorowane w
    `arc_text()` / `cam_label_cut()` w `cam_common.scad`.
+
+## Poprawki na podstawie adnotacji użytkownika na renderze
+
+Użytkownik, mając fizyczny bęben A w ręku, naniósł bezpośrednio na render trzy strzałki i opis —
+to najbardziej bezpośrednie źródło korekt w tym projekcie (fizyczny obiekt vs. render, nie
+zdjęcie interpretowane wizualnie):
+
+- **Czerwona strzałka** — wieloschodkowy trzpień montażowy (dawne Y=3.2–9.7, schodzący aż do
+  promienia ~7.75 mm) tworzył w renderze niezamierzoną szczelinę/wnękę, której na fizycznym
+  bębnie nie ma. Poprawka: usunięto wąskie stopnie, zastąpiono pojedynczym, gładkim stożkiem
+  wprost do promienia doliny krzywek (`EDGE_MIN_R`) — materiał wypełnia teraz całą tę
+  przestrzeń, bez odcinków węższych niż dolina krzywek (`mounting_neck()` w `cam_common.scad`).
+- **Żółta strzałka** — element zidentyfikowany wcześniej jako gwint śrubowy **nie jest gwintem**
+  i jest wyraźnie mniejszy niż maksymalna amplituda krzywek. Poprawka: zamieniono
+  `boss0_threaded()` (helisa) na `ring_grooved()` — proste, poziome rowki o promieniu dna
+  (`RING_R`) wyraźnie mniejszym niż `EDGE_MAX_R`.
+- **Niebieska strzałka** — kołnierz z grawerunkiem (`BOSS0`) jest szerszy i to on **określa
+  maksymalną średnicę/amplitudę krzywek** — powinien mieć średnicę równą maksymalnej amplitudzie
+  krzywek. Poprawka: `BOSS0_R = EDGE_MAX_R` wprost w `cam_common.scad` (dawniej 14.97 mm i
+  17.03 mm były niezależnie zmierzonymi, różnymi wartościami).
+- **Ścięcie na czole** — element ma fazę (ścięcie) na górnej krawędzi czoła. Dodano jako
+  `CHAMFER_LEN` w `boss0_plain()`.
+- **Otwór na wałek z wpustem (najważniejsza poprawka)** — poprzednia wersja miała to odwrócone:
+  żeberko wystające **do wnętrza** otworu bębna (błąd), a element pomocniczy
+  `mating_shaft_reference.scad` miał pasujący rowek. Zgodnie ze standardową konwencją wpustu
+  pryzmatycznego (i z korektą użytkownika trzymającego fizyczny bęben): **wałek maszyny ma
+  wypust** (klin, materiał wystający na zewnątrz), a **bęben ma wpust** — rowek wycięty **na
+  zewnątrz** od okrągłego otworu. Poprawiono `socket_cut()` (rowek zamiast żeberka) i
+  `mating_shaft_reference.scad` (wypust zamiast rowka).
 
 **Uwaga o oznaczeniu modelu maszyny**: dotychczasowa dokumentacja tego projektu odnosiła się
 do "Husqvarna Viking 21A" (za tytułem źródłowego pliku thing:6018240). Użytkownik, fotografując
@@ -80,12 +116,11 @@ dokładnego oznaczenia modelu.
 
 Żeby nowe zestawy fizycznie pasowały do maszyny, muszą zachować:
 - tę samą długość całkowitą (26.0 mm),
-- ten sam, dokładny profil schodkowego trzpienia montażowego (Y=3.2–9.7) — to
-  prawdopodobnie kluczowy element pozycjonujący/mocujący, nie dowolny szczegół kosmetyczny,
-- ten sam otwór na wałek napędowy z wypustem w czole dużego kołnierza (funkcjonalny —
-  przenosi napęd),
-- te same średnice kołnierzy na obu końcach (Ø 29.9 mm przy Y=0, Ø 20.6 mm przy Y=26),
-- tę samą maksymalną obwiednię części zębatej (Ø ~34 mm),
+- ten sam kołnierz z grawerunkiem o średnicy równej maksymalnej amplitudzie krzywek
+  (`BOSS0_R = EDGE_MAX_R`), pierścień z poziomymi rowkami i gładki stożek do części zębatej,
+- ten sam otwór na wałek napędowy z wpustem w czole dużego kołnierza (funkcjonalny —
+  przenosi napęd; wpust w bębnie, wypust na wałku maszyny),
+- ten sam promień kołnierza na dalekim końcu (Ø 20.6 mm przy Y=26),
 - **brak odstępu między pozycjami** ściegu w części zębatej,
 - **ten sam zakres promienia krawędzi [7.71, 17.03] mm** — żaden wzór nie może wychylić
   czujnika poza granice, w których fizycznie się porusza w oryginale.

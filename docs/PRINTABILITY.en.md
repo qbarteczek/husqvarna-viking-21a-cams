@@ -87,25 +87,43 @@ hard scale in the photos), but closer to the physical drum than the STL replica 
 0.3–0.9 from `docs/STITCH_DESIGN.en.md`), so no pattern asks the sensor to deflect beyond its
 reach.
 
-### 6. Thread, prismatic key, and engraving added based on photos of the physical drum
+### 6. Grooves, prismatic keyway, and engraving added based on photos of the physical drum
 
 After receiving photos of the real drum A (see `docs/DIMENSIONS.en.md`, "Corrections based on
 photos..." section), three elements not visible in the STL mesh of set A alone were added:
 
-- **Thread on the large flange** (`boss0_threaded()` in `cam_common.scad`) — instead of a
-  smooth cylinder. Printability: a thread printed with the axis vertical (like the rest of the
-  solid) is standard, trouble-free FDM — each turn is just a slight, gradual radius increase
-  across successive layers, no overhangs. **The exact thread dimensions should be confirmed by
-  a test fit into the machine's socket** — pitch/depth were chosen visually from photos, not
-  measured.
-- **Prismatic key (drive dog) in the shaft hole** — a solid, rectangular rib protruding INTO
-  the hole (not a flat cut/slot, see `docs/DIMENSIONS.en.md`). Printability: the rib is solid
-  material spanning the hole, printed from the first layer along with the rest of the flange —
-  no overhangs, no supports. Dimensions (`SOCKET_KEY_WIDTH`/`SOCKET_KEY_PROTRUSION`) were
-  revised after a closer look at photos of the drum's far end — the rib is more prominent than
-  initially estimated. **To be verified by fitting against the real shaft.**
+- **Ring of horizontal grooves on the large flange** (`ring_grooved()` in `cam_common.scad`) —
+  instead of a smooth cylinder. Printability: horizontal grooves (perpendicular to the axis)
+  printed with the axis vertical are standard, trouble-free FDM geometry — no overhangs. **The
+  exact dimensions should be confirmed by comparison against the real drum** — depth/spacing
+  were chosen visually from photos, not measured.
+- **Prismatic keyway in the shaft hole** — a slot cut OUTWARD from the round hole (not a rib
+  protruding inward, see `docs/DIMENSIONS.en.md` — direction fixed after the user's
+  correction). Printability: just an extra cut-out space across the hole, no overhangs, no
+  supports. **To be verified by fitting against the real shaft** —
+  `tools/openscad/mating_shaft_reference.scad` now has a matching protruding key.
 - **Engraving** ("HUSQVARNA" + "SWEDEN" + the set's letter) — shallow (0.7 mm), on the flat
   face, no effect on printability — as before.
+
+### 7. Three geometry fixes after the user's annotations on a render (fixed)
+
+Holding the physical drum A, the user marked up a render with three arrows (see
+`docs/DIMENSIONS.en.md`, "Corrections based on the user's annotations..." section):
+
+- **Red arrow** — the stepped mounting spindle (Y=3.2–9.7, narrowing down to ~7.75 mm) created
+  an unintended gap in the render that doesn't exist on the physical part. Fixed:
+  `mounting_neck()` is now a single, smooth taper straight to `EDGE_MIN_R`, with no segment
+  narrower than the tooth valley. Printability: a single taper is simpler and safer to print
+  than the previous three alternating narrowings/widenings.
+- **Yellow arrow** — the feature previously modeled as a screw thread (a helix) **is not a
+  thread**. Fixed: replaced with `ring_grooved()` (see point 6 above) — simpler, more reliable
+  print geometry than a spiral thread.
+- **Blue arrow** — the engraved flange (`BOSS0`) now has a diameter equal to the maximum cam
+  amplitude (`BOSS0_R = EDGE_MAX_R = 17.03 mm`, previously 14.97 mm). Printability: no change —
+  still a full cylinder at the bottom of the solid.
+- **Chamfer on the face** (`CHAMFER_LEN` in `boss0_plain()`) — a small bevel on the top edge of
+  the face, printed with no overhangs (the cone angle is much gentler than the typical 45°
+  limit).
 
 ### Auxiliary part for verifying the fit
 
@@ -122,10 +140,10 @@ larger flange (Ø 29.94 mm, the side with the engraved letter) on the bed.**
 Reasons:
 - The shaft hole in the face prints horizontally, layer by layer, like any other hole printed
   perpendicular to the axis — no bridging.
-- The stepped mounting spindle (Ø 29.94 → 19.5 → 27.94 → 15.5 mm) is a series of short cones
-  and collars, all **narrowing** alternately as Z increases — no single step exceeds a few mm
-  and all fall within the typical trouble-free FDM range without supports.
-- The taper Ø33.94 → Ø20.6 mm at the far end is inward — always trouble-free.
+- The transition into the toothed section is now a single, smooth taper from the grooved ring
+  down to the tooth valley — simpler than the earlier alternating narrowings/widenings, and
+  standard, trouble-free FDM geometry without supports.
+- The taper at the far end is inward — always trouble-free.
 
 **Known geometric imperfection**: between adjacent stitch positions (with no separating
 collar — see above), the edge radius can change fairly abruptly at the boundary between two
@@ -162,7 +180,7 @@ it, turn the finished part upside down. The engraving has no effect on printabil
 
 ## Steps after printing
 
-1. Check the fit of the shaft hole (with its key) and the stepped spindle in the machine —
+1. Check the fit of the shaft hole (with its keyway) and the tapered transition in the machine —
    start with the `mating_shaft_reference.scad` auxiliary part, cheaper than a whole drum.
    FDM prints often come out slightly smaller than nominal (material shrinkage); lightly sand/
    fit as needed.

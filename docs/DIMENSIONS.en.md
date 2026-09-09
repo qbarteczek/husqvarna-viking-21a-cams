@@ -49,28 +49,64 @@ Depth of the shaft hole from the Y=0 face: approx. 2.5 mm (to be confirmed — t
 measurement doesn't unambiguously resolve the exact floor, only the hole's presence and
 radius).
 
+**Note:** the table above describes exactly what is in the `V21ZZ3Z.stl` file (a third-party
+replica). The generated drums (`cam_common.scad`) **no longer literally reproduce** the stepped
+spindle at Y=3.2–9.7 from this table — based on the user's annotations on the physical drum
+(section below), it was replaced with a single smooth taper, because the literal reproduction
+created a recess in the render that doesn't exist on the real part. The STL remains reliable for
+flange radii and the toothed section's reach, but not for the detail of this particular
+transition.
+
 ## Corrections based on photos of the physical drum A
 
 The user supplied a series of photos of the physical, original drum A (not an STL file) —
 folder [`references/husqvarna_photos_A/`](../references/husqvarna_photos_A/) (see also its
 README). The photos revealed three elements not visible/ambiguous in the STL mesh alone:
 
-1. **Thread on the large flange (Y=0–3.2)** — the photos clearly show several thread turns
-   right next to the engraved face. The earlier version modeled this flange as a smooth
-   cylinder. The pitch and depth of the thread were chosen **visually from the photos** (no
-   STL data for this) — `THREAD_PITCH=1.1mm`, `THREAD_DEPTH=0.9mm` in `cam_common.scad` —
-   **to be verified and possibly corrected once fitted to the machine's actual socket**.
-2. **Key/spline in the shaft hole** — the photos show a flat cut (D-shape) in the hole on the
-   engraved-face side. This is a **functional drive element**, not cosmetic — without it the
-   machine's shaft would spin freely in the hole without transmitting motion to the drum.
-   Added as `SOCKET_KEY_DEPTH`/`SOCKET_KEY_WIDTH` in `cam_common.scad`. The other end of the
-   drum (near the small flange) shows a different, more protruding key in the photos (a
-   rectangular block projecting into the hole) — **not modeled** in this version (lower
-   priority — it's not the face with the interchangeable letter marking, and the face-side
-   key already carries the drive).
+1. **Horizontal grooves on the large flange (Y=0–3.2)** — the photos clearly show several
+   horizontal grooves right next to the engraved face. **The first version misread these as a
+   screw thread** (a helix, `boss0_threaded()`); after the user annotated a render directly
+   (see section below), this was corrected to plain horizontal grooves — `ring_grooved()` in
+   `cam_common.scad`. Groove depth and spacing were chosen **visually from the photos** — **to
+   be verified and possibly corrected once fitted to the machine's actual socket**.
+2. **Key in the shaft hole** — the photos show a cut in the hole on the engraved-face side.
+   This is a **functional drive element**, not cosmetic — without it the machine's shaft would
+   spin freely in the hole without transmitting motion to the drum. Added as
+   `SOCKET_KEY_DEPTH`/`SOCKET_KEY_WIDTH` in `cam_common.scad` — **the drum has the keyway (a
+   slot cut outward from the hole), the machine's shaft has the key**, see the section below
+   on the key/keyway direction fix.
 3. **Engraving** — the real drum has "HUSQVARNA" engraved in an arc at the bottom of the
    face, "SWEDEN" below it, and a large, separate letter for the set closer to the hole at
    the top. Reproduced via `arc_text()` / `cam_label_cut()` in `cam_common.scad`.
+
+## Corrections based on the user's annotations on a render
+
+Holding the physical drum A, the user marked up a render with three arrows and an explanation —
+the most direct source of correction in this project (a physical object compared against a
+render, not a photo interpreted visually):
+
+- **Red arrow** — the stepped mounting spindle (formerly Y=3.2–9.7, narrowing down to a radius
+  of ~7.75 mm) created an unintended gap/recess in the render that doesn't exist on the
+  physical drum. Fix: removed the narrow steps, replaced with a single smooth taper straight to
+  the tooth-valley radius (`EDGE_MIN_R`) — material now fills that whole space, with no segment
+  narrower than the tooth valley (`mounting_neck()` in `cam_common.scad`).
+- **Yellow arrow** — the feature previously identified as a screw thread **is not a thread** and
+  is clearly smaller than the maximum cam amplitude. Fix: replaced `boss0_threaded()` (helix)
+  with `ring_grooved()` — plain horizontal grooves with a floor radius (`RING_R`) clearly
+  smaller than `EDGE_MAX_R`.
+- **Blue arrow** — the engraved flange (`BOSS0`) is wider and it's the one that **defines the
+  maximum diameter/amplitude of the cams** — it should have a diameter equal to the maximum
+  cam amplitude. Fix: `BOSS0_R = EDGE_MAX_R` directly in `cam_common.scad` (previously 14.97 mm
+  and 17.03 mm were independently measured, different values).
+- **Chamfer on the face** — the part has a chamfer on the top edge of the face. Added as
+  `CHAMFER_LEN` in `boss0_plain()`.
+- **Shaft hole with key (the most important correction)** — the earlier version had this
+  backwards: a rib protruding **into** the drum's hole (wrong), with the auxiliary
+  `mating_shaft_reference.scad` part having a matching slot. Per standard prismatic-key
+  convention (and the user's correction, holding the physical drum): **the machine's shaft has
+  the key** (a protruding rib), and **the drum has the keyway** — a slot cut **outward** from
+  the round hole. Fixed `socket_cut()` (slot instead of rib) and `mating_shaft_reference.scad`
+  (protruding key instead of a slot).
 
 **Note on the machine model designation**: this project's documentation previously referred
 to "Husqvarna Viking 21A" (following the title of the source file, thing:6018240). The user,
@@ -86,12 +122,12 @@ designation.
 
 For new sets to physically fit the machine, they must keep:
 - the same overall length (26.0 mm),
-- the same, exact profile of the stepped mounting spindle (Y=3.2–9.7) — likely a key
-  positioning/mounting element, not an arbitrary cosmetic detail,
-- the same drive-shaft hole with key in the face of the large flange (functional — carries
-  the drive),
-- the same flange diameters at both ends (Ø 29.9 mm at Y=0, Ø 20.6 mm at Y=26),
-- the same maximum envelope of the toothed section (Ø ~34 mm),
+- the same engraved flange with diameter equal to the maximum cam amplitude
+  (`BOSS0_R = EDGE_MAX_R`), the horizontally-grooved ring, and the smooth taper into the
+  toothed section,
+- the same drive-shaft hole with keyway in the face of the large flange (functional — carries
+  the drive; keyway on the drum, key on the machine's shaft),
+- the same flange radius at the far end (Ø 20.6 mm at Y=26),
 - **no gap between positions** in the toothed section,
 - **the same edge-radius range [7.71, 17.03] mm** — no pattern may deflect the sensor beyond
   the limits it physically moves within on the original.

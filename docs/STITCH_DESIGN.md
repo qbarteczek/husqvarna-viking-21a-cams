@@ -70,9 +70,10 @@ dokładności tego szacunku).
 ## Inne parametry do kalibracji przed drukiem
 - Pozycje ściegu sąsiadują bezpośrednio, bez kołnierzy separujących (`BAND_LEN` w
   `cam_common.scad`) — zgodnie ze zmierzoną budową oryginału.
-- Schodkowy trzpień montażowy (`mounting_neck()`), otwór na wałek z wypustem pryzmatycznym
-  (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`) i gwint (`THREAD_*`) odtwarzają zmierzoną/
-  sfotografowaną geometrię mocowania zestawu A — patrz `docs/DIMENSIONS.md`.
+- Stożkowe przejście montażowe (`mounting_neck()`), otwór na wałek z wpustem pryzmatycznym
+  (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`), kołnierz z rowkami (`ring_grooved()`/`RING_*`) i
+  ścięcie na czole (`CHAMFER_LEN`) odtwarzają zmierzoną/sfotografowaną geometrię mocowania
+  zestawu A — patrz `docs/DIMENSIONS.md`.
 - Zestaw A ma teraz też natywną wersję generatora (`models/generated/cam_A.scad`), niezależną
   od pliku referencyjnego STL — przybliża opisany w źródle wzór (pozycje 1–2 = zygzak
   3-stopniowy, 3–5 = zwykły zygzak), ale nie jest wierną kopią oryginalnego toru.
