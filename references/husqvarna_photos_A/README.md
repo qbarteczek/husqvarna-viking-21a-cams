@@ -2,12 +2,13 @@
 
 Zdjęcia własne użytkownika (nie materiał zewnętrzny), fizycznego, oryginalnego bębna
 oznaczonego "A" wymontowanego z maszyny — 10 z 46 zrobionych, wybranych jako
-najbardziej informacyjne. Pełny zestaw pozostaje lokalnie u użytkownika
-(`C:\Users\Qbart\Downloads\husqvarna\`).
+najbardziej informacyjne. Pełny zestaw 46 zdjęć (oryginalne nazwy plików) jest w
+[`../downloads_all/`](../downloads_all/) — dokumentacja cytuje konkretne zdjęcia stamtąd.
 
 User's own photos (not third-party material) of the physical, original drum marked "A"
-removed from the machine — 10 out of 46 taken, selected as most informative. The full set
-stays local to the user.
+removed from the machine — 10 out of 46 taken, selected as most informative. The full set of
+46 photos (original filenames) is in [`../downloads_all/`](../downloads_all/) — the
+documentation cites specific photos from there.
 
 | Plik / File | Co pokazuje / What it shows |
 |---|---|

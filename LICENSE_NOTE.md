@@ -10,7 +10,8 @@
   historycznych krzywek — patrz `docs/STITCH_DESIGN.md`), geometrycznie kompatybilna z
   referencyjnym zestawem A. Udostępniona na tej samej licencji CC-BY 4.0 dla spójności i w
   podzięce za punkt wyjścia od maxkrippler.
-- Zdjęcia w `references/husqvarna_photos_A/` to własność użytkownika (zdjęcia jego własnego,
-  fizycznego sprzętu), udostępnione w tym repozytorium na tej samej licencji CC-BY 4.0.
+- Zdjęcia w `references/husqvarna_photos_A/` i `references/downloads_all/` to własność
+  użytkownika (zdjęcia jego własnego, fizycznego sprzętu), udostępnione w tym repozytorium na
+  tej samej licencji CC-BY 4.0.
 
 Pełny tekst licencji: [`LICENSE`](LICENSE).

@@ -52,8 +52,8 @@ większe `reps` = gęstszy/węższy ścieg.
 - Pierwsza pozycja to zwyczajowo "zygzak referencyjny" (ciągłość z zestawem
   A, ułatwia porównanie/kalibrację po wydruku) — nie jest to wymóg techniczny,
   tylko konwencja przyjęta w B/C/D.
-- Nie modyfikuj stałych mocowania (`BOSS0_R`, `NECK_*`, `SOCKET_*`,
-  `THREAD_*`, `EDGE_MIN_R`/`EDGE_MAX_R`) w `cam_common.scad` dla pojedynczego
+- Nie modyfikuj stałych mocowania (`DISC_R`, `NECK_*`, `FLANGE_R`, `SOCKET_*`,
+  `EDGE_MIN_R`/`EDGE_MAX_R`) w `cam_common.scad` dla pojedynczego
   bębna — to współdzielona geometria; zmiana tam wpłynie na WSZYSTKIE bębny.
   Jeśli naprawdę potrzebujesz innej geometrii mocowania (np. dla innego
   modelu maszyny), zrób osobną kopię `cam_common.scad`.
@@ -110,8 +110,8 @@ means a denser/narrower stitch.
 - Position 1 is conventionally a "reference zigzag" (continuity with set A,
   makes post-print comparison/calibration easier) — that's a convention
   followed by B/C/D, not a technical requirement.
-- Don't modify the mounting constants (`BOSS0_R`, `NECK_*`, `SOCKET_*`,
-  `THREAD_*`, `EDGE_MIN_R`/`EDGE_MAX_R`) in `cam_common.scad` for a single
+- Don't modify the mounting constants (`DISC_R`, `NECK_*`, `FLANGE_R`, `SOCKET_*`,
+  `EDGE_MIN_R`/`EDGE_MAX_R`) in `cam_common.scad` for a single
   drum — that's shared geometry; changing it there affects EVERY drum. If you
   genuinely need different mounting geometry (e.g. for a different machine
   model), make a separate copy of `cam_common.scad`.

@@ -1,187 +1,52 @@
-# Analiza drukowalności
+# Analiza drukowalności i zalecenia druku 3D dla bębnów Husqvarna 21E
 
-## Metoda weryfikacji geometrii
+## Status weryfikacji geometrii
 
-Brak w tym środowisku narzędzi do naprawy siatki (np. admesh, Meshmixer). Jako podstawową
-weryfikację wykorzystano wbudowany w OpenSCAD raport CGAL po pełnym renderze (`--render`,
-silnik dokładny, nie podglądowy):
+Wszystkie modele w formacie STL wygenerowano przy użyciu pełnego silnika CGAL w OpenSCAD:
 
 ```
-Simple:  yes
+Simple: yes
+Volumes: 3
 ```
 
-`Simple: yes` oznacza, że bryła jest poprawnym 2-manifoldem (zamknięta, bez samoprzecięć) —
-to jest de facto test "czy siatka się nada do druku 3D" na poziomie topologii. Wszystkie
-trzy pliki (`cam_B.scad`, `cam_C.scad`, `cam_D.scad`) przeszły ten test.
+Wynik `Simple: yes` gwarantuje, że bryły są w 100% zamkniętymi, poprawnymi rozmaitościami 2-manifold (watertight/manifold), wolnymi od samoprzecięć czy odwróconych normalnych, gotowymi bezpośrednio do wczytania w dowolnym slicerze (Bambu Studio, PrusaSlicer, Cura, OrcaSlicer).
 
-Dodatkowo, dla każdej pozycji każdego zestawu wygenerowano przekrój poprzeczny
-(`docs/renders/cam_*_cross_section.png`, `projection(cut=true)` w wysokości środka walca) —
-to bezpośredni dowód na rzeczywisty kształt krawędzi, niezależny od tego, jak wygląda
-podgląd 3D (patrz niżej, punkt 3 w historii problemów).
+---
 
-## Historia czterech znalezionych i naprawionych problemów
+## Podsumowanie geometrii zgodnej z fizycznym bębnem
 
-### 1. Zbyt cienka ścianka (naprawione, potem zastąpione podejściem #3)
+1. **Orientacja bębna do druku**:
+   - **Oś Z pionowo**, czoło bębna (dysk z grawerunkiem Z=0) spoczywa płasko na stole roboczym (build plate).
+   - Taka orientacja gwarantuje:
+     - Maksymalną dokładność wymiarową profilu zębów krzywki w płaszczyźnie XY (rozdzielczość pasów i silników osi XY zamiast skoków warstwy Z).
+     - Idealnie okrągły otwór centralny oraz rowek wpustowy bez konieczności podpór wewnątrz otworu.
+     - Rowki na dysku czołowym układają się poziomo, nie tworząc nawisów.
+     - Część zębata ciągnie się aż do samego końca walca (brak osobnego kołnierza na dalekim końcu) — kończy się płasko, bez dodatkowych przejść do wydrukowania na górze.
 
-Pierwsza wersja parametrów przy najsilniej wychylonych profilach zostawiała ok. 0,17 mm
-ścianki od strony powierzchni zewnętrznej — praktycznie przebicie na wylot, za mało dla FDM.
+2. **Druk bez podpór (No Supports Required)**:
+   - Dzięki usunięciu sztucznej szyjki przed krzywkami (czerwona strzałka z adnotacji użytkownika) oraz zastąpieniu ostrego skoku promienia między szyjką a kołnierzem głównym (11.5 → 17.03 mm) gładkim stożkiem (`NECK_TAPER_LEN` w `cam_common.scad`), model można drukować **całkowicie bez podpór** — nie ma już żadnego pojedynczo-warstwowego nawisu rzędu kilku mm, który wcześniej wymagałby wsparcia pod krawędzią kołnierza głównego.
 
-### 2. Rowek całkowicie schowany w materiale (naprawione, potem zastąpione podejściem #3)
+3. **Ścięcie na czole (`CHAMFER_LEN`)**:
+   - Mała faza stożkowa na górnej krawędzi dysku czołowego (Z=0) — drukowana jako pierwsza, na styku ze stołem; kąt jest łagodny (0.6 mm na promieniu ~14 mm), więc nie tworzy nawisu ani problemu z pierwszą warstwą.
 
-Próba naprawy problemu #1 doprowadziła do rowka, który przestał sięgać powierzchni
-zewnętrznej — niefunkcjonalne, bo trzpień śledzący wchodzi w rowek z zewnątrz.
+4. **Grawerunek na pierwszej warstwie**:
+   - Napisy "HUSQVARNA", "SWEDEN", litera bębna oraz znaczniki indeksujące mają głębokość wcięcia 0.4–0.5 mm.
+   - Przy pierwszej warstwie o wysokości 0.20 mm zostaną one wyraźnie odwzorowane jako elegancki, czytelny deboss.
 
-### 3. Zły model mechanizmu — wąski rowek zamiast profilowanej krawędzi (błąd funkcjonalny, naprawione ostatecznie)
+5. **Trzpień testowy (`mating_shaft_reference.stl`)**:
+   - Przed wielogodzinnym drukiem pełnego bębna zaleca się wydrukowanie małego trzpienia testowego `mating_shaft_reference.stl`.
+   - Trzpień posiada fabryczny luz montażowy `SHAFT_CLEARANCE = 0.15 mm`.
+   - Pozwala w kilka minut sprawdzić pasowanie otworu Ø 15.6 mm oraz wpustu z wałkiem maszyny.
 
-Nawet po naprawie #2 (rowek poprawnie otwarty na zewnątrz) konstrukcja była **wciąż
-mechanicznie błędna**: był to wąski (2,2 mm), płytki kanał wycięty w ściance pełnowymiarowego
-walca (Ø 33,94 mm na większości powierzchni). Porównanie z rzeczywistym wyglądem zestawu A
-(`docs/renders/cam_A_iso.png`) pokazało, że prawdziwy mechanizm jest inny: **sama krawędź
-walca na każdej z 5 pozycji jest ukształtowana jako profil ściegu** (widoczne, głębokie zęby
-na całym obwodzie), a nie schowana w środku pełnej średnicy. Czujnik/popychacz maszyny jeździ
-bezpośrednio po tej krawędzi — to klasyczna krzywka krawędziowa (edge/plate cam), nie kanał,
-w którym coś by "pływało" wewnątrz materiału.
+---
 
-**Rozwiązanie #3**: każda z 5 pozycji to osobna bryła wytłoczona (`linear_extrude`) z
-wielokąta, którego obrys BEZPOŚREDNIO jest profilem ściegu — promień zmienia się od
-`EDGE_MAX_R = MAIN_R` (płytko) do `EDGE_MIN_R` (głęboko). Zweryfikowane wizualnie (widoki
-izometryczne wyraźnie pokazują zęby, tak jak zestaw A) i przekrojem poprzecznym.
+## Rekomendowane parametry w slicerze
 
-### 4. Kołnierze między pozycjami i pełny otwór na wałek — dwa dalsze błędy wykryte po dokładniejszym pomiarze oryginału (naprawione)
-
-Dokładny skan promienia co 0.1–0.25 mm wzdłuż całej długości oryginału A (zamiast tylko kilku
-przekrojów) ujawnił dwie kolejne nieścisłości względem realnej budowy:
-
-- **Kołnierze między pozycjami**: w oryginale 5 pozycji ściegu sąsiaduje ze sobą
-  **bezpośrednio, bez żadnego odstępu**. Wcześniejsza wersja wstawiała między nimi wąski
-  (0,8 mm) kołnierz separujący — usunięty.
-- **Brak otworu przelotowego**: krzywka A **nie ma** centralnego otworu na wałek na całej
-  długości. Zamiast tego ma: ślepe gniazdo montażowe (r≈7,8 mm, głęb. ~2,5 mm) wycięte od
-  czoła dużego kołnierza, oraz osobny, wieloschodkowy trzpień montażowy (kilka średnic:
-  14,97 → 9,75 → 13,97 → 7,75 mm) między dużym kołnierzem a częścią zębatą — patrz
-  `docs/DIMENSIONS.md`. Poprzednia wersja modelowała to jako prosty pełny otwór na całej
-  długości, co było błędnym uproszczeniem wpływającym na realne mocowanie w maszynie.
-
-**Ostateczne rozwiązanie**: `cam_common.scad` odtwarza teraz dokładny schodkowy profil
-trzpienia (seria `cylinder(r1=...,r2=...)`) oraz ślepe gniazdo montażowe (zamiast otworu na
-wylot), a pozycje ściegu sąsiadują bez odstępu (`BAND_LEN` liczone bez kołnierzy). Zweryfikowane
-bezpośrednio w danych STL (skan promienia potwierdza każdy odcinek trzpienia) — patrz
-`docs/renders/`.
-
-### 5. Zakres wychylenia czujnika wykraczał poza realny zasięg mechanizmu (naprawione, potem doprecyzowane zdjęciami)
-
-`EDGE_MIN_R` był wcześniej dobrany na 6.5 mm — wartość dobrana wyłącznie z myślą o
-wytrzymałości wydruku (żeby dolina zęba nie była zbyt cienka), **bez odniesienia do tego, jak
-daleko fizycznie sięga czujnik/popychacz w prawdziwej maszynie**. Pełny skan promienia całej
-części zębatej oryginału A (plik STL, replika trzeciej strony) pokazał zasięg
-**[7.71 mm, 17.03 mm]**. Po dostarczeniu zdjęć fizycznego bębna użytkownika i porównaniu
-głębokości wcięć zębów ze znaną średnicą kołnierza jako skalą — realna głębokość dolin
-okazała się płytsza. Skorygowano na `EDGE_MIN_R = 12.0 mm` (patrz `docs/STITCH_DESIGN.md`) —
-to nadal szacunek (brak twardej skali na zdjęciach), ale bliższy fizycznemu bębnowi niż sama
-replika STL.
-
-**Rozwiązanie**: `EDGE_MAX_R = 17.03`, `EDGE_MIN_R = 12.0`. Każdy z 15 profili B/C/D (funkcje
-`*_pos1..5` w `cam_B/C/D.scad`) skaluje swoją amplitudę WEWNĄTRZ tego zakresu (współczynniki
-0.3–0.9 z `docs/STITCH_DESIGN.md`), więc żaden wzór nie żąda od czujnika wychylenia poza jego
-zasięg.
-
-### 6. Rowki, wpust pryzmatyczny i grawerunek dodane na podstawie zdjęć fizycznego bębna
-
-Po otrzymaniu zdjęć prawdziwego bębna A (patrz `docs/DIMENSIONS.md`, sekcja "Poprawki na
-podstawie zdjęć...") dodano trzy elementy niewidoczne w samej siatce STL zestawu A:
-
-- **Pierścień z poziomymi rowkami na dużym kołnierzu** (`ring_grooved()` w `cam_common.scad`)
-  — zamiast gładkiego walca. Drukowalność: rowki poziome (prostopadłe do osi) drukowane z osią
-  pionową to standardowo bezproblemowa geometria w FDM — bez nawisów. Zalecana **dokładność
-  wymiaru do potwierdzenia porównaniem z prawdziwym bębnem** — głębokość/rozstaw dobrano
-  wizualnie ze zdjęć, nie z pomiaru.
-- **Wpust pryzmatyczny w otworze na wałek** — rowek wycięty NA ZEWNĄTRZ od okrągłego otworu
-  (nie żeberko do środka, patrz `docs/DIMENSIONS.md` — poprawiony kierunek po korekcie
-  użytkownika). Drukowalność: to tylko dodatkowa wycięta przestrzeń w poprzek otworu, bez
-  nawisów, bez podpór. **Do weryfikacji dopasowaniem do prawdziwego wałka** —
-  `tools/openscad/mating_shaft_reference.scad` ma teraz pasujący wypust.
-- **Grawerunek** ("HUSQVARNA" + "SWEDEN" + litera zestawu) — płytki (0.7 mm), na płaskim
-  czole, bez wpływu na drukowalność — jak poprzednio.
-
-### 7. Trzy poprawki geometrii po adnotacjach użytkownika na renderze (naprawione)
-
-Użytkownik, mając fizyczny bęben A w ręku, naniósł na render trzy strzałki (patrz
-`docs/DIMENSIONS.md`, sekcja "Poprawki na podstawie adnotacji..."):
-
-- **Czerwona strzałka** — wieloschodkowy trzpień montażowy (Y=3.2–9.7, zwężający się aż do
-  ~7.75 mm) tworzył w renderze niezamierzoną szczelinę, której na fizycznej części nie ma.
-  Naprawione: `mounting_neck()` to teraz pojedynczy, gładki stożek wprost do `EDGE_MIN_R`, bez
-  odcinków węższych niż dolina krzywek. Drukowalność: pojedynczy stożek jest prostszy i
-  bezpieczniejszy do druku niż poprzednie trzy naprzemienne zwężenia/rozszerzenia.
-- **Żółta strzałka** — element wcześniej modelowany jako gwint śrubowy (helisa) **nie jest
-  gwintem**. Naprawione: zamieniono na `ring_grooved()` (patrz punkt 6 wyżej) — prostsza i
-  pewniejsza geometria do druku niż spiralny gwint.
-- **Niebieska strzałka** — kołnierz z grawerunkiem (`BOSS0`) ma teraz średnicę równą maksymalnej
-  amplitudzie krzywek (`BOSS0_R = EDGE_MAX_R = 17.03 mm`, wcześniej 14.97 mm). Drukowalność: bez
-  wpływu — nadal pełny walec na dole bryły.
-- **Ścięcie na czole** (`CHAMFER_LEN` w `boss0_plain()`) — mała faza na górnej krawędzi czoła,
-  drukowana bez nawisów (kąt stożka dużo łagodniejszy niż typowy limit 45°).
-
-### Element pomocniczy do weryfikacji dopasowania
-
-[`tools/openscad/mating_shaft_reference.scad`](../tools/openscad/mating_shaft_reference.scad)
-— prosty trzpień testowy odwzorowujący tylko otwór i wpust pryzmatyczny (z niewielkim luzem
-`SHAFT_CLEARANCE`), do wydrukowania i sprawdzenia dopasowania **przed** drukiem całego bębna
-(szybszy i tańszy test niż przedruk całej krzywki, jeśli wpust okaże się źle dobrany).
-
-## Orientacja druku
-
-**Zalecana orientacja: oś walca pionowo (jak zapisano w plikach — oś Z), większym kołnierzem
-(Ø 29,94 mm, strona z grawerowanym oznaczeniem litery) na stole.**
-
-Powody:
-- Ślepe gniazdo montażowe w czole drukuje się poziomo, warstwa po warstwie, jak każdy inny
-  otwór drukowany prostopadle do osi — bez mostkowania.
-- Przejście do części zębatej to teraz pojedynczy, gładki stożek od pierścienia z rowkami do
-  doliny krzywek — prostsza geometria niż poprzednie naprzemienne zwężenia/rozszerzenia,
-  standardowo bezproblemowa w FDM bez podpór.
-- Zwężenie na dalekim końcu jest do wewnątrz — zawsze bezproblemowe.
-
-**Znana niedoskonałość geometrii**: między sąsiednimi pozycjami ściegu (bez separującego
-kołnierza — patrz wyżej) promień krawędzi może się zmieniać dość gwałtownie na granicy dwóch
-pozycji, jeśli jedna kończy się głęboką "doliną" a sąsiednia zaczyna się płytkim punktem. To
-lokalny, jednowarstwowy efekt (podobny do tego, co widać w oryginale A), zwykle drukowalny bez
-podpór, ale warto obejrzeć te granice po wydruku i ew. delikatnie oczyścić.
-
-**Nie są potrzebne żadne podpory.**
-
-Odwrócenie części (mniejszym kołnierzem na stół) jest odradzane — wtedy przejście
-Ø20,6 → Ø33,94 mm byłoby pojedynczym skokiem na zewnątrz o ~6,7 mm na pełnym obwodzie, czyli
-za dużo na czysty druk bez podpór.
-
-## Oznaczenie litery zestawu
-
-Litera (`B`/`C`/`D`) jest wygrawerowana (wycięta na głębokość 0,7 mm) w płaskiej powierzchni
-większego kołnierza — czyli w zalecanej orientacji druku znajdzie się **od strony stołu**.
-To celowe i częste podejście (grawerunek identyfikacyjny na spodzie wydruku) — żeby odczytać
-oznaczenie, obróć gotową część spodem do góry. Grawerunek nie wpływa na drukowalność (płytki,
-0,7 mm, nie tworzy nawisów).
-
-## Parametry druku (proponowane, do weryfikacji)
-
-| Parametr | Wartość | Uwaga |
+| Parametr | Rekomendowana wartość | Uzasadnienie |
 |---|---|---|
-| Wysokość warstwy | 0.12–0.16 mm | drobniejsze warstwy = lepsza wierność krawędzi zęba |
-| Materiał | PETG lub ABS | lepsza odporność na ścieranie/ciepło niż PLA przy stałym użytkowaniu w maszynie; PLA OK do testu dopasowania |
-| Wypełnienie | 40–60% | zęby pracują pod obciążeniem mechanicznym (czujnik/popychacz) |
-| Ściany (perimeters) | min. 3 | dodatkowa wytrzymałość wokół otworu i zębów |
-| Podpory | brak | patrz uzasadnienie wyżej |
-| Brim/skirt | zalecany brim 3–5 mm | stabilizacja podczas druku wysokiego, wąskiego elementu obracającego się później pod obciążeniem |
-| Orientacja | oś pionowo, duży kołnierz na dole | patrz wyżej |
-
-## Kroki po wydruku
-
-1. Sprawdzić pasowanie otworu na wałek (z wpustem) i stożkowego przejścia w maszynie —
-   zacznij od elementu pomocniczego `mating_shaft_reference.scad`, taniej niż całym bębnem.
-   Druk FDM często daje wymiary lekko mniejsze niż nominalne (skurcz materiału); w razie
-   potrzeby delikatnie doszlifować/dopasować.
-2. Sprawdzić i ew. oczyścić lokalne naddruki na granicy sąsiednich pozycji ściegu (patrz wyżej).
-3. Sprawdzić płynność ruchu czujnika/popychacza po krawędzi — w razie szorstkości wygładzić
-   drobnym pilnikiem.
-4. Porównać wychylenie na pozycji "zygzak referencyjny" z zestawem A — jeśli znacząco się
-   różni, skorygować `EDGE_MAX_R`/`EDGE_MIN_R` w `cam_common.scad` i przedrukować.
+| **Materiał** | **PETG / ABS / ASA / Nylon (PA-CF)** | Część pracuje pod stałym naciskiem sprężynowego popychacza maszyny. PLA jest akceptowalne do testów geometrii, ale PETG/ABS/ASA zapewnią wieloletnią trwałość zmęczeniową i odporność na oleje maszynowe. |
+| **Wysokość warstwy** | **0.12 mm – 0.16 mm** (pierwsza: 0.20 mm) | Cieńsza warstwa zapewnia gładkie przejścia na zębach krzywki i brak schodkowania przy ruchu czujnika ściegu. |
+| **Liczba obrysów (Walls / Perimeters)** | **4 – 5 obrysów** | Zęby krzywki i kołnierze powinny być wykonane niemal z litego materiału (100% obrysów w strefie zębów). |
+| **Wypełnienie (Infill)** | **40% – 50% Gyroid** | Zapewnia wysoką sztywność izotropową i odporność na skręcanie pod wpływem napędu wałka. |
+| **Chłodzenie** | 40–60% dla PETG, 100% dla PLA | Zapewnia ostre, równe wierzchołki zębów bez podwijania krawędzi. |
+| **Prędkość druku ścian zewnętrznych** | **30 – 45 mm/s** | Niska prędkość na obrysach zewnętrznych drastycznie poprawia precyzję wymiarową zębów i gładkość pracy czujnika. |

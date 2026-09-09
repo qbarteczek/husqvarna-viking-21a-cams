@@ -1,6 +1,16 @@
 # Materiały referencyjne
 
-Dla każdego zestawu (B, C, D) twórz osobny plik:
+## Zdjęcia fizycznego bębna A
+
+- [`husqvarna_photos_A/`](husqvarna_photos_A/) — 10 wybranych, opisowo nazwanych zdjęć
+  (najbardziej informacyjne, do szybkiego przeglądu).
+- [`downloads_all/`](downloads_all/) — wszystkie 46 zdjęć z oryginalnymi nazwami plików —
+  dokumentacja (`docs/DIMENSIONS.md` i inne) cytuje konkretne zdjęcia po nazwie pliku z tego
+  katalogu.
+
+## Nowe zestawy (B, C, D, ...)
+
+Dla każdego nowego zestawu twórz osobny plik:
 
 ```text
 references/cam_B_sources.md

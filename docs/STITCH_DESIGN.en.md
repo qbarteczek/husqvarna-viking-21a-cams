@@ -59,11 +59,12 @@ normalized functions (`-1..1`), rescaled in `cam_common.scad` to the radius rang
 ## Deflection range — a hard limit, not a free tuning parameter
 
 `EDGE_MAX_R = 17.03 mm` (tooth peaks, measured both in the STL file and in the photos) and
-`EDGE_MIN_R = 12.0 mm` (tooth valleys — revised down from an initial 7.71 mm after comparing
-the notch depth in photos of the physical drum A against the flange's known diameter as a
-scale reference — the STL file on its own suggested deeper valleys, but that's a third-party
-replica model, not the user's physical drum) in `cam_common.scad` are the **approximate, real
-range of motion of the sensor/follower**. All 15 B/C/D profiles scale their amplitude WITHIN
+`EDGE_MIN_R = 14.50 mm` (tooth valleys — revised down twice: from an initial 7.71 mm from the
+STL scan, to 12.0 mm after the first photo comparison, to the current 14.50 mm after the
+user's correction "the amplitude is still too big" — the subtle, "checkerboard" tooth texture
+visible in the physical drum A photos corresponds to a much shallower deflection than earlier
+versions assumed) in `cam_common.scad` are the **approximate, real range of motion of the
+sensor/follower**. All 15 B/C/D profiles scale their amplitude WITHIN
 this range (coefficients 0.3–0.9 in the tables above) — no pattern deflects the sensor beyond
 these limits. Don't change these two constants without re-measuring/re-comparing against the
 original — this isn't a cosmetic parameter to "feel out," just an approximation of the
@@ -72,11 +73,13 @@ the accuracy of this estimate).
 
 ## Other parameters to calibrate before printing
 - Stitch positions are directly adjacent, with no separating collar (`BAND_LEN` in
-  `cam_common.scad`) — matching the measured structure of the original.
-- The tapered mounting transition (`mounting_neck()`), the shaft hole with its prismatic
-  keyway (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`), the grooved ring (`ring_grooved()`/
-  `RING_*`), and the face chamfer (`CHAMFER_LEN`) reproduce the measured/photographed mounting
-  geometry of set A — see `docs/DIMENSIONS.en.md`.
+  `cam_common.scad`), and run all the way to the end of the barrel — matching the structure
+  found by direct review of all 46 photos of the physical drum.
+- The grooved face disc with its chamfer (`disc_grooved()`/`DISC_*`/`CHAMFER_LEN`), the tapered
+  transition to the main flange (`neck_section()`/`NECK_*`), the main flange sized to the
+  cams' maximum amplitude (`main_flange()`/`FLANGE_R`), and the through-hole with its keyway
+  (`socket_cut()`/`SOCKET_*`, both running the full length) reproduce the photographed mounting geometry of
+  set A — see `docs/DIMENSIONS.en.md`.
 - Set A now also has a native generator version (`models/generated/cam_A.scad`), independent
   of the reference STL file — it approximates the pattern described in the source (positions
   1–2 = 3-step zigzag, 3–5 = plain zigzag), but is not a faithful copy of the original edge

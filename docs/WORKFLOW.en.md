@@ -17,10 +17,9 @@
 & "C:\Program Files\OpenSCAD\openscad.exe" -o mating_shaft_reference.stl tools\openscad\mating_shaft_reference.scad
 ```
 
-Each stitch position is a single `linear_extrude` of a polygon (the edge profile) — fast. The
-thread on the flange (`boss0_threaded()`) is a helix built from many `hull()` operations
-between spheres — slower. Overall: about 1.5 minutes per drum file, a fraction of a second for
-`mating_shaft_reference` (no thread/teeth).
+Each stitch position is a single `linear_extrude` of a polygon (the edge profile) — fast.
+Overall: about 1.5 minutes per drum file, a fraction of a second for
+`mating_shaft_reference` (no teeth).
 
 To see just the profile shape (a cross-section), e.g. for a quick check after changing a
 pattern:

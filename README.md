@@ -16,20 +16,24 @@ własnych wzorów ściegów. Patrz [`docs/CREATING_NEW_DRUMS.md`](docs/CREATING_
 
 Zestaw A jest już zaprojektowany: [Viking 21a Basic Stitch Cam](https://www.thingiverse.com/thing:6018240)
 autorstwa maxkrippler — zygzak + zygzak 3-stopniowy. Geometrię zweryfikowano dwoma
-niezależnymi źródłami:
+niezależnymi źródłami, z priorytetem dla bezpośrednich zdjęć fizycznej części tam, gdzie
+się rozjeżdżały z plikiem referencyjnym:
 
 1. **Analiza pliku STL** zestawu A (skan promienia co 0.1–0.25 mm wzdłuż całej długości) —
    wykazała, że to nie płaska tarcza, tylko **krzywka bębnowa z profilowaną krawędzią**:
-   - sama krawędź walca na każdej z 5 pozycji jest ukształtowana jako ząbki/profil ściegu
-     (nie schowany rowek) — czujnik/popychacz maszyny jeździ bezpośrednio po tej krawędzi,
-   - pozycje **sąsiadują bezpośrednio, bez żadnego odstępu**,
-   - krzywka **nie ma otworu przelotowego na wałek** — ma za to gniazdo montażowe (otwór na
-     wałek napędowy z wypustem blokującym obrót) w czole dużego kołnierza oraz osobny,
-     wieloschodkowy trzpień montażowy między dużym kołnierzem a częścią zębatą.
-2. **Zdjęcia fizycznego bębna A** (dostarczone przez użytkownika, patrz
-   [`references/husqvarna_photos_A/`](references/husqvarna_photos_A/)) — ujawniły dodatkowo
-   gwint na dużym kołnierzu, dokładny kształt wpustu w gnieździe i układ grawerunku
-   ("HUSQVARNA SWEDEN" + litera zestawu).
+   sama krawędź walca na każdej z 5 pozycji jest ukształtowana jako ząbki/profil ściegu
+   (nie schowany rowek) — czujnik/popychacz maszyny jeździ bezpośrednio po tej krawędzi, a
+   pozycje **sąsiadują bezpośrednio, bez żadnego odstępu**. To ta część analizy STL, która
+   się potwierdziła.
+2. **Bezpośrednia, systematyczna analiza wszystkich 46 zdjęć** fizycznego bębna A
+   (dostarczonych przez użytkownika, patrz
+   [`references/husqvarna_photos_A/`](references/husqvarna_photos_A/)) — ujawniła, że
+   szczegóły elementu mocującego między dużym kołnierzem a częścią zębatą różnią się od
+   pliku STL repliki trzeciej strony: dysk z grawerunkiem jest WĘŻSZY niż część zębata, a to
+   osobny, szeroki kołnierzyk pośredni wyznacza maksymalną średnicę bębna; otwór na wałek
+   jest przelotowy (nie ślepy); nie ma osobnego, mniejszego kołnierza na dalekim końcu; na
+   dysku czołowym są płaskie, poziome rowki (nie gwint śrubowy, jak wcześniej sądzono); czoło
+   ma małe ścięcie. Pełna historia korekt: [`docs/DIMENSIONS.md`](docs/DIMENSIONS.md).
 
 Na tej podstawie zbudowano parametryczny generator OpenSCAD z trzema gotowymi, oryginalnymi
 zestawami — **B, C, D** — z tą samą, zweryfikowaną geometrią mocowania, ale nowymi wzorami
@@ -47,7 +51,7 @@ zestawami — **B, C, D** — z tą samą, zweryfikowaną geometrią mocowania, 
 Element pomocniczy [`tools/openscad/mating_shaft_reference.scad`](tools/openscad/mating_shaft_reference.scad)
 — testowy trzpień do sprawdzenia dopasowania otworu i wpustu przed drukiem całego bębna.
 
-Kolejny krok: wydruk próbny i ew. kalibracja (`EDGE_MAX_R`/`EDGE_MIN_R`, `THREAD_*` w
+Kolejny krok: wydruk próbny i ew. kalibracja (`EDGE_MAX_R`/`EDGE_MIN_R` w
 `cam_common.scad`) — patrz [`docs/WORKFLOW.md`](docs/WORKFLOW.md) i
 [`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
 
@@ -118,20 +122,23 @@ once and shared, while you design any number of your own stitch patterns. See
 
 Set A is already designed: [Viking 21a Basic Stitch Cam](https://www.thingiverse.com/thing:6018240)
 by maxkrippler — zigzag + 3-step zigzag. The geometry was verified from two independent
-sources:
+sources, with the direct photos of the physical part taking priority wherever they
+disagreed with the reference file:
 
 1. **STL file analysis** of set A (radius scan every 0.1–0.25 mm along the full length) —
-   showed it's not a flat disc, but a **barrel cam with a profiled edge**:
-   - the cylinder's edge itself, at each of the 5 positions, is shaped as the stitch profile
-     (teeth), not a hidden groove — the machine's sensor/follower rides directly on this edge,
-   - positions are **directly adjacent, with no gap between them**,
-   - the cam **has no through-bore for a shaft** — instead it has a mounting socket (a hole
-     for the drive shaft with a key that blocks rotation) in the face of the large flange, and
-     a separate, multi-step mounting spindle between the large flange and the toothed section.
-2. **Photos of the physical drum A** (provided by the user, see
-   [`references/husqvarna_photos_A/`](references/husqvarna_photos_A/)) — additionally revealed
-   a thread on the large flange, the exact shape of the socket's keyway, and the engraving
-   layout ("HUSQVARNA SWEDEN" + the set's letter).
+   showed it's not a flat disc, but a **barrel cam with a profiled edge**: the cylinder's edge
+   itself, at each of the 5 positions, is shaped as the stitch profile (teeth), not a hidden
+   groove — the machine's sensor/follower rides directly on this edge, and positions are
+   **directly adjacent, with no gap between them**. This part of the STL analysis held up.
+2. **A direct, systematic review of all 46 photos** of the physical drum A (provided by the
+   user, see [`references/husqvarna_photos_A/`](references/husqvarna_photos_A/)) — revealed
+   that the mounting feature between the large flange and the toothed section differs from
+   the third-party replica STL file: the engraved disc is NARROWER than the toothed section,
+   and it's a separate, wide intermediate flange that sets the drum's maximum diameter; the
+   shaft hole runs all the way through (not blind); there's no separate, smaller flange at the
+   far end; the face disc has plain, horizontal grooves (not a screw thread, as first assumed);
+   the face has a small chamfer. Full correction history:
+   [`docs/DIMENSIONS.en.md`](docs/DIMENSIONS.en.md).
 
 Based on this, a parametric OpenSCAD generator was built with three ready-made, original
 sets — **B, C, D** — sharing the same, verified mounting geometry, but with new stitch
@@ -150,7 +157,7 @@ could be found).
 Auxiliary part [`tools/openscad/mating_shaft_reference.scad`](tools/openscad/mating_shaft_reference.scad)
 — a test pin for checking the hole/key fit before printing a whole drum.
 
-Next step: a test print and possible calibration (`EDGE_MAX_R`/`EDGE_MIN_R`, `THREAD_*` in
+Next step: a test print and possible calibration (`EDGE_MAX_R`/`EDGE_MIN_R` in
 `cam_common.scad`) — see [`docs/WORKFLOW.md`](docs/WORKFLOW.md) and
 [`docs/PRINTABILITY.md`](docs/PRINTABILITY.md).
 
