@@ -68,20 +68,49 @@ wylot), a pozycje ściegu sąsiadują bez odstępu (`BAND_LEN` liczone bez kołn
 bezpośrednio w danych STL (skan promienia potwierdza każdy odcinek trzpienia) — patrz
 `docs/renders/`.
 
-### 5. Zakres wychylenia czujnika wykraczał poza realny zasięg mechanizmu (naprawione ostatecznie)
+### 5. Zakres wychylenia czujnika wykraczał poza realny zasięg mechanizmu (naprawione, potem doprecyzowane zdjęciami)
 
 `EDGE_MIN_R` był wcześniej dobrany na 6.5 mm — wartość dobrana wyłącznie z myślą o
 wytrzymałości wydruku (żeby dolina zęba nie była zbyt cienka), **bez odniesienia do tego, jak
 daleko fizycznie sięga czujnik/popychacz w prawdziwej maszynie**. Pełny skan promienia całej
-części zębatej oryginału A pokazał, że rzeczywisty zasięg czujnika to dokładnie
-**[7.71 mm, 17.03 mm]** — nigdy szerzej ani węziej. Wartość 6.5 mm była POZA tym zakresem
-(głębiej, niż czujnik może fizycznie sięgnąć), więc najgłębsze punkty niektórych wzorów B/C/D
-odpowiadały wychyleniu, którego mechanizm maszyny nie jest w stanie wykonać.
+części zębatej oryginału A (plik STL, replika trzeciej strony) pokazał zasięg
+**[7.71 mm, 17.03 mm]**. Po dostarczeniu zdjęć fizycznego bębna użytkownika i porównaniu
+głębokości wcięć zębów ze znaną średnicą kołnierza jako skalą — realna głębokość dolin
+okazała się płytsza. Skorygowano na `EDGE_MIN_R = 12.0 mm` (patrz `docs/STITCH_DESIGN.md`) —
+to nadal szacunek (brak twardej skali na zdjęciach), ale bliższy fizycznemu bębnowi niż sama
+replika STL.
 
-**Ostateczne rozwiązanie**: `EDGE_MAX_R = 17.03`, `EDGE_MIN_R = 7.71` — dokładnie zmierzone
-granice z oryginału. Każdy z 15 profili B/C/D (funkcje `*_pos1..5` w `cam_B/C/D.scad`) skaluje
-swoją amplitudę WEWNĄTRZ tego zakresu (współczynniki 0.3–0.9 z `docs/STITCH_DESIGN.md`), więc
-żaden wzór nie żąda od czujnika wychylenia poza jego fizyczny zasięg.
+**Rozwiązanie**: `EDGE_MAX_R = 17.03`, `EDGE_MIN_R = 12.0`. Każdy z 15 profili B/C/D (funkcje
+`*_pos1..5` w `cam_B/C/D.scad`) skaluje swoją amplitudę WEWNĄTRZ tego zakresu (współczynniki
+0.3–0.9 z `docs/STITCH_DESIGN.md`), więc żaden wzór nie żąda od czujnika wychylenia poza jego
+zasięg.
+
+### 6. Gwint, wpust pryzmatyczny i grawerunek dodane na podstawie zdjęć fizycznego bębna
+
+Po otrzymaniu zdjęć prawdziwego bębna A (patrz `docs/DIMENSIONS.md`, sekcja "Poprawki na
+podstawie zdjęć...") dodano trzy elementy niewidoczne w samej siatce STL zestawu A:
+
+- **Gwint na dużym kołnierzu** (`boss0_threaded()` w `cam_common.scad`) — zamiast gładkiego
+  walca. Drukowalność: gwint drukowany z osią pionową (jak cała reszta bryły) jest
+  standardowo bezproblemowy w FDM — każdy zwój to tylko lekki, stopniowy narost promienia w
+  kolejnych warstwach, bez nawisów. Zalecana **dokładność wymiaru gwintu do potwierdzenia
+  próbnym wkręceniem w gniazdo maszyny** — skok/głębokość dobrano wizualnie ze zdjęć, nie z
+  pomiaru.
+- **Wpust pryzmatyczny (zabierak) w otworze na wałek** — pełne, prostokątne żeberko wystające
+  DO WEWNĄTRZ otworu (nie ścięcie/rowek, patrz `docs/DIMENSIONS.md`). Drukowalność: żeberko
+  to lita bryła w poprzek otworu, drukowana od pierwszej warstwy wraz z resztą kołnierza —
+  bez nawisów, bez podpór. Skorygowano wymiary (`SOCKET_KEY_WIDTH`/`SOCKET_KEY_PROTRUSION`)
+  po dokładniejszym przejrzeniu zdjęć dalekiego końca bębna — żeberko jest bardziej wystające,
+  niż wcześniej szacowano. **Do weryfikacji dopasowaniem do prawdziwego wałka.**
+- **Grawerunek** ("HUSQVARNA" + "SWEDEN" + litera zestawu) — płytki (0.7 mm), na płaskim
+  czole, bez wpływu na drukowalność — jak poprzednio.
+
+### Element pomocniczy do weryfikacji dopasowania
+
+[`tools/openscad/mating_shaft_reference.scad`](../tools/openscad/mating_shaft_reference.scad)
+— prosty trzpień testowy odwzorowujący tylko otwór i wpust pryzmatyczny (z niewielkim luzem
+`SHAFT_CLEARANCE`), do wydrukowania i sprawdzenia dopasowania **przed** drukiem całego bębna
+(szybszy i tańszy test niż przedruk całej krzywki, jeśli wpust okaże się źle dobrany).
 
 ## Orientacja druku
 
@@ -131,8 +160,9 @@ oznaczenie, obróć gotową część spodem do góry. Grawerunek nie wpływa na 
 
 ## Kroki po wydruku
 
-1. Sprawdzić pasowanie ślepego gniazda montażowego i schodkowego trzpienia w maszynie —
-   druk FDM często daje wymiary lekko mniejsze niż nominalne (skurcz materiału); w razie
+1. Sprawdzić pasowanie otworu na wałek (z wpustem) i schodkowego trzpienia w maszynie —
+   zacznij od elementu pomocniczego `mating_shaft_reference.scad`, taniej niż całym bębnem.
+   Druk FDM często daje wymiary lekko mniejsze niż nominalne (skurcz materiału); w razie
    potrzeby delikatnie doszlifować/dopasować.
 2. Sprawdzić i ew. oczyścić lokalne naddruki na granicy sąsiednich pozycji ściegu (patrz wyżej).
 3. Sprawdzić płynność ruchu czujnika/popychacza po krawędzi — w razie szorstkości wygładzić

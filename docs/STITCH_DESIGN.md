@@ -55,16 +55,24 @@ znormalizowane (`-1..1`), przeskalowane w `cam_common.scad` na zakres promienia
 
 ## Zakres wychylenia — twarda granica, nie parametr do dowolnego strojenia
 
-`EDGE_MAX_R = 17.03 mm` i `EDGE_MIN_R = 7.71 mm` w `cam_common.scad` to **zmierzony, rzeczywisty
-zasięg ruchu czujnika/popychacza** w oryginalnym zestawie A (pełny skan promienia całej części
-zębatej — patrz `docs/DIMENSIONS.md`). Wszystkie 15 profili B/C/D skaluje swoją amplitudę
+`EDGE_MAX_R = 17.03 mm` (szczyty zębów, zmierzone i w pliku STL, i na zdjęciach) i
+`EDGE_MIN_R = 12.0 mm` (doliny zębów — skorygowane w dół z pierwotnych 7.71 mm po porównaniu
+głębokości wcięć na zdjęciach fizycznego bębna A ze znaną średnicą kołnierza jako skalą
+odniesienia — plik STL osobno sam w sobie sugerował głębsze doliny, ale to model repliki
+trzeciej strony, nie fizyczny bęben użytkownika) w `cam_common.scad` to **przybliżony, realny
+zasięg ruchu czujnika/popychacza**. Wszystkie 15 profili B/C/D skaluje swoją amplitudę
 WEWNĄTRZ tego zakresu (współczynniki 0.3–0.9 w tabelach niżej) — żaden wzór nie wychyla
-czujnika poza granice, w których fizycznie się porusza w prawdziwej maszynie. Nie zmieniaj tych
-dwóch stałych bez ponownego zmierzenia oryginału — to nie jest kosmetyczny parametr do
-"wyczucia", tylko twardy limit mechanizmu.
+czujnika poza te granice. Nie zmieniaj tych dwóch stałych bez ponownego zmierzenia/porównania
+z oryginałem — to nie jest kosmetyczny parametr do "wyczucia", tylko przybliżenie realnego
+limitu mechanizmu (patrz `docs/DIMENSIONS.md` po pełne uzasadnienie i zastrzeżenia dotyczące
+dokładności tego szacunku).
 
 ## Inne parametry do kalibracji przed drukiem
 - Pozycje ściegu sąsiadują bezpośrednio, bez kołnierzy separujących (`BAND_LEN` w
   `cam_common.scad`) — zgodnie ze zmierzoną budową oryginału.
-- Schodkowy trzpień montażowy (`mounting_neck()`) i ślepe gniazdo (`SOCKET_R`/`SOCKET_DEPTH`)
-  odtwarzają zmierzoną geometrię mocowania zestawu A — patrz `docs/DIMENSIONS.md`.
+- Schodkowy trzpień montażowy (`mounting_neck()`), otwór na wałek z wypustem pryzmatycznym
+  (`SOCKET_R`/`SOCKET_DEPTH`/`SOCKET_KEY_*`) i gwint (`THREAD_*`) odtwarzają zmierzoną/
+  sfotografowaną geometrię mocowania zestawu A — patrz `docs/DIMENSIONS.md`.
+- Zestaw A ma teraz też natywną wersję generatora (`models/generated/cam_A.scad`), niezależną
+  od pliku referencyjnego STL — przybliża opisany w źródle wzór (pozycje 1–2 = zygzak
+  3-stopniowy, 3–5 = zwykły zygzak), ale nie jest wierną kopią oryginalnego toru.

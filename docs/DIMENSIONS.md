@@ -11,10 +11,12 @@ wierzchołków siatki STL (skan promienia `sqrt(x²+z²)` w funkcji pozycji na o
    krzywka bębnowa/walcowa z 5 pozycjami osiowymi.
 2. Profil ściegu to **sama krawędź walca** (jak ząbki/zęby), nie schowany rowek — czujnik
    maszyny jeździ bezpośrednio po krawędzi. Pozycje **sąsiadują bezpośrednio, bez odstępu**.
-3. Krzywka **nie ma otworu przelotowego na wałek**. To, co wcześniej wzięto za "otwór
-   centralny", to w rzeczywistości: (a) płytkie, ślepe gniazdo montażowe wycięte od czoła
-   dużego kołnierza i (b) osobny, węższy **czop montażowy** będący częścią wieloschodkowego
-   trzpienia między dużym kołnierzem a częścią zębatą. Cała reszta bryły jest lita.
+3. Krzywka **nie ma otworu przelotowego na całą długość**. To, co wcześniej wzięto za "otwór
+   centralny", to w rzeczywistości: (a) **otwór na wałek napędowy maszyny z wypustem** (klinem)
+   wycięty od czoła dużego kołnierza — wypust jest **niezbędny do przeniesienia ruchu
+   obrotowego** z wałka na bęben (nie jest to kosmetyczny szczegół) — i (b) osobny, węższy
+   **czop montażowy** będący częścią wieloschodkowego trzpienia między dużym kołnierzem a
+   częścią zębatą. Cała reszta bryły jest lita.
 4. Czujnik/popychacz maszyny ma **ograniczony, twardy zakres ruchu**: pełny skan promienia
    części zębatej (Y=9.7–24.25) pokazuje, że promień krawędzi w oryginale nigdy nie wychodzi
    poza **[7.71 mm, 17.03 mm]** — to fizyczna granica zasięgu czujnika w mechanizmie maszyny,
@@ -29,7 +31,7 @@ Współrzędna Y biegnie od 0 (duży kołnierz, strona z widoczną strukturą mo
 
 | Odcinek (Y) | Promień | Opis |
 |---|---:|---|
-| Y = 0 (czoło) | Ø 29.94 mm (r 14.97) na zewnątrz, gniazdo r ≈ 7.8 mm w środku | czoło dużego kołnierza z wyciętym ślepym gniazdem montażowym |
+| Y = 0 (czoło) | Ø 29.94 mm (r 14.97) na zewnątrz, otwór na wałek r ≈ 7.8 mm w środku, z wypustem | czoło dużego kołnierza — otwór na wałek napędowy maszyny (wypust przenosi obrót) |
 | Y = 0 – 3.2 | r = 14.97 mm | duży kołnierz (lity, poza gniazdem od czoła) |
 | Y = 3.2 – 3.7 | 14.97 → 9.75 mm | stożkowe przejście / próg |
 | Y = 3.7 – 5.8 | r = 9.75 mm | stała szyjka pośrednia |
@@ -43,13 +45,45 @@ Współrzędna Y biegnie od 0 (duży kołnierz, strona z widoczną strukturą mo
 Głębokość gniazda montażowego od czoła Y=0: ok. 2.5 mm (do potwierdzenia — pomiar siatki nie
 rozstrzyga jednoznacznie dokładnego dna, tylko obecność i promień gniazda).
 
+## Poprawki na podstawie zdjęć fizycznego bębna A
+
+Użytkownik dostarczył serię zdjęć fizycznego, oryginalnego bębna A (nie pliku STL) — folder
+`references/husqvarna_photos_A/` (patrz też `references/README.md`). Zdjęcia ujawniły trzy
+elementy niewidoczne/niejednoznaczne w samej siatce STL:
+
+1. **Gwint na dużym kołnierzu (Y=0–3.2)** — na zdjęciach widać wyraźnie kilka zwojów gwintu
+   tuż przy grawerowanym czole. Poprzednia wersja modelowała ten kołnierz jako gładki walec.
+   Skok i głębokość zwoju dobrano **wizualnie ze zdjęć** (brak w danych STL) —
+   `THREAD_PITCH=1.1mm`, `THREAD_DEPTH=0.9mm` w `cam_common.scad` — **do weryfikacji i
+   ew. korekty po dopasowaniu do prawdziwego gniazda maszyny**.
+2. **Wypust/klin w otworze na wałek** — zdjęcia pokazują płaskie ścięcie (D-shape) w otworze
+   od strony grawerowanego czoła. To **funkcjonalny element napędowy**, nie kosmetyczny —
+   bez niego wałek maszyny obracałby się swobodnie w otworze bez przenoszenia ruchu na bęben.
+   Dodano jako `SOCKET_KEY_DEPTH`/`SOCKET_KEY_WIDTH` w `cam_common.scad`. Drugi koniec bębna
+   (przy małym kołnierzu) ma na zdjęciach inny, bardziej wystający wypust (prostokątny klocek
+   do wewnątrz otworu) — **nieodwzorowany** w tej wersji (mniejszy priorytet — nie jest to
+   strona z wymiennym oznaczeniem litery, a napęd przenosi wypust od strony czoła).
+3. **Grawerunek** — realny bęben ma wygrawerowane "HUSQVARNA" łukiem u dołu czoła, "SWEDEN"
+   pod spodem, i dużą, osobną literę zestawu bliżej otworu od góry. Odwzorowane w
+   `arc_text()` / `cam_label_cut()` w `cam_common.scad`.
+
+**Uwaga o oznaczeniu modelu maszyny**: dotychczasowa dokumentacja tego projektu odnosiła się
+do "Husqvarna Viking 21A" (za tytułem źródłowego pliku thing:6018240). Użytkownik, fotografując
+własny, fizyczny bęben, odnosi się do maszyny jako **Husqvarna 21E** — może to być inny wariant
+tej samej rodziny mechanizmu (te same 21xx mają zwykle wspólną platformę mechaniczną z różnymi
+oznaczeniami rynkowymi) albo dokładniejsze oznaczenie posiadanej maszyny. Nazwę projektu
+zaktualizowano na "21E"; jeśli w przyszłości okaże się to niedokładne, wystarczy zmienić nazwę
+— sama geometria (zmierzona z realnego bębna i pliku STL) pozostaje aktualna niezależnie od
+dokładnego oznaczenia modelu.
+
 ## Co z tego wynika dla B, C, D
 
 Żeby nowe zestawy fizycznie pasowały do maszyny, muszą zachować:
 - tę samą długość całkowitą (26.0 mm),
 - ten sam, dokładny profil schodkowego trzpienia montażowego (Y=3.2–9.7) — to
   prawdopodobnie kluczowy element pozycjonujący/mocujący, nie dowolny szczegół kosmetyczny,
-- to samo ślepe gniazdo montażowe w czole dużego kołnierza,
+- ten sam otwór na wałek napędowy z wypustem w czole dużego kołnierza (funkcjonalny —
+  przenosi napęd),
 - te same średnice kołnierzy na obu końcach (Ø 29.9 mm przy Y=0, Ø 20.6 mm przy Y=26),
 - tę samą maksymalną obwiednię części zębatej (Ø ~34 mm),
 - **brak odstępu między pozycjami** ściegu w części zębatej,
