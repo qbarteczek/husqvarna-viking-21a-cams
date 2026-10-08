@@ -1,16 +1,14 @@
-// Natywna rekonstrukcja zestawu A w generatorze (nie zamiennik pliku
-// referencyjnego w models/original/ — ten zostaje jako źródło pomiarów).
-// Wzór wg opisu z thing:6018240: pozycje 1-2 = zygzak 3-stopniowy,
-// pozycje 3-5 = zwykły zygzak (węższy/średni/szerszy). Profil przybliżony
-// falą trójkątną (dokładny, oryginalny kształt toru nie jest odtwarzany
-// 1:1 — patrz docs/DIMENSIONS.md o ograniczeniach analizy STL).
+// Bęben A (standardowy) dla Husqvarna 21E / 21A.
+// Geometria zębów oparta na 9-zębnej fali trapezowej (trap_wave) o płaskich szczytach
+// i dolinach, bezpośrednio odwzorowującej fizyczny bęben A ze zdjęć.
 include <../../tools/openscad/cam_common.scad>
 
-function a_pos1(a) = tri_wave(a, 9) * 0.55;   // zygzak 3-stopniowy, wariant 1
-function a_pos2(a) = tri_wave(a, 7) * 0.7;    // zygzak 3-stopniowy, wariant 2
-function a_pos3(a) = tri_wave(a, 6) * 0.45;   // zwykły zygzak, wąski
-function a_pos4(a) = tri_wave(a, 6) * 0.65;   // zwykły zygzak, średni
-function a_pos5(a) = tri_wave(a, 6) * 0.85;   // zwykły zygzak, szeroki
+// 5 pozycji ściegów bębna A:
+function a_pos1(a) = trap_wave(a, 9, 0.28) * 0.85;        // zygzak standardowy / pełny
+function a_pos2(a) = trap_wave(a + 20, 9, 0.28) * 0.70;   // wariant ściegu elastycznego
+function a_pos3(a) = trap_wave(a, 9, 0.28) * 0.50;        // zygzak wąski
+function a_pos4(a) = trap_wave(a + 10, 9, 0.28) * 0.65;   // zygzak średni
+function a_pos5(a) = trap_wave(a, 9, 0.28) * 0.95;        // zygzak szeroki
 
 cam_with_grooves("A", [
     function(a) a_pos1(a),
