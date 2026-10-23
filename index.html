@@ -250,11 +250,11 @@
     /* --- Gniazda 5 Pozycji Bębna --- */
     .tracks-deck {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));   /* minmax: długi tytuł nie poszerza strony */
       gap: 1rem;
     }
     @media (max-width: 1080px) {
-      .tracks-deck { grid-template-columns: repeat(2, 1fr); }
+      .tracks-deck { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 640px) {
       .tracks-deck { grid-template-columns: 1fr; }
@@ -789,17 +789,17 @@
       { id: 7, key: "zigzag_satin", name_pl: "Zygzak gęsty cerujący (A1 poz. 4)", name_en: "Dense Satin Zigzag", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.80", desc: "Gęsty zygzak cerujący do wzmacniania przetarć.", fn: (a) => trapWave(a, 9, 0.28) * 0.80 },
       { id: 8, key: "three_step_elastic", name_pl: "Zygzak 3-stopniowy elastyczny (A1 poz. 2)", name_en: "3-Step Elastic Zigzag", category: "utility", formula: "three_step_zigzag(a, 3)", desc: "Elastyczny trójskok (3 wkłucia w lewo, 3 w prawo) do dzianin i gumy.", fn: (a) => threeStepZigzag(a, 3) },
       { id: 9, key: "four_step_elastic", name_pl: "Zygzak 4-stopniowy elastyczny", name_en: "4-Step Elastic", category: "utility", formula: "let(t = (a*3/360) - floor(a*3/360), step = floor(t * 8)) (step < 4 ? -0.9 + step * 0.6 : 0.9 - (step - 4) * 0.6)", desc: "Czterostopniowy zygzak do materiałów wysokoelastycznych (spandex/lycra).", fn: (a) => fourStepElastic(a) },
-      { id: 10, key: "overlock_open", name_pl: "Owerlok otwarty", name_en: "Open Overlock", category: "utility", formula: "(sine_wave(a, 4) * 0.6 + blind_hem(a, 4, 0.20) * 0.4)", desc: "Ścieg owerlokowy do jednoczesnego łączenia i obrzucania krawędzi.", fn: (a) => (Math.sin(a*4*Math.PI/180)*0.6 + blindHem(a, 4, 0.20)*0.4) },
-      { id: 11, key: "overlock_closed", name_pl: "Owerlok zamknięty elastyczny", name_en: "Closed Elastic Overlock", category: "utility", formula: "(sine_wave(a, 6) + 0.3*sine_wave(a, 18)) / 1.3 * 0.85", desc: "Zamknięty ścieg owerlokowy o wzmocnionej krawędzi.", fn: (a) => (Math.sin(a*6*Math.PI/180) + 0.3*Math.sin(a*18*Math.PI/180))/1.3 * 0.85 },
+      { id: 10, key: "overlock_open", name_pl: "Owerlok otwarty", name_en: "Open Overlock", category: "utility", formula: "(sine_wave(a, 4) * 0.6 + blind_hem(a, 4, 0.20) * 0.4)", desc: "Ścieg owerlokowy do jednoczesnego łączenia i obrzucania krawędzi.", fn: (a) => (sinDeg(a*4)*0.6 + blindHem(a, 4, 0.20)*0.4) },
+      { id: 11, key: "overlock_closed", name_pl: "Owerlok zamknięty elastyczny", name_en: "Closed Elastic Overlock", category: "utility", formula: "(sine_wave(a, 6) + 0.3*sine_wave(a, 18)) / 1.3 * 0.85", desc: "Zamknięty ścieg owerlokowy o wzmocnionej krawędzi.", fn: (a) => (sinDeg(a*6) + 0.3*sinDeg(a*18))/1.3 * 0.85 },
       { id: 12, key: "triple_stretch", name_pl: "Potrójny elastyczny prosty (D poz. 4)", name_en: "Triple Stretch Stitch", category: "utility", formula: "tri_wave(a, 18) * 0.30", desc: "Trzykrotne wzmocnienie szwu o wysokiej elastyczności na rozerwanie.", fn: (a) => triWave(a, 18) * 0.30 },
-      { id: 13, key: "ladder", name_pl: "Drabinka cerująca (D poz. 3)", name_en: "Ladder Stitch", category: "utility", formula: "sign(sine_wave(a, 6)) * 0.85", desc: "Dwie równoległe ścieżki z gwałtownym przeskokiem igły.", fn: (a) => Math.sign(Math.sin(a*6*Math.PI/180)) * 0.85 },
+      { id: 13, key: "ladder", name_pl: "Drabinka cerująca (D poz. 3)", name_en: "Ladder Stitch", category: "utility", formula: "sign(sine_wave(a, 6)) * 0.85", desc: "Dwie równoległe ścieżki z gwałtownym przeskokiem igły.", fn: (a) => Math.sign(sinDeg(a*6)) * 0.85 },
 
       // Grupa II: Faliste i organiczne
-      { id: 14, key: "serpentine_wide", name_pl: "Serpentyna szeroka / fala (B1 poz. 1)", name_en: "Wide Serpentine (B1)", category: "wave", formula: "sine_wave(a, 3) * 0.90", desc: "Klasyczny ścieg wężowy o łagodnych, miękkich łukach (ozdoba bielizny i obrusów).", fn: (a) => Math.sin(a*3*Math.PI/180) * 0.90 },
-      { id: 15, key: "serpentine_med", name_pl: "Serpentyna średnia", name_en: "Medium Serpentine", category: "wave", formula: "sine_wave(a, 4) * 0.85", desc: "Cztery łuki sinusoidalne na obrót bębna.", fn: (a) => Math.sin(a*4*Math.PI/180) * 0.85 },
-      { id: 16, key: "serpentine_dense", name_pl: "Serpentyna gęsta", name_en: "Dense Serpentine", category: "wave", formula: "sine_wave(a, 6) * 0.80", desc: "Drobna serpentyna dekoracyjna o częstych łukach.", fn: (a) => Math.sin(a*6*Math.PI/180) * 0.80 },
+      { id: 14, key: "serpentine_wide", name_pl: "Serpentyna szeroka / fala (B1 poz. 1)", name_en: "Wide Serpentine (B1)", category: "wave", formula: "sine_wave(a, 3) * 0.90", desc: "Klasyczny ścieg wężowy o łagodnych, miękkich łukach (ozdoba bielizny i obrusów).", fn: (a) => sinDeg(a*3) * 0.90 },
+      { id: 15, key: "serpentine_med", name_pl: "Serpentyna średnia", name_en: "Medium Serpentine", category: "wave", formula: "sine_wave(a, 4) * 0.85", desc: "Cztery łuki sinusoidalne na obrót bębna.", fn: (a) => sinDeg(a*4) * 0.85 },
+      { id: 16, key: "serpentine_dense", name_pl: "Serpentyna gęsta", name_en: "Dense Serpentine", category: "wave", formula: "sine_wave(a, 6) * 0.80", desc: "Drobna serpentyna dekoracyjna o częstych łukach.", fn: (a) => sinDeg(a*6) * 0.80 },
       { id: 17, key: "scallop_wave", name_pl: "Muszelka łuskowa", name_en: "Scallop Shell Wave", category: "wave", formula: "saw_wave(a, 5, 0.85) * 0.90", desc: "Łagodne narastanie fali i ostry powrót tworzące wzór muszelki brzegowej.", fn: (a) => sawWave(a, 5, 0.85) * 0.90 },
-      { id: 18, key: "double_lobe", name_pl: "Podwójna pętla", name_en: "Double Lobe Wave", category: "wave", formula: "double_lobe(a, 5) * 0.90", desc: "Fala z dodatkowym zagięciem harmonicznym tworząca wypustki.", fn: (a) => (Math.sin(a*5*Math.PI/180) + 0.35*Math.sin(a*10*Math.PI/180))/1.35 * 0.90 },
+      { id: 18, key: "double_lobe", name_pl: "Podwójna pętla", name_en: "Double Lobe Wave", category: "wave", formula: "double_lobe(a, 5) * 0.90", desc: "Fala z dodatkowym zagięciem harmonicznym tworząca wypustki.", fn: (a) => (sinDeg(a*5) + 0.35*sinDeg(a*10))/1.35 * 0.90 },
       { id: 19, key: "feather", name_pl: "Piórko gałązkowe", name_en: "Feather Stitch", category: "wave", formula: "feather(a, 6) * 0.85", desc: "Wzór przypominający gałązki jodełki lub piórka.", fn: (a) => featherFn(a, 6) * 0.85 },
       { id: 20, key: "stepped_chevron", name_pl: "Jodełka schodkowa / fala łamana (B1 poz. 2)", name_en: "Stepped Chevron (B1)", category: "wave", formula: "(tri_wave(a, 3) * 0.70 + tri_wave(a, 18) * 0.25)", desc: "Szeroka fala trójkątna z nałożonym drobnym ząbkiem krawędziowym.", fn: (a) => (triWave(a, 3)*0.70 + triWave(a, 18)*0.25) },
       { id: 21, key: "angled_teeth", name_pl: "Ząbki skośne piła (B1 poz. 4)", name_en: "Angled Saw Teeth (B1)", category: "wave", formula: "saw_wave(a, 6, 0.80) * 0.90", desc: "Asymetryczny profil piłokształtny o ostrym powrocie.", fn: (a) => sawWave(a, 6, 0.80) * 0.90 },
@@ -808,7 +808,7 @@
       // Grupa III: Satynowe modulowane
       { id: 23, key: "diamond_satin_3", name_pl: "Satynowy romb / perełki (B1 poz. 3)", name_en: "Diamond Satin 3c (B1)", category: "satin", formula: "diamond_satin(a, 18, 3)", desc: "Płynnie rosnąca i malejąca szerokość satyny tworząca łańcuch rombów/perełek.", fn: (a) => diamondSatin(a, 18, 3) },
       { id: 24, key: "diamond_satin_4", name_pl: "Satynowy romb gęsty (4 cykle)", name_en: "Diamond Satin 4c", category: "satin", formula: "diamond_satin(a, 20, 4)", desc: "Cztery romby satynowe na obrót wałka.", fn: (a) => diamondSatin(a, 20, 4) },
-      { id: 25, key: "pearl_beads", name_pl: "Perełki satynowe okrągłe", name_en: "Pearl Beads", category: "satin", formula: "let(env = pow(sin(a*3/2), 2)) trap_wave(a, 18, 0.20) * (env * 0.80 + 0.15)", desc: "Krople satynowe o zaokrąglonej obwiedni.", fn: (a) => { let env = Math.pow(Math.sin(a*3*Math.PI/360), 2); return trapWave(a, 18, 0.20) * (env * 0.80 + 0.15); } },
+      { id: 25, key: "pearl_beads", name_pl: "Perełki satynowe okrągłe", name_en: "Pearl Beads", category: "satin", formula: "let(env = pow(sin(a*3/2), 2)) trap_wave(a, 18, 0.20) * (env * 0.80 + 0.15)", desc: "Krople satynowe o zaokrąglonej obwiedni.", fn: (a) => { let env = Math.pow(sinDeg(a*3/2), 2); return trapWave(a, 18, 0.20) * (env * 0.80 + 0.15); } },
       { id: 26, key: "hourglass_satin", name_pl: "Klepsydra / podwójny romb (C1 poz. 4)", name_en: "Hourglass Satin (C1)", category: "satin", formula: "hourglass_satin(a, 18, 3)", desc: "Symetryczne przewężenie satyny w talii tworzące efekt klepsydry.", fn: (a) => hourglassSatin(a, 18, 3) },
       { id: 27, key: "flame_satin", name_pl: "Ścieg płomieniowy ostry (C1 poz. 2)", name_en: "Flame Sharp Satin (C1)", category: "satin", formula: "arrow_sharpen(a, 6, 0.50) * 0.90", desc: "Ostre, dynamiczne trójkąty płomieniowe o wyostrzonych wierzchołkach.", fn: (a) => arrowSharpen(a, 6, 0.50) * 0.90 },
       { id: 28, key: "taper_satin", name_pl: "Stożek satynowy / klin", name_en: "Taper Satin Wedge", category: "satin", formula: "let(t = (a*3/360) - floor(a*3/360)) trap_wave(a, 18, 0.22) * (t * 0.80 + 0.15)", desc: "Ciągłe narastanie szerokości zygzaka i nagły powrót do zera.", fn: (a) => { let t = (a*3/360)%1; return trapWave(a, 18, 0.22)*(t*0.80 + 0.15); } },
@@ -872,17 +872,32 @@
     }
 
     function diamondSatin(a, satinReps = 18, cycleReps = 3) {
-      let env = (1 - Math.cos(a * cycleReps * Math.PI / 180)) / 2;
+      let env = (1 - cosDeg(a * cycleReps)) / 2;
       return trapWave(a, satinReps, 0.22) * (env * 0.75 + 0.2);
     }
 
+    // sin/cos w stopniach dokładnie jak w OpenSCAD: 0 dla wielokrotności 180°, ±1 dla 90°/270°, ±0,5 dla 30°/150°…
+    // (Math.sin(Math.PI) = 1.2e-16, więc sign() w punktach skoku dawał ±1 zamiast 0 i ścianki skoków
+    // przesuwały się o jeden segment względem STL z OpenSCAD – np. pozycja 3 bębnów C i D).
+    function sinDeg(x) {
+      let d = x % 360;
+      if (d < 0) d += 360;
+      if (d === 0 || d === 180) return 0;
+      if (d === 90) return 1;
+      if (d === 270) return -1;
+      if (d === 30 || d === 150) return 0.5;
+      if (d === 210 || d === 330) return -0.5;
+      return Math.sin(d * Math.PI / 180);
+    }
+    function cosDeg(x) { return sinDeg(x + 90); }
+
     function blockSatin(a, satinReps = 16, blockReps = 4) {
-      let side = Math.sign(Math.sin(a * blockReps * Math.PI / 180)) || 1;
+      let side = Math.sign(sinDeg(a * blockReps));   // sign(0) = 0 jak w OpenSCAD
       return trapWave(a, satinReps, 0.22) * 0.45 + side * 0.45;
     }
 
     function hourglassSatin(a, satinReps = 18, cycleReps = 3) {
-      let env = Math.abs(Math.cos(a * cycleReps * Math.PI / 180));
+      let env = Math.abs(cosDeg(a * cycleReps));
       return trapWave(a, satinReps, 0.22) * (env * 0.75 + 0.2);
     }
 
@@ -895,7 +910,7 @@
       let macro = 360 / clusters;
       let t = (a % macro) / macro;
       if (t < 0) t += 1;
-      return (t < 0.75) ? 0.5 * triWave(a, clusters * 9) : Math.sin(a * clusters * Math.PI / 180);
+      return (t < 0.75) ? 0.5 * triWave(a, clusters * 9) : sinDeg(a * clusters);
     }
 
     // Stan bieżący

@@ -15,9 +15,13 @@ import sys
 import tempfile
 from pathlib import Path
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")   # konsola Windows (cp1250) nie ma znaku ≠
 ROOT = Path(__file__).resolve().parent.parent
 OPENSCAD = r"C:\Program Files\OpenSCAD\openscad.com"
-ANGLES = [i * 5 + 0.5 for i in range(72)]        # +0.5° omija dokładne punkty nieciągłości (skoki fal)
+# Dwie siatki kątów: i*5+0.5° (między punktami nieciągłości) oraz dokładnie kąty próbek siatki bębna
+# i*360/96 – w nich wypadają skoki fal (sign, floor), a STL z OpenSCAD i z przeglądarki muszą się zgadzać.
+ANGLES = [i * 5 + 0.5 for i in range(72)] + [i * 360 / 96 for i in range(96)]
 TOL = 1e-3
 
 JS = r"""
