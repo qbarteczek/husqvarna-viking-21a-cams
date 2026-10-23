@@ -15,6 +15,13 @@ Aplikacja działa w 100% w przeglądarce internetowej (na komputerze lub telefon
 
 ---
 
+## Materiał / wykończenie
+
+Nad podglądem 3D wybierasz materiał: oryginał Husqvarna (czarne tworzywo), PETG (zalecany), ASA/ABS,
+nylon PA-CF, nylon PA, żywica tough albo PLA (tylko próbny wydruk). Zmienia to wygląd podglądu i pokazuje
+zalecane temperatury i ustawienia (wg [PRINTABILITY.md](PRINTABILITY.md)); wybór trafia też jako komentarz
+do pobieranego pliku `.scad`. Geometria i plik STL są dla wszystkich materiałów takie same.
+
 ## 3 Sposoby korzystania z generatora
 
 ### Sposób 1: Aplikacja Webowa Online / Lokalna (Najprostszy dla amatorów!)

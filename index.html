@@ -434,6 +434,18 @@
       border-color: var(--accent-cyan);
     }
 
+    /* Wybór materiału (jak „Wykończenie” w generatorze krzywek Elny) */
+    .material-bar {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+      margin: 0 0 0.75rem; font-size: 0.85rem; color: var(--text-muted);
+    }
+    .material-bar select {
+      background: var(--bg-surface-elevated); color: var(--text-main); border: 1px solid var(--border-subtle);
+      border-radius: 6px; padding: 0.35rem 0.6rem; font: inherit;
+    }
+    .material-info { flex-basis: 100%; line-height: 1.45; }
+    .material-info b { color: var(--text-main); font-weight: 600; }
+
     /* --- Dolny Panel: Katalog Ściegów --- */
     .catalog-section {
       background: var(--bg-surface);
@@ -706,6 +718,11 @@
           </div>
           <button class="three-reset-btn" onclick="resetThreeCamera()">🔄 Reset kamery</button>
         </div>
+        <div class="material-bar">
+          <label for="materialSelect">Materiał / wykończenie:</label>
+          <select id="materialSelect" title="Wygląd podglądu 3D i zalecane parametry druku dla materiału"></select>
+          <span class="material-info" id="materialInfo"></span>
+        </div>
         <div class="three-canvas-container" id="threeContainer">
           <!-- Canvas WebGL Three.js -->
           <div class="three-controls-hint">🖱️ Przeciągnij lewym przyciskiem myszy, aby obrócić • Kółko = Zoom</div>
@@ -897,12 +914,53 @@
       "CUSTOM": { letter: "E", slots: [1, 14, 23, 29, 4] }
     };
 
+    // ==============================================================================
+    // MATERIAŁ DO DRUKU: wygląd podglądu 3D + parametry wg docs/PRINTABILITY.md
+    // ==============================================================================
+    const MATERIALS = {
+      original: { name: "🖤 Oryginał Husqvarna (czarne tworzywo)", color: 0x16181b, roughness: 0.55, metalness: 0.05,
+        info: "Wygląd fabrycznego bębna. Do druku wybierz materiał poniżej – najbliższy oryginałowi to czarny PETG albo nylon." },
+      petg: { name: "⚫ PETG (zalecany)", color: 0x1f2933, roughness: 0.32, metalness: 0.08,
+        info: "<b>Zalecany.</b> Dysza 230–245 °C, stół 70–80 °C, chłodzenie 40–60 %. Trwały, odporny na olej maszynowy, łatwy w druku." },
+      asa: { name: "🩶 ASA / ABS", color: 0x8b9199, roughness: 0.7, metalness: 0.02,
+        info: "<b>Bardzo dobry.</b> Dysza 240–260 °C, stół 90–110 °C, chłodzenie 0–20 %, najlepiej w zamkniętej komorze (skurcz). Odporny na olej i ciepło." },
+      pacf: { name: "◼️ Nylon PA-CF (z włóknem węglowym)", color: 0x2a2b2e, roughness: 0.9, metalness: 0.0,
+        info: "<b>Najtrwalszy.</b> Dysza 260–290 °C (dysza hartowana), stół 60–90 °C, filament suszony. Sztywny, odporny na ścieranie zębów." },
+      nylon: { name: "🤍 Nylon PA (naturalny)", color: 0xe9e4d8, roughness: 0.8, metalness: 0.0,
+        info: "<b>Dobry</b>, cichy w pracy, ale bardziej elastyczny – sprawdź dopasowanie wpustu. Dysza 250–270 °C, stół 70–90 °C, filament suszony." },
+      resin: { name: "🧪 Żywica tough / ABS-like", color: 0x9aa3ad, roughness: 0.22, metalness: 0.05,
+        info: "<b>Dobry</b> na drukarce żywicznej (bardzo dokładne zęby). Tylko żywica wytrzymała (tough / ABS-like); doświetl wg producenta." },
+      pla: { name: "🟦 PLA (tylko próbny wydruk)", color: 0x3b82f6, roughness: 0.45, metalness: 0.05,
+        info: "<b>Tylko do testu dopasowania.</b> Dysza 200–215 °C, stół 55–60 °C, chłodzenie 100 %. Mięknie w cieple i pęka zmęczeniowo – nie do stałej pracy." },
+    };
+    let currentMaterial = (() => { try { return localStorage.getItem('husq.material') || 'petg'; } catch (e) { return 'petg'; } })();
+    if (!MATERIALS[currentMaterial]) currentMaterial = 'petg';
+
+    function initMaterialSelect() {
+      const sel = document.getElementById('materialSelect');
+      if (!sel) return;
+      for (const [key, m] of Object.entries(MATERIALS)) sel.add(new Option(m.name, key, false, key === currentMaterial));
+      const show = () => {
+        document.getElementById('materialInfo').innerHTML = MATERIALS[currentMaterial].info +
+          ' Ustawienia wspólne: warstwa 0,12–0,16 mm, 4–5 obrysów, wypełnienie 40–50 % gyroid, czołem na stole.';
+      };
+      sel.addEventListener('change', () => {
+        currentMaterial = sel.value;
+        try { localStorage.setItem('husq.material', currentMaterial); } catch (e) { /* bez pamięci */ }
+        show();
+        updateThreeDrumMesh();
+        updateScadPreview();
+      });
+      show();
+    }
+
     // --- Inicjalizacja aplikacji ---
     function init() {
       buildTrackCards();
       renderCatalog(STITCHES);
       updateAllSlotUI();
       drawFabricSimulation();
+      initMaterialSelect();
       initThreeJS();
       updateScadPreview();
 
@@ -1372,11 +1430,11 @@
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
       scene.add(ambientLight);
 
-      const dirLight1 = new THREE.DirectionalLight(0x38bdf8, 1.2);
+      const dirLight1 = new THREE.DirectionalLight(0xffffff, 1.25);   // neutralne światło: kolor materiału bez przekłamań
       dirLight1.position.set(40, 60, 50);
       scene.add(dirLight1);
 
-      const dirLight2 = new THREE.DirectionalLight(0xa855f7, 0.8);
+      const dirLight2 = new THREE.DirectionalLight(0xdbe4ee, 0.6);
       dirLight2.position.set(-40, -30, -50);
       scene.add(dirLight2);
 
@@ -1417,11 +1475,9 @@
       // Obrót tak, aby bęben stał pionowo wzdłuż osi Y w Three.js
       geom.rotateX(-Math.PI / 2);
 
-      const material = new THREE.MeshStandardMaterial({
-        color: 0xe2e8f0,
-        roughness: 0.35,
-        metalness: 0.28
-      });
+      const mm = MATERIALS[currentMaterial] || MATERIALS.petg;
+      const material = new THREE.MeshStandardMaterial({ color: mm.color, roughness: mm.roughness, metalness: mm.metalness,
+        flatShading: true });   // ostre krawędzie zębów i półek (bez wygładzania normalnych)
 
       drumMesh = new THREE.Mesh(geom, material);
       scene.add(drumMesh);
@@ -1466,6 +1522,9 @@
 // Poz 3: ${s2.name_pl}
 // Poz 4: ${s3.name_pl}
 // Poz 5: ${s4.name_pl} (zalecany stan spoczynkowy)
+//
+// Materiał: ${(MATERIALS[currentMaterial] || MATERIALS.petg).name.replace(/^\S+\s/, '')}
+// ${(MATERIALS[currentMaterial] || MATERIALS.petg).info.replace(/<[^>]+>/g, '')}
 // ==============================================================================
 include <../../tools/openscad/cam_common.scad>
 

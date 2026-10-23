@@ -15,6 +15,13 @@ The application runs 100% in your browser (desktop or mobile) and lets you desig
 
 ---
 
+## Material / finish
+
+Above the 3D preview you choose the material: Husqvarna original (black plastic), PETG (recommended), ASA/ABS,
+nylon PA-CF, nylon PA, tough resin or PLA (test print only). It changes the look of the preview and shows the
+recommended temperatures and settings (see [PRINTABILITY.en.md](PRINTABILITY.en.md)); the choice is also written
+as a comment into the downloaded `.scad` file. The geometry and the STL are the same for every material.
+
 ## 3 Ways to Use the Generator
 
 ### Method 1: Web Application Online / Local (Easiest for Sewing Machine Users)
