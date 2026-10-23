@@ -25,7 +25,7 @@ param(
 $stitchDefs = @{
     0  = @{ Name = "Ścieg prosty zerowy"; Formula = "-1.0" }
     1  = @{ Name = "Ścieg kryty / brzegowy (A1)"; Formula = "blind_hem(a, 3, 0.20)" }
-    2  = @{ Name = "Ścieg kryty gęsty"; Formula = "blind_hem(a, 4, 0.16)" }
+    2  = @{ Name = "Ścieg kryty gęsty"; Formula = "blind_hem(a, 4, 0.15)" }
     3  = @{ Name = "Ścieg kryty szeroki"; Formula = "blind_hem(a, 3, 0.28)" }
     4  = @{ Name = "Zygzak standardowy referencyjny / spoczynkowy"; Formula = "trap_wave(a, 9, 0.28) * 0.95" }
     5  = @{ Name = "Zygzak szeroki (A1 poz. 3)"; Formula = "trap_wave(a, 9, 0.28) * 0.95" }
@@ -57,7 +57,7 @@ $stitchDefs = @{
     31 = @{ Name = "Bloki satynowe prostokątne (C1 poz. 3)"; Formula = "block_satin(a, 16, 4)" }
     32 = @{ Name = "Szachownica schodkowa"; Formula = "let(t = (a*4/360) - floor(a*4/360)) (t < 0.5 ? (tri_wave(a, 16)*0.4 + 0.5) : (tri_wave(a, 16)*0.4 - 0.5))" }
     33 = @{ Name = "Krzyżyki"; Formula = "(tri_wave(a, 6) + 0.4*tri_wave(a*2, 6)) / 1.4 * 0.85" }
-    34 = @{ Name = "Strzałka ostra"; Formula = "arrow_sharpen(a, 6, 0.50) * 0.90" }
+    34 = @{ Name = "Strzałka ostra"; Formula = "arrow_sharpen(a, 6, 0.80) * 0.90" }
     35 = @{ Name = "Plaster miodu"; Formula = "diamond_lattice(a, 6) * 0.80" }
 }
 

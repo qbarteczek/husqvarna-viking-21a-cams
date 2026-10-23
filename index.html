@@ -764,7 +764,7 @@
     const STITCHES = [
       { id: 0, key: "straight", name_pl: "Ścieg prosty zerowy", name_en: "Straight Stitch", category: "utility", formula: "-1.0", desc: "Czysty ścieg prosty (brak wychylenia igły, promień maksymalny).", fn: (a) => -1.0 },
       { id: 1, key: "blind_hem_std", name_pl: "Ścieg kryty standardowy (A1)", name_en: "Blind Hem Standard (A1)", category: "utility", formula: "blind_hem(a, 3, 0.20)", desc: "4-5 wkłuć po lewej + pojedynczy skok w prawo do podszywania dołów i krawędzi.", fn: (a) => blindHem(a, 3, 0.20) },
-      { id: 2, key: "blind_hem_dense", name_pl: "Ścieg kryty gęsty", name_en: "Blind Hem Dense", category: "utility", formula: "blind_hem(a, 4, 0.16)", desc: "Ścieg kryty o 4 cyklach na obrót bębna (częstsze podchwytywanie tkaniny).", fn: (a) => blindHem(a, 4, 0.16) },
+      { id: 2, key: "blind_hem_dense", name_pl: "Ścieg kryty gęsty", name_en: "Blind Hem Dense", category: "utility", formula: "blind_hem(a, 4, 0.15)", desc: "Ścieg kryty o 4 cyklach na obrót bębna (częstsze podchwytywanie tkaniny).", fn: (a) => blindHem(a, 4, 0.15) },
       { id: 3, key: "blind_hem_wide", name_pl: "Ścieg kryty szeroki", name_en: "Blind Hem Wide", category: "utility", formula: "blind_hem(a, 3, 0.28)", desc: "Ścieg kryty o poszerzonym skoku poprzecznym igły.", fn: (a) => blindHem(a, 3, 0.28) },
       { id: 4, key: "zigzag_std", name_pl: "Zygzak referencyjny / spoczynkowy", name_en: "Zigzag Reference (A1/B1/C1)", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.95", desc: "Fabryczna pozycja spoczynkowa mechanizmu (zalecana na pozycji 5 do wymiany bębna).", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
       { id: 5, key: "zigzag_wide", name_pl: "Zygzak szeroki (A1 poz. 3)", name_en: "Wide Zigzag", category: "utility", formula: "trap_wave(a, 9, 0.28) * 0.95", desc: "Szeroki zygzak stabilizowany o pełnym wychyleniu igły.", fn: (a) => trapWave(a, 9, 0.28) * 0.95 },
@@ -802,7 +802,7 @@
       { id: 31, key: "satin_blocks", name_pl: "Bloki satynowe prostokątne (C1 poz. 3)", name_en: "Satin Blocks (C1)", category: "geometric", formula: "block_satin(a, 16, 4)", desc: "Naprzemienne schodkowe prostokąty satynowe (przeskok lewo-prawo).", fn: (a) => blockSatin(a, 16, 4) },
       { id: 32, key: "checker_step", name_pl: "Szachownica schodkowa", name_en: "Checker Step", category: "geometric", formula: "let(t = (a*4/360) - floor(a*4/360)) (t < 0.5 ? (tri_wave(a, 16)*0.4 + 0.5) : (tri_wave(a, 16)*0.4 - 0.5))", desc: "Dwa poziomy zygzaka tworzące efekt szachownicy.", fn: (a) => { let t = (a*4/360)%1; return t < 0.5 ? (triWave(a, 16)*0.4 + 0.5) : (triWave(a, 16)*0.4 - 0.5); } },
       { id: 33, key: "cross_stitch", name_pl: "Krzyżyki dekoracyjne", name_en: "Cross Stitch Pattern", category: "geometric", formula: "(tri_wave(a, 6) + 0.4*tri_wave(a*2, 6)) / 1.4 * 0.85", desc: "Złożenie dwóch częstotliwości dające efekt ściegu krzyżykowego.", fn: (a) => (triWave(a, 6) + 0.4*triWave(a*2, 6)) / 1.4 * 0.85 },
-      { id: 34, key: "arrowhead", name_pl: "Grot strzały ostry", name_en: "Arrowhead Stitch", category: "geometric", formula: "arrow_sharpen(a, 6, 0.50) * 0.90", desc: "Wyostrzone groty geometryczne skierowane w jednym kierunku.", fn: (a) => arrowSharpen(a, 6, 0.50) * 0.90 },
+      { id: 34, key: "arrowhead", name_pl: "Grot strzały ostry", name_en: "Arrowhead Stitch", category: "geometric", formula: "arrow_sharpen(a, 6, 0.80) * 0.90", desc: "Wyostrzone groty geometryczne skierowane w jednym kierunku.", fn: (a) => arrowSharpen(a, 6, 0.80) * 0.90 },
       { id: 35, key: "honeycomb", name_pl: "Plaster miodu", name_en: "Honeycomb Lattice", category: "geometric", formula: "diamond_lattice(a, 6) * 0.80", desc: "Siatka rombowa przypominająca komórki plastra miodu.", fn: (a) => (triWave(a, 6) + triWave(a+30, 6))/2 * 0.80 }
     ];
 
@@ -893,7 +893,7 @@
       "A1": { letter: "A", slots: [1, 8, 5, 7, 4] },
       "B1": { letter: "B", slots: [14, 20, 23, 21, 4] },
       "C1": { letter: "C", slots: [29, 27, 31, 26, 4] },
-      "D":  { letter: "D", slots: [6, 1, 13, 12, 4] },
+      "D":  { letter: "D", slots: [6, 2, 13, 12, 4] },   // = models/generated/cam_D.scad
       "CUSTOM": { letter: "E", slots: [1, 14, 23, 29, 4] }
     };
 
@@ -1166,186 +1166,104 @@
     // eksport do standardowego pliku binarnego STL gotowego do druku 3D.
     // ==============================================================================
     function generateWatertightDrumGeometry(slots) {
-      const EDGE_MAX_R = 17.03;
-      const EDGE_MIN_R = 14.20;
-      const EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R; // 2.83 mm
-      const N = 96; // 96 próbek obwodowych (identycznie jak $fn=96 w OpenSCAD)
+      // Wymiary = tools/openscad/cam_common.scad (jedno źródło prawdy dla geometrii)
+      const EDGE_MAX_R = 17.03, EDGE_MIN_R = 14.20, EDGE_SWING = EDGE_MAX_R - EDGE_MIN_R; // 2.83 mm
+      const LENGTH = 26.0;
+      const DISC_R = 14.5, DISC_LEN = 2.4, DISC_GROOVES = 3, DISC_GROOVE_W = 0.35, DISC_GROOVE_D = 0.4;
+      const NECK_R = 11.5, NECK_LEN = 2.0, FLANGE_LEN = 2.0;
+      const CAM_START_Z = DISC_LEN + NECK_LEN + FLANGE_LEN;                  // 6.4
+      const N_POS = 5, COLLAR_LEN = 2.4;
+      const BAND_LEN = (LENGTH - CAM_START_Z - COLLAR_LEN) / N_POS;           // 3.44
+      const COLLAR_R = 11.5, COLLAR_TOP_R = 10.3, COLLAR_CHAMFER_LEN = 1.4;
+      const SOCKET_R = 7.8, KEY_W = 4.5, KEY_DEPTH = 2.2, KEY_START_Z = 6.4;
+      const N = 96; // 96 próbek obwodowych (jak $fn=96 w OpenSCAD); musi być podzielne przez 4
 
-      const fn0 = (STITCHES.find(s => s.id === slots[0]) || STITCHES[1]).fn;
-      const fn1 = (STITCHES.find(s => s.id === slots[1]) || STITCHES[14]).fn;
-      const fn2 = (STITCHES.find(s => s.id === slots[2]) || STITCHES[23]).fn;
-      const fn3 = (STITCHES.find(s => s.id === slots[3]) || STITCHES[29]).fn;
-      const fn4 = (STITCHES.find(s => s.id === slots[4]) || STITCHES[4]).fn;
+      const fns = [1, 14, 23, 29, 4].map((def, k) => (STITCHES.find(s => s.id === slots[k]) || STITCHES[def]).fn);
 
-      // Warstwy płaszcza zewnętrznego w osi Z (wymiary z cam_common.scad)
-      const layers = [
-        { z: 0.00, r: 14.5 },
-        { z: 0.35, r: 14.5 },
-        { z: 0.35, r: 14.1 },
-        { z: 0.70, r: 14.1 },
-        { z: 0.70, r: 14.5 },
-        { z: 1.15, r: 14.5 },
-        { z: 1.15, r: 14.1 },
-        { z: 1.50, r: 14.1 },
-        { z: 1.50, r: 14.5 },
-        { z: 1.95, r: 14.5 },
-        { z: 1.95, r: 14.1 },
-        { z: 2.30, r: 14.1 },
-        { z: 2.30, r: 14.5 },
-        { z: 2.40, r: 14.5 },
-        { z: 2.40, r: 11.5 },
-        { z: 4.40, r: 11.5 },
-        { z: 4.40, r: 17.03 },
-        { z: 6.40, r: 17.03 },
-        { z: 6.40, r: fn0 },
-        { z: 9.84, r: fn0 },
-        { z: 9.84, r: fn1 },
-        { z: 13.28, r: fn1 },
-        { z: 13.28, r: fn2 },
-        { z: 16.72, r: fn2 },
-        { z: 16.72, r: fn3 },
-        { z: 20.16, r: fn3 },
-        { z: 20.16, r: fn4 },
-        { z: 23.60, r: fn4 },
-        { z: 23.60, r: 11.5 },
-        { z: 24.60, r: 11.5 },
-        { z: 26.00, r: 10.3 }
-      ];
-
-      const numOuterRings = layers.length;
-      const numOuterVerts = numOuterRings * N;
-      const numBoreVerts = 4 * N;
-      const totalVerts = numOuterVerts + numBoreVerts;
-
-      const positions = new Float32Array(totalVerts * 3);
-      const cosA = new Float32Array(N);
-      const sinA = new Float32Array(N);
-
-      for (let i = 0; i < N; i++) {
-        const a = i * 2.0 * Math.PI / N;
-        cosA[i] = Math.cos(a);
-        sinA[i] = Math.sin(a);
+      // Warstwy płaszcza zewnętrznego w osi Z (pary o tym samym z = schodek / półka)
+      const layers = [{ z: 0, r: DISC_R }];
+      for (let g = 0; g < DISC_GROOVES; g++) {           // rowki jak w disc_grooved(): środki 0.4 / 1.2 / 2.0 mm
+        const gz = DISC_LEN * (g + 0.5) / DISC_GROOVES, z0 = gz - DISC_GROOVE_W / 2, z1 = gz + DISC_GROOVE_W / 2;
+        layers.push({ z: z0, r: DISC_R }, { z: z0, r: DISC_R - DISC_GROOVE_D },
+                    { z: z1, r: DISC_R - DISC_GROOVE_D }, { z: z1, r: DISC_R });
       }
+      layers.push({ z: DISC_LEN, r: DISC_R }, { z: DISC_LEN, r: NECK_R },
+                  { z: DISC_LEN + NECK_LEN, r: NECK_R }, { z: DISC_LEN + NECK_LEN, r: EDGE_MAX_R },
+                  { z: CAM_START_Z, r: EDGE_MAX_R });
+      const zb = [];                                     // granice pozycji liczone raz (bez różnic zaokrągleń)
+      for (let k = 0; k <= N_POS; k++) zb.push(Math.round((CAM_START_Z + k * BAND_LEN) * 1e6) / 1e6);
+      for (let k = 0; k < N_POS; k++) layers.push({ z: zb[k], r: fns[k] }, { z: zb[k + 1], r: fns[k] });
+      const zc = LENGTH - COLLAR_LEN;
+      layers.push({ z: zc, r: COLLAR_R }, { z: LENGTH - COLLAR_CHAMFER_LEN, r: COLLAR_R }, { z: LENGTH, r: COLLAR_TOP_R });
 
-      // 1. Wierzchołki płaszcza zewnętrznego
-      let pIdx = 0;
-      for (let l = 0; l < numOuterRings; l++) {
-        const lay = layers[l];
-        const z = lay.z;
+      const verts = [];
+      const addV = (x, y, z) => { verts.push(x, y, z); return verts.length / 3 - 1; };
+      const ang = (i) => i * 2 * Math.PI / N;
+
+      // 1. Płaszcz zewnętrzny. Pierścienie o tym samym z i tym samym promieniu w danym kącie dzielą wierzchołek
+      //    (np. szczyt zęba = kołnierz 17.03 mm) – inaczej powstają trójkąty o zerowym polu.
+      const rings = [];
+      let prevR = null;
+      layers.forEach((lay, l) => {
+        const ring = new Array(N), rs = new Array(N);
         for (let i = 0; i < N; i++) {
-          const aDeg = i * 360.0 / N;
           let r = lay.r;
-          if (typeof r === 'function') {
-            const v = r(aDeg); // -1 .. 1
-            const depth = (v + 1.0) / 2.0;
-            r = EDGE_MAX_R - EDGE_SWING * depth;
-          }
-          positions[pIdx++] = r * cosA[i];
-          positions[pIdx++] = r * sinA[i];
-          positions[pIdx++] = z;
+          if (typeof r === 'function') r = EDGE_MAX_R - EDGE_SWING * (r(i * 360 / N) + 1) / 2;
+          rs[i] = r;
+          const same = l > 0 && Math.abs(layers[l - 1].z - lay.z) < 1e-9 && Math.abs(prevR[i] - r) < 1e-9;
+          ring[i] = same ? rings[l - 1][i] : addV(r * Math.cos(ang(i)), r * Math.sin(ang(i)), lay.z);
         }
+        rings.push(ring);
+        prevR = rs;
+      });
+
+      // 2. Otwór Ø15.6 i prostokątny wpust 4.5 × 2.2 mm (od Z=6.4 do tyłu, na +X).
+      //    Punkt i=±(N/24+1) leży dokładnie w narożniku wpustu na okręgu, punkty |i|<=N/24 na dnie wpustu (x = 10).
+      const kHalf = N / 24;                                    // 4 przy N=96 (15°): dno wpustu
+      const thetaK = Math.asin((KEY_W / 2) / SOCKET_R);        // 16.77°: narożnik wpustu na okręgu
+      const holeXY = (i) => {
+        const j = ((i + N / 2) % N) - N / 2;                  // -N/2 .. N/2-1
+        if (Math.abs(j) === kHalf + 1) { const a = Math.sign(j) * thetaK; return [SOCKET_R * Math.cos(a), SOCKET_R * Math.sin(a)]; }
+        return [SOCKET_R * Math.cos(ang(i)), SOCKET_R * Math.sin(ang(i))];
+      };
+      const keyXY = (i) => {
+        const j = ((i + N / 2) % N) - N / 2;
+        if (Math.abs(j) <= kHalf) return [SOCKET_R + KEY_DEPTH, (KEY_W / 2) * j / kHalf];
+        return null;                                           // poza wpustem: jak otwór
+      };
+      const bore0 = [], bore1 = [], bore2 = [], bore3 = [];
+      for (let i = 0; i < N; i++) {
+        const [hx, hy] = holeXY(i), key = keyXY(i);
+        bore0.push(addV(hx, hy, 0));
+        bore1.push(addV(hx, hy, KEY_START_Z));
+        bore2.push(key ? addV(key[0], key[1], KEY_START_Z) : bore1[i]);
+        bore3.push(addV(key ? key[0] : hx, key ? key[1] : hy, LENGTH));
       }
 
-      // 2. Wierzchołki otworu wewnętrznego i wpustu
-      const boreBase = numOuterVerts;
-      // Warstwa 0: Z=0, R=7.8 (okrągły otwór)
-      for (let i = 0; i < N; i++) {
-        positions[pIdx++] = 7.8 * cosA[i];
-        positions[pIdx++] = 7.8 * sinA[i];
-        positions[pIdx++] = 0.0;
-      }
-      // Warstwa 1: Z=6.4, R=7.8 (okrągły otwór)
-      for (let i = 0; i < N; i++) {
-        positions[pIdx++] = 7.8 * cosA[i];
-        positions[pIdx++] = 7.8 * sinA[i];
-        positions[pIdx++] = 6.4;
-      }
-      // Warstwa 2: Z=6.4 z wpustem (szerokość 4.5, głębokość do X=10.0)
-      for (let i = 0; i < N; i++) {
-        const y = 7.8 * sinA[i];
-        if (cosA[i] > 0 && Math.abs(y) <= 2.25) {
-          positions[pIdx++] = 10.0;
-          positions[pIdx++] = y;
-          positions[pIdx++] = 6.4;
-        } else {
-          positions[pIdx++] = 7.8 * cosA[i];
-          positions[pIdx++] = 7.8 * sinA[i];
-          positions[pIdx++] = 6.4;
-        }
-      }
-      // Warstwa 3: Z=26.0 z wpustem
-      for (let i = 0; i < N; i++) {
-        const y = 7.8 * sinA[i];
-        if (cosA[i] > 0 && Math.abs(y) <= 2.25) {
-          positions[pIdx++] = 10.0;
-          positions[pIdx++] = y;
-          positions[pIdx++] = 26.0;
-        } else {
-          positions[pIdx++] = 7.8 * cosA[i];
-          positions[pIdx++] = 7.8 * sinA[i];
-          positions[pIdx++] = 26.0;
-        }
-      }
-
-      // 3. Budowa trójkątów (zamknięta bryła 2-manifold)
+      // 3. Trójkąty (zamknięta bryła 2-manifold); trójkąty ze zdublowanym wierzchołkiem pomijane
       const indices = [];
-
-      function addQuad(v1, v2, v3, v4) {
-        indices.push(v1, v2, v3);
-        indices.push(v1, v3, v4);
-      }
-
-      // Płaszcz zewnętrzny
-      for (let k = 0; k < numOuterRings - 1; k++) {
-        const rowA = k * N;
-        const rowB = (k + 1) * N;
+      const tri = (a, b, c) => { if (a !== b && b !== c && a !== c) indices.push(a, b, c); };
+      const quad = (a, b, c, d) => { tri(a, b, c); tri(a, c, d); };
+      // strip(A, B, out): pas między pierścieniami A i B (kąt rośnie przeciwnie do zegara patrząc z +Z).
+      // out=true: normalna = kierunek_obwodu × (B - A) – na zewnątrz dla ścian bocznych od dołu do góry,
+      // out=false: odwrotnie. Każdy pas sprawdzony testem tools/test_browser_mesh.js (objętość > 0, spójne ściany).
+      const strip = (A, B, out) => {
         for (let i = 0; i < N; i++) {
-          const next = (i + 1) % N;
-          addQuad(rowA + i, rowB + i, rowB + next, rowA + next);
+          const n = (i + 1) % N;
+          if (out) quad(A[i], A[n], B[n], B[i]); else quad(A[i], B[i], B[n], A[n]);
         }
-      }
-
-      // Dno czołowe Z = 0: łączy outer ring 0 z inner layer 0 (normalna w dół: -Z)
-      const out0 = 0;
-      const in0 = boreBase;
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N;
-        addQuad(out0 + i, out0 + next, in0 + next, in0 + i);
-      }
-
-      // Szczyt kołnierza Z = 26: łączy outer ring top z inner layer 3 (normalna w górę: +Z)
-      const outTop = (numOuterRings - 1) * N;
-      const inTop = boreBase + 3 * N;
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N;
-        addQuad(outTop + i, inTop + i, inTop + next, outTop + next);
-      }
-
-      // Otwór dolny cylindryczny (Z = 0 .. 6.4)
-      const in1 = boreBase + 1 * N;
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N;
-        addQuad(in0 + i, in0 + next, in1 + next, in1 + i);
-      }
-
-      // Krok wpustu na Z = 6.4 (płaskie dno wpustu montażowego)
-      const in2 = boreBase + 2 * N;
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N;
-        addQuad(in1 + i, in2 + i, in2 + next, in1 + next);
-      }
-
-      // Otwór górny z wpustem (Z = 6.4 .. 26.0)
-      for (let i = 0; i < N; i++) {
-        const next = (i + 1) % N;
-        addQuad(in2 + i, in2 + next, inTop + next, inTop + i);
-      }
+      };
+      for (let l = 0; l < rings.length - 1; l++) strip(rings[l], rings[l + 1], true);   // płaszcz i półki
+      strip(rings[0], bore0, false);                   // czoło Z=0 (normalna -Z)
+      strip(rings[rings.length - 1], bore3, true);     // tył Z=26 (normalna +Z)
+      strip(bore0, bore1, false);                      // otwór Z=0..6.4 (normalna do osi)
+      strip(bore1, bore2, false);                      // dno wpustu Z=6.4 (normalna +Z, w wolną przestrzeń)
+      strip(bore2, bore3, false);                      // otwór z wpustem Z=6.4..26
 
       const geometry = new THREE.BufferGeometry();
-      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(verts), 3));
       geometry.setIndex(indices);
       geometry.computeVertexNormals();
-
       return geometry;
     }
 

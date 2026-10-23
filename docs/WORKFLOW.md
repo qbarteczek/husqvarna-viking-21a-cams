@@ -28,6 +28,25 @@ Całość: ok. 1.5 minuty na plik bębna, ułamek sekundy na `mating_shaft_refer
 
 (`projection(cut=true)` w tych plikach robi przekrój na wysokości Z=13 — środek walca.)
 
+## Kontrola po zmianach (od 2026-10-23)
+
+Po każdej zmianie geometrii, wzorów ściegów albo generatora w przeglądarce:
+
+```powershell
+python tools/verify_drums.py                         # models/generated/cam_*.stl
+node tools/test_browser_mesh.js outrowser          # siatki z index.html: 5 presetów + 36 ściegów
+python tools/verify_drums.py --browser outrowser
+python tools/check_stitch_formulas.py                # 36 ściegów: JS = wzór OpenSCAD = stitch_catalog.scad
+```
+
+`verify_drums.py` sprawdza: jedna szczelna bryła, spójne ściany, brak trójkątów o zerowym polu, wymiary otworu,
+wpustu (4.5 × 2.2 mm, od Z = 6.4), rowków dysku, kołnierzy i zakres zębów 14.20–17.03 mm.
+Katalog ściegów jest zapisany w kilku miejscach (`index.html`, `tools/openscad/stitch_catalog.scad`,
+`tools/generator/generate_drum.ps1`, presety w `tools/openscad/cam_generator.scad`) – zmieniaj wszystkie naraz.
+
+Uwaga o OpenSCAD 2021 (CGAL): części, które w `union()` stykają się tylko płaszczyzną, potrafią wyjść w STL
+jako osobne bryły. Dlatego `cam_common.scad` łączy sekcje z zakładką `JOIN_EPS = 0.01` mm.
+
 ## Kolejność prac
 
 1. Wydrukować `tools/openscad/mating_shaft_reference.scad` i sprawdzić dopasowanie otworu +

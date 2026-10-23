@@ -32,6 +32,26 @@ pattern:
 
 (`projection(cut=true)` in these files makes a cross-section at Z=13 — the barrel's midpoint.)
 
+
+## Checks after changes (since 2026-10-23)
+
+After any change of the geometry, the stitch formulas or the browser generator:
+
+```powershell
+python tools/verify_drums.py                         # models/generated/cam_*.stl
+node tools/test_browser_mesh.js outrowser          # meshes from index.html: 5 presets + 36 stitches
+python tools/verify_drums.py --browser outrowser
+python tools/check_stitch_formulas.py                # 36 stitches: JS = OpenSCAD formula = stitch_catalog.scad
+```
+
+`verify_drums.py` checks: one watertight body, consistent winding, no zero-area triangles, the bore, the key slot
+(4.5 × 2.2 mm, from Z = 6.4), the disc grooves, the flanges and the tooth range 14.20–17.03 mm.
+The stitch catalogue lives in several places (`index.html`, `tools/openscad/stitch_catalog.scad`,
+`tools/generator/generate_drum.ps1`, presets in `tools/openscad/cam_generator.scad`) – change them together.
+
+Note on OpenSCAD 2021 (CGAL): parts that only touch on a plane inside `union()` can end up as separate bodies in
+the STL. That is why `cam_common.scad` joins the sections with an overlap of `JOIN_EPS = 0.01` mm.
+
 ## Order of work
 
 1. Print `tools/openscad/mating_shaft_reference.scad` and check the fit of the hole + prismatic

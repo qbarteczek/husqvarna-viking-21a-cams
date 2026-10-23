@@ -46,6 +46,11 @@ COLLAR_R            = 11.5;   // Ø 23.0 mm
 COLLAR_TOP_R        = 10.3;   // Ø 20.6 mm
 COLLAR_CHAMFER_LEN  = 1.4;
 
+// Zakładka między sąsiednimi częściami w sumie (union): części stykające się tylko płaszczyzną
+// OpenSCAD 2021 (CGAL) potrafi zapisać jako osobne bryły (STL nieszczelny, 10 kawałków).
+// 0.01 mm zachodzenia scala wszystko w jedną bryłę i nie zmienia wymiarów w praktyce.
+JOIN_EPS = 0.01;
+
 // 6. Otwór centralny przelotowy i wpust (rowek)
 // Otwór centralny jest przelotowy na wylot (Z = 0 .. 26 mm).
 // Wpust (rowek pod klin) NIE przechodzi przez całą długość bębna — wprowadzany jest
@@ -165,21 +170,22 @@ module disc_grooved() {
 
 // 2. Szyjka między dyskiem a kołnierzem
 module neck_section() {
-    translate([0, 0, DISC_LEN])
-        cylinder(h=NECK_LEN, r=NECK_R, $fn=96);
+    translate([0, 0, DISC_LEN - JOIN_EPS])
+        cylinder(h=NECK_LEN + 2*JOIN_EPS, r=NECK_R, $fn=96);
 }
 
 // 3. Główny kołnierz o maksymalnej średnicy
 module main_flange() {
-    translate([0, 0, DISC_LEN + NECK_LEN])
-        cylinder(h=FLANGE_LEN, r=FLANGE_R, $fn=96);
+    translate([0, 0, DISC_LEN + NECK_LEN - JOIN_EPS])
+        cylinder(h=FLANGE_LEN + 2*JOIN_EPS, r=FLANGE_R, $fn=96);
 }
 
 // 5. Kołnierz tylny ze stożkową fazą montażową
 module end_collar() {
     collar_cyl_h = COLLAR_LEN - COLLAR_CHAMFER_LEN;
     translate([0, 0, LENGTH - COLLAR_LEN]) {
-        cylinder(h=collar_cyl_h, r=COLLAR_R, $fn=96);
+        translate([0, 0, -JOIN_EPS])
+            cylinder(h=collar_cyl_h + 2*JOIN_EPS, r=COLLAR_R, $fn=96);
         translate([0, 0, collar_cyl_h])
             cylinder(h=COLLAR_CHAMFER_LEN, r1=COLLAR_R, r2=COLLAR_TOP_R, $fn=96);
     }
@@ -238,8 +244,8 @@ module cam_solid(profile_fns) {
             neck_section();
             main_flange();
             for (i = [0:N_POS-1])
-                translate([0, 0, position_z(i)])
-                    tooth_band(profile_fns[i], BAND_LEN);
+                translate([0, 0, position_z(i) - (i == 0 ? JOIN_EPS : 0)])
+                    tooth_band(profile_fns[i], BAND_LEN + (i == 0 ? JOIN_EPS : 0) + (i == N_POS-1 ? JOIN_EPS : 0));
             end_collar();
         }
         socket_cut();

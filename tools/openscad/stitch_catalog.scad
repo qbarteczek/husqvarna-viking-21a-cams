@@ -13,19 +13,19 @@ include <cam_common.scad>
 // --- Grupa I: Ściegi użytkowe i elastyczne ---
 function stitch_straight(a) = -1.0;
 function stitch_blind_hem_std(a) = blind_hem(a, 3, 0.20);
-function stitch_blind_hem_dense(a) = blind_hem(a, 4, 0.16);
+function stitch_blind_hem_dense(a) = blind_hem(a, 4, 0.15);
 function stitch_blind_hem_wide(a) = blind_hem(a, 3, 0.28);
 function stitch_zigzag_std(a) = trap_wave(a, 9, 0.28) * 0.95;
-function stitch_zigzag_wide(a) = trap_wave(a, 6, 0.30) * 0.95;
-function stitch_zigzag_narrow(a) = trap_wave(a, 10, 0.25) * 0.40;
-function stitch_zigzag_satin(a) = trap_wave(a, 18, 0.20) * 0.85;
+function stitch_zigzag_wide(a) = trap_wave(a, 9, 0.28) * 0.95;    // = A1 poz. 3
+function stitch_zigzag_narrow(a) = tri_wave(a, 10) * 0.40;          // = D poz. 1
+function stitch_zigzag_satin(a) = trap_wave(a, 9, 0.28) * 0.80;    // = A1 poz. 4
 function stitch_three_step_elastic(a) = three_step_zigzag(a, 3);
 function stitch_four_step_elastic(a) =
     let(t = (a*3/360) - floor(a*3/360), step = floor(t * 8))
     (step < 4 ? -0.9 + step * 0.6 : 0.9 - (step - 4) * 0.6);
 function stitch_overlock_open(a) = (sine_wave(a, 4) * 0.6 + blind_hem(a, 4, 0.20) * 0.4);
 function stitch_overlock_closed(a) = (sine_wave(a, 6) + 0.3*sine_wave(a, 18)) / 1.3 * 0.85;
-function stitch_triple_stretch(a) = tri_wave(a, 18) * 0.35;
+function stitch_triple_stretch(a) = tri_wave(a, 18) * 0.30;        // = D poz. 4
 function stitch_ladder(a) = sign(sine_wave(a, 6)) * 0.85;
 
 // --- Grupa II: Ściegi ozdobne faliste i organiczne ---
@@ -46,9 +46,7 @@ function stitch_pearl_beads(a) =
     let(env = pow(sin(a*3/2), 2))
     trap_wave(a, 18, 0.20) * (env * 0.80 + 0.15);
 function stitch_hourglass_satin(a) = hourglass_satin(a, 18, 3);
-function stitch_flame_satin(a) =
-    let(env = (1 - cos(a*4))/2)
-    arrow_sharpen(a, 16, 0.6) * (env * 0.75 + 0.20);
+function stitch_flame_satin(a) = arrow_sharpen(a, 6, 0.50) * 0.90;  // = C1 poz. 2
 function stitch_taper_satin(a) =
     let(t = (a*3/360) - floor(a*3/360))
     trap_wave(a, 18, 0.22) * (t * 0.80 + 0.15);
@@ -61,9 +59,11 @@ function stitch_checker_step(a) =
     let(t = (a*4/360) - floor(a*4/360))
     (t < 0.5 ? (tri_wave(a, 16)*0.4 + 0.5) : (tri_wave(a, 16)*0.4 - 0.5));
 function stitch_cross_stitch(a) = (tri_wave(a, 6) + 0.4*tri_wave(a*2, 6)) / 1.4 * 0.85;
-function stitch_arrowhead(a) = arrow_sharpen(a, 6, 0.50) * 0.90;
+function stitch_arrowhead(a) = arrow_sharpen(a, 6, 0.80) * 0.90;
 function stitch_honeycomb(a) = diamond_lattice(a, 6) * 0.80;
 
+// Wzory muszą być identyczne z index.html (STITCHES) i tools/generator/stitches.json –
+// sprawdza to tools/check_stitch_formulas.py.
 // ==============================================================================
 // DYSPOZYTOR ŚCIEGU WG ID (0 .. 35)
 // ==============================================================================

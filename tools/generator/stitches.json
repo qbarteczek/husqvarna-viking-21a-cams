@@ -38,7 +38,7 @@
     "scad_call": "stitch_blind_hem_dense(a)",
     "wave_type": "pulse",
     "reps": 4,
-    "spike_w": 0.16
+    "spike_w": 0.15
   },
   {
     "id": 3,
@@ -488,6 +488,7 @@
     "scad_call": "stitch_arrowhead(a)",
     "wave_type": "arrow",
     "reps": 6,
+    "skew": 0.80,
     "amp": 0.90
   },
   {
